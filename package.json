@@ -1,0 +1,43 @@
+{
+  "name": "charge-worlds",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "run-p --print-label --race dev:*",
+    "dev:server": "tsx watch --clear-screen=false server.ts",
+    "dev:astro": "astro dev",
+    "build": "astro build && tsup",
+    "start": "NODE_ENV=production node dist/server/server.js",
+    "lint": "eslint --ext js,ts,tsx .",
+    "lint-fix": "pnpm lint -- --fix",
+    "format": "prettier --write .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@trpc/client": "10.0.0-proxy-beta.0",
+    "@trpc/server": "10.0.0-proxy-beta.0",
+    "chalk": "^5.0.1",
+    "express": "^4.18.1",
+    "ws": "^8.8.1",
+    "zod": "^3.19.1"
+  },
+  "devDependencies": {
+    "@astrojs/tailwind": "^2.0.1",
+    "@itsmapleleaf/configs": "^1.1.5",
+    "@rushstack/eslint-patch": "^1.2.0",
+    "@types/eslint": "^8.4.6",
+    "@types/express": "^4.17.14",
+    "@types/node": "^18.7.18",
+    "@types/prettier": "^2.7.0",
+    "@types/ws": "^8.5.3",
+    "astro": "^1.2.6",
+    "eslint": "^8.23.1",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.7.1",
+    "prettier-plugin-astro": "^0.5.4",
+    "tailwindcss": "^3.0.24",
+    "tsup": "^6.2.3",
+    "tsx": "^3.9.0",
+    "typescript": "^4.8.3"
+  }
+}

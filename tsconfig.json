@@ -1,0 +1,12 @@
+{
+  "extends": "@itsmapleleaf/configs/tsconfig.base",
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.cjs",
+    "**/*.mjs",
+    ".eslintrc.cjs"
+  ],
+  "exclude": ["**/node_modules/**", "**/build/**", "**/dist/**", "**/.cache/**"]
+}
