@@ -1,5 +1,11 @@
 ---
+import { prisma } from "../prisma/client"
+
 const title = "charge worlds"
+
+const character =
+  (await prisma.character.findFirst({ where: { name: "Ruby" } })) ??
+  (await prisma.character.create({ data: { name: "Ruby" } }))
 ---
 
 <html lang="en" class="bg-slate-800 text-slate-50">
@@ -10,7 +16,8 @@ const title = "charge worlds"
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
   </head>
-  <body class="flex flex-col min-h-screen">
-    <p>the</p>
+  <body>
+    <h1>{character.name}</h1>
+    <p>created at {character.createdAt.toLocaleString()}</p>
   </body>
 </html>

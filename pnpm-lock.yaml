@@ -3,6 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@astrojs/tailwind': ^2.0.1
   '@itsmapleleaf/configs': ^1.1.5
+  '@prisma/client': ^4.3.1
   '@rushstack/eslint-patch': ^1.2.0
   '@trpc/client': 10.0.0-proxy-beta.0
   '@trpc/server': 10.0.0-proxy-beta.0
@@ -18,6 +19,7 @@ specifiers:
   npm-run-all: ^4.1.5
   prettier: ^2.7.1
   prettier-plugin-astro: ^0.5.4
+  prisma: ^4.3.1
   tailwindcss: ^3.0.24
   tsup: ^6.2.3
   tsx: ^3.9.0
@@ -26,6 +28,7 @@ specifiers:
   zod: ^3.19.1
 
 dependencies:
+  '@prisma/client': 4.3.1_prisma@4.3.1
   '@trpc/client': 10.0.0-proxy-beta.0_pb4q3dpmg4qimgj5eamij2eeei
   '@trpc/server': 10.0.0-proxy-beta.0
   chalk: 5.0.1
@@ -47,6 +50,7 @@ devDependencies:
   npm-run-all: 4.1.5
   prettier: 2.7.1
   prettier-plugin-astro: 0.5.4
+  prisma: 4.3.1
   tailwindcss: 3.1.8
   tsup: 6.2.3_typescript@4.8.3
   tsx: 3.9.0
@@ -625,6 +629,28 @@ packages:
   /@polka/url/1.0.0-next.21:
     resolution: {integrity: sha512-a5Sab1C4/icpTZVzZc5Ghpz88yQtGOyNqYXcZgOssB2uuAr+wF/MvN6bgtW32q7HHrvBki+BsZ0OuNv6EV3K9g==}
     dev: true
+
+  /@prisma/client/4.3.1_prisma@4.3.1:
+    resolution: {integrity: sha512-FA0/d1VMJNWqzU7WVWTNWJ+lGOLR9JUBnF73GdIPAEVo/6dWk4gHx0EmgeU+SMv4MZoxgOeTBJF2azhg7x0hMw==}
+    engines: {node: '>=14.17'}
+    requiresBuild: true
+    peerDependencies:
+      prisma: '*'
+    peerDependenciesMeta:
+      prisma:
+        optional: true
+    dependencies:
+      '@prisma/engines-version': 4.3.0-32.c875e43600dfe042452e0b868f7a48b817b9640b
+      prisma: 4.3.1
+    dev: false
+
+  /@prisma/engines-version/4.3.0-32.c875e43600dfe042452e0b868f7a48b817b9640b:
+    resolution: {integrity: sha512-8yWpXkQRmiSfsi2Wb/ZS5D3RFbeu/btL9Pm/gdF4phB0Lo5KGsDFMxFMgaD64mwED2nHc8ZaEJg/+4Jymb9Znw==}
+    dev: false
+
+  /@prisma/engines/4.3.1:
+    resolution: {integrity: sha512-4JF/uMaEDAPdcdZNOrnzE3BvrbGpjgV0FcPT3EVoi6I86fWkloqqxBt+KcK/+fIRR0Pxj66uGR9wVH8U1Y13JA==}
+    requiresBuild: true
 
   /@proload/core/0.3.3:
     resolution: {integrity: sha512-7dAFWsIK84C90AMl24+N/ProHKm4iw0akcnoKjRvbfHifJZBLhaDsDus1QJmhG12lXj4e/uB/8mB/0aduCW+NQ==}
@@ -4852,6 +4878,14 @@ packages:
     engines: {node: '>=10.13.0'}
     hasBin: true
     dev: true
+
+  /prisma/4.3.1:
+    resolution: {integrity: sha512-90xo06wtqil76Xsi3mNpc4Js3SdDRR5g4qb9h+4VWY4Y8iImJY6xc3PX+C9xxTSt1lr0Q89A0MLkJjd8ax6KiQ==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+    requiresBuild: true
+    dependencies:
+      '@prisma/engines': 4.3.1
 
   /prismjs/1.29.0:
     resolution: {integrity: sha512-Kx/1w86q/epKcmte75LNrEoT+lX8pBpavuAbvJWRXar7Hz8jrtF+e3vY751p0R8H9HdArwaCTNDDzHg/ScJK1Q==}
