@@ -8,14 +8,15 @@
     "dev:server": "tsx watch --clear-screen=false server.ts",
     "dev:astro": "astro dev",
     "dev:docker": "docker-compose up",
-    "build": "astro build && tsup",
-    "start": "NODE_ENV=production node dist/server/server.js",
+    "build": "astro build",
+    "start": "NODE_ENV=production tsx server.ts",
     "lint": "eslint --ext js,ts,tsx .",
     "lint-fix": "pnpm lint -- --fix",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@astrojs/node": "^1.0.1",
     "@prisma/client": "^4.3.1",
     "@trpc/client": "10.0.0-proxy-beta.0",
     "@trpc/server": "10.0.0-proxy-beta.0",
@@ -40,7 +41,6 @@
     "prettier-plugin-astro": "^0.5.4",
     "prisma": "^4.3.1",
     "tailwindcss": "^3.0.24",
-    "tsup": "^6.2.3",
     "tsx": "^3.9.0",
     "typescript": "^4.8.3"
   }
