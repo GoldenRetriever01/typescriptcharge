@@ -3,15 +3,16 @@ import { applyWSSHandler } from "@trpc/server/adapters/ws"
 import chalk from "chalk"
 import express from "express"
 import { request } from "node:http"
-import { join } from "node:path"
+import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
-import { dirname } from "node:path"
 import { WebSocketServer } from "ws"
 import { appRouter } from "./src/trpc/router"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 const app = express()
+
+app.disable("x-powered-by")
 
 app.use(
   "/api/http",
