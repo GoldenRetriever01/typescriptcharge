@@ -1,23 +1,69 @@
 ---
-import { prisma } from "../prisma/client"
+import backgroundUrl from "../assets/background.jpg"
 
-const title = "charge worlds"
+export type Props = {
+  title?: string
+  description?: string
+}
 
-const character =
-  (await prisma.character.findFirst({ where: { name: "Ruby" } })) ??
-  (await prisma.character.create({ data: { name: "Ruby" } }))
+const appName = "Charge Worlds"
+const appDescription = "Virtual environment for the Charge RPG system"
+
+const title = [Astro.props.title, appName].filter(Boolean).join(" | ")
+
+const description = [Astro.props.description, appDescription]
+  .filter(Boolean)
+  .join(" | ")
 ---
 
-<html lang="en" class="bg-slate-800 text-slate-50">
+<html lang="en" class="bg-gray-900 text-gray-100">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
+
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={Astro.site} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <!-- <meta
+      property="og:image"
+      content="https://metatags.io/assets/meta-tags-16a33a6a8531e519cc0936fbba0ad904e52d35f34a46c97a2c9f6f7dd7d336f2.png"
+    /> -->
+
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={Astro.site} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <!-- <meta
+      property="twitter:image"
+      content="https://metatags.io/assets/meta-tags-16a33a6a8531e519cc0936fbba0ad904e52d35f34a46c97a2c9f6f7dd7d336f2.png"
+    /> -->
+
     <title>{title}</title>
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
   <body>
-    <h1>{character.name}</h1>
-    <p>created at {character.createdAt.toLocaleString()}</p>
+    <div
+      style={`background-image: url(${backgroundUrl})`}
+      class="fixed inset-0 bg-center bg-cover brightness-[25%] blur-md scale-105"
+    >
+    </div>
+    <div class="relative py-16 px-4 max-w-screen-lg mx-auto flex gap-4">
+      <main
+        class="bg-zinc-700 p-4 rounded-md shadow-md shadow-[rgba(0,0,0,0.25)] flex-1 self-start h-[150vh]"
+      >
+        main content
+      </main>
+      <div
+        class="w-64 h-[calc(100vh-8rem)] sticky top-16 bg-zinc-700 p-4 rounded-md shadow-md shadow-[rgba(0,0,0,0.25)]"
+      >
+        the
+      </div>
+    </div>
   </body>
 </html>
