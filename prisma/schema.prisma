@@ -10,9 +10,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model World {
+  id          String      @id @default(cuid())
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  name        String
+  description String
+  characters  Character[]
+}
+
 model Character {
-  id        Int      @id @default(autoincrement())
-  name      String
+  id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  name      String
+  world     World    @relation(fields: [worldId], references: [id])
+  worldId   String
 }
