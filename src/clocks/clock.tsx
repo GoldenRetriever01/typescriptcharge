@@ -1,27 +1,23 @@
 import clsx from "clsx"
-import { MinusCircle, PlusCircle, X } from "preact-feather"
-import { useEffect, useRef } from "preact/hooks"
+import { useEffect, useRef } from "react"
+import { MinusCircle, PlusCircle, X } from "react-feather"
+import { TRPC } from "../trpc/react"
 import { activePress } from "../ui/styles"
 import type { ClockState } from "./clock-state"
 
-export function Clock({
-  clock,
-  onChange,
-  onRemove,
-}: {
-  clock: ClockState
-  onChange: (clock: ClockState) => void
-  onRemove: () => void
-}) {
+export function Clock({ clock }: { clock: ClockState }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const pointerDownRef = useRef(false)
   const lastSliceInput = useRef<number>()
 
+  const updateClock = TRPC.updateClock.useMutation()
+  const deleteClock = TRPC.deleteClock.useMutation()
+
   const updateFilledSlices = (
-    event: PointerEvent,
+    event: React.PointerEvent,
     { toggleSlice = false } = {},
   ) => {
-    const { offsetX, offsetY } = event
+    const { offsetX, offsetY } = event.nativeEvent
     const { width, height } = canvasRef.current!
 
     const x = offsetX - width / 2
@@ -46,11 +42,11 @@ export function Clock({
       progress -= 1
     }
 
-    onChange({ ...clock, progress })
+    updateClock.mutate({ id: clock.id, progress })
   }
 
   const updateMaxProgress = (delta: number) => {
-    onChange({ ...clock, maxProgress: clock.maxProgress + delta })
+    updateClock.mutate({ id: clock.id, maxProgress: clock.maxProgress + delta })
   }
 
   useEffect(() => {
@@ -120,13 +116,13 @@ export function Clock({
   const countButtonClass = clsx("transition hover:text-blue-300", activePress)
 
   return (
-    <div class="flex flex-col gap-4 items-center justify-center bg-black/20 rounded-md p-4 shadow-inner text-center relative group">
+    <div className="flex flex-col gap-4 items-center justify-center bg-black/20 rounded-md p-4 shadow-inner text-center relative group">
       <input
-        class="tracking-wide text-xl leading-tight bg-transparent transition hover:bg-black/25 focus:bg-black/25 focus:outline-none text-center w-full p-2 -my-2 rounded-md"
+        className="tracking-wide text-xl leading-tight bg-transparent transition hover:bg-black/25 focus:bg-black/25 focus:outline-none text-center w-full p-2 -my-2 rounded-md"
         placeholder="Clock name"
         value={clock.name}
         onInput={(event) => {
-          onChange({ ...clock, name: event.currentTarget.value })
+          updateClock.mutate({ id: clock.id, name: event.currentTarget.value })
         }}
       />
       <canvas
@@ -134,6 +130,7 @@ export function Clock({
         width={100}
         height={100}
         draggable={false}
+        // eslint-disable-next-line react/no-unknown-property
         onPointerDown={(event) => {
           pointerDownRef.current = true
           lastSliceInput.current = undefined
@@ -147,40 +144,41 @@ export function Clock({
             { once: true },
           )
         }}
+        // eslint-disable-next-line react/no-unknown-property
         onPointerMove={(event) => {
           if (pointerDownRef.current) updateFilledSlices(event)
         }}
-        class="cursor-pointer opacity-75 hover:opacity-100 transition-opacity select-none"
+        className="cursor-pointer opacity-75 hover:opacity-100 transition-opacity select-none"
       />
-      <div class="flex items-center justify-center gap-4">
+      <div className="flex items-center justify-center gap-4">
         <button
           type="button"
           title="Remove slice"
-          class={countButtonClass}
+          className={countButtonClass}
           onClick={() => updateMaxProgress(-1)}
         >
           <MinusCircle />
         </button>
-        <p class="leading-none tabular-nums min-w-[1.5rem]">
+        <p className="leading-none tabular-nums min-w-[1.5rem]">
           {clock.maxProgress}
         </p>
         <button
           type="button"
           title="Add slice"
-          class={countButtonClass}
+          className={countButtonClass}
           onClick={() => updateMaxProgress(1)}
         >
           <PlusCircle />
         </button>
       </div>
       <button
-        class={clsx(
+        className={clsx(
           "absolute top-0 right-0 p-2 opacity-0 group-hover:opacity-75 focus:opacity-75 focus:ring-2 focus:outline-none rounded-md ring-blue-500 transition",
           activePress,
         )}
         type="button"
         title="Remove clock"
-        onClick={() => onRemove()}
+        onClick={() => deleteClock.mutate({ id: clock.id })}
       >
         <X />
       </button>

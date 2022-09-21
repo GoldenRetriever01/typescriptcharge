@@ -1,13 +1,14 @@
 import node from "@astrojs/node"
-import preact from "@astrojs/preact"
 import tailwind from "@astrojs/tailwind"
 import { defineConfig } from "astro/config"
+
+import react from "@astrojs/react"
 
 // https://astro.build/config
 export default defineConfig({
   output: "server",
   adapter: node(),
-  integrations: [tailwind(), preact()],
+  integrations: [tailwind(), react()],
   vite: {
     server: {
       hmr: {

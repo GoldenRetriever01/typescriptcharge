@@ -2,6 +2,7 @@
 import { createExpressMiddleware } from "@trpc/server/adapters/express"
 import { applyWSSHandler } from "@trpc/server/adapters/ws"
 import chalk from "chalk"
+import compression from "compression"
 import express from "express"
 import { request } from "node:http"
 import { WebSocketServer } from "ws"
@@ -18,6 +19,7 @@ app.use(
 )
 
 if (process.env.NODE_ENV === "production") {
+  app.use(compression())
   app.use(express.static("dist/client"))
   app.use(handler)
 } else {

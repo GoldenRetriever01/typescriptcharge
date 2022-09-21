@@ -77,7 +77,7 @@ const clocks = await prisma.clock.findMany({
         </p>
       </Card>
       <Card title="Clocks">
-        <ClockList client:load clocks={clocks} worldId={defaultWorldId} />
+        <ClockList client:only="react" clocks={clocks} />
       </Card>
       <Card title="Characters">
         <p>

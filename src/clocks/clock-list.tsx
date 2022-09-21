@@ -1,47 +1,42 @@
-import { Plus } from "preact-feather"
-import { useState } from "preact/hooks"
+import { useState } from "react"
+import { Plus } from "react-feather"
+import { TRPC, TrpcProvider } from "../trpc/react"
 import { solidButton } from "../ui/styles"
 import { Clock } from "./clock"
 import type { ClockState } from "./clock-state"
 
-export function ClockList(props: { worldId: string; clocks: ClockState[] }) {
+type Props = {
+  clocks: ClockState[]
+}
+
+export function ClockList(props: Props) {
+  return (
+    <TrpcProvider>
+      <ClockListInternal {...props} />
+    </TrpcProvider>
+  )
+}
+
+function ClockListInternal(props: Props) {
   const [clocks, setClocks] = useState(props.clocks)
+  TRPC.clocks.useSubscription(undefined, { onData: setClocks })
+
+  const createClock = TRPC.createClock.useMutation()
 
   return (
-    <div class="grid gap-4">
+    <div className="grid gap-4">
       {clocks.length > 0 && (
-        <div class="flex gap-4 flex-wrap justify-center ">
+        <div className="flex gap-4 flex-wrap justify-center ">
           {clocks.map((clock) => (
-            <Clock
-              key={clock.id}
-              clock={clock}
-              onChange={(newClock) => {
-                setClocks(
-                  clocks.map((c) => (c.id === newClock.id ? newClock : c)),
-                )
-              }}
-              onRemove={() => {
-                setClocks(clocks.filter((c) => c.id !== clock.id))
-              }}
-            />
+            <Clock key={clock.id} clock={clock} />
           ))}
         </div>
       )}
-      <div class="flex justify-center">
+      <div className="flex justify-center">
         <button
           type="button"
-          class={solidButton}
-          onClick={() => {
-            setClocks([
-              ...clocks,
-              {
-                id: Math.random().toString(),
-                name: "new clock",
-                progress: 0,
-                maxProgress: 4,
-              },
-            ])
-          }}
+          className={solidButton}
+          onClick={() => createClock.mutate()}
         >
           <Plus />
           Add clock

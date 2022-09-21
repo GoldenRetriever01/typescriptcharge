@@ -11,31 +11,37 @@ datasource db {
 }
 
 model World {
-  id          String      @id @default(cuid())
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  name        String
-  description String
-  characters  Character[]
-  clocks      Clock[]
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name        String @default("New World")
+  description String @default("")
+
+  characters Character[]
+  clocks     Clock[]
 }
 
 model Character {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  name      String
-  world     World    @relation(fields: [worldId], references: [id])
-  worldId   String
+
+  name String @default("New Character")
+
+  world   World  @relation(fields: [worldId], references: [id])
+  worldId String
 }
 
 model Clock {
-  id          String   @id @default(cuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  name        String
-  world       World    @relation(fields: [worldId], references: [id])
-  worldId     String
-  progress    Int
-  maxProgress Int
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name        String @default("New Clock")
+  progress    Int    @default(0)
+  maxProgress Int    @default(4)
+
+  world   World  @relation(fields: [worldId], references: [id])
+  worldId String
 }
