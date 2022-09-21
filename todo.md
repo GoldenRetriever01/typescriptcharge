@@ -1,0 +1,13 @@
+- [ ] world title
+- [ ] world description
+- [ ] clocks
+- [ ] character list
+  - [ ] name
+  - [ ] group
+  - [ ] concept
+  - [ ] appearance
+  - [ ] ties
+  - [ ] momentum
+  - [ ] condition / stress clock
+  - [ ] actions
+  - [ ] talents
