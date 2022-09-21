@@ -17,6 +17,7 @@ model World {
   name        String
   description String
   characters  Character[]
+  clocks      Clock[]
 }
 
 model Character {
@@ -26,4 +27,15 @@ model Character {
   name      String
   world     World    @relation(fields: [worldId], references: [id])
   worldId   String
+}
+
+model Clock {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  name        String
+  world       World    @relation(fields: [worldId], references: [id])
+  worldId     String
+  progress    Int
+  maxProgress Int
 }

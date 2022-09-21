@@ -1,19 +1,19 @@
 import clsx from "clsx"
-import { MinusCircle, PlusCircle } from "preact-feather"
-import { useEffect, useRef, useState } from "preact/hooks"
+import { MinusCircle, PlusCircle, X } from "preact-feather"
+import { useEffect, useRef } from "preact/hooks"
 import { activePress } from "../ui/styles"
+import type { ClockState } from "./clock-state"
 
 export function Clock({
-  name,
-  ...props
+  clock,
+  onChange,
+  onRemove,
 }: {
-  name: string
-  slices: number
-  filledSlices: number
+  clock: ClockState
+  onChange: (clock: ClockState) => void
+  onRemove: () => void
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [slices, setSlices] = useState(props.slices)
-  const [filledSlices, setFilledSlices] = useState(props.filledSlices)
   const pointerDownRef = useRef(false)
   const lastSliceInput = useRef<number>()
 
@@ -29,24 +29,28 @@ export function Clock({
 
     const angle = Math.atan2(y, x) + Math.PI / 2
 
-    let slice = Math.ceil((angle / (2 * Math.PI)) * slices)
+    let progress = Math.ceil((angle / (2 * Math.PI)) * clock.maxProgress)
 
     // to ensure we can't turn off a slice
     // then immediately turn it back on when dragging a pixel
-    if (slice === lastSliceInput.current) return
-    lastSliceInput.current = slice
+    if (progress === lastSliceInput.current) return
+    lastSliceInput.current = progress
 
     // the slice being 0 means we actually filled the chart, due to atan2 math
-    if (slice === 0) {
-      slice = slices
+    if (progress === 0) {
+      progress = clock.maxProgress
     }
 
     // need to be able to turn the current slice off
-    if (slice === filledSlices && toggleSlice) {
-      slice -= 1
+    if (progress === clock.progress && toggleSlice) {
+      progress -= 1
     }
 
-    setFilledSlices(slice)
+    onChange({ ...clock, progress })
+  }
+
+  const updateMaxProgress = (delta: number) => {
+    onChange({ ...clock, maxProgress: clock.maxProgress + delta })
   }
 
   useEffect(() => {
@@ -72,7 +76,7 @@ export function Clock({
       centerY,
       centerX - lineWidth / 2,
       angleTop,
-      angleTop + (tau * filledSlices) / slices,
+      angleTop + (tau * clock.progress) / clock.maxProgress,
       false,
     )
     context.lineTo(centerX, centerY)
@@ -90,20 +94,22 @@ export function Clock({
     context.restore()
 
     // segments going from inside to outside
-    if (slices > 1) {
+    if (clock.maxProgress > 1) {
       context.save()
       context.globalAlpha = 0.75
       context.strokeStyle = color
       context.lineWidth = lineWidth
 
-      for (let i = 0; i < slices; i++) {
+      for (let i = 0; i < clock.maxProgress; i++) {
         context.beginPath()
         context.moveTo(centerX, centerY)
         context.lineTo(
           centerX +
-            (centerX - lineWidth) * Math.cos(angleTop + (tau * i) / slices),
+            (centerX - lineWidth) *
+              Math.cos(angleTop + (tau * i) / clock.maxProgress),
           centerY +
-            (centerY - lineWidth) * Math.sin(angleTop + (tau * i) / slices),
+            (centerY - lineWidth) *
+              Math.sin(angleTop + (tau * i) / clock.maxProgress),
         )
         context.stroke()
       }
@@ -114,11 +120,14 @@ export function Clock({
   const countButtonClass = clsx("transition hover:text-blue-300", activePress)
 
   return (
-    <div class="flex flex-col gap-4 items-center justify-center bg-black/20 rounded-md p-4 shadow-inner text-center">
+    <div class="flex flex-col gap-4 items-center justify-center bg-black/20 rounded-md p-4 shadow-inner text-center relative group">
       <input
         class="tracking-wide text-xl leading-tight bg-transparent transition hover:bg-black/25 focus:bg-black/25 focus:outline-none text-center w-full p-2 -my-2 rounded-md"
-        value={name}
         placeholder="Clock name"
+        value={clock.name}
+        onInput={(event) => {
+          onChange({ ...clock, name: event.currentTarget.value })
+        }}
       />
       <canvas
         ref={canvasRef}
@@ -148,20 +157,33 @@ export function Clock({
           type="button"
           title="Remove slice"
           class={countButtonClass}
-          onClick={() => setSlices(Math.max(1, slices - 1))}
+          onClick={() => updateMaxProgress(-1)}
         >
           <MinusCircle />
         </button>
-        <p class="leading-none tabular-nums min-w-[1.5rem]">{slices}</p>
+        <p class="leading-none tabular-nums min-w-[1.5rem]">
+          {clock.maxProgress}
+        </p>
         <button
           type="button"
           title="Add slice"
           class={countButtonClass}
-          onClick={() => setSlices(slices + 1)}
+          onClick={() => updateMaxProgress(1)}
         >
           <PlusCircle />
         </button>
       </div>
+      <button
+        class={clsx(
+          "absolute top-0 right-0 p-2 opacity-0 group-hover:opacity-75 focus:opacity-75 focus:ring-2 focus:outline-none rounded-md ring-blue-500 transition",
+          activePress,
+        )}
+        type="button"
+        title="Remove clock"
+        onClick={() => onRemove()}
+      >
+        <X />
+      </button>
     </div>
   )
 }
