@@ -1,5 +1,9 @@
 ---
-import backgroundUrl from "../assets/background.jpg"
+import "@fontsource/oswald/variable.css"
+import "@fontsource/rubik/variable.css"
+import { AddClockButton } from "../clocks/add-clock-button"
+import { Clock } from "../clocks/clock"
+import Card from "../ui/card.astro"
 
 export type Props = {
   title?: string
@@ -16,7 +20,7 @@ const description = [Astro.props.description, appDescription]
   .join(" | ")
 ---
 
-<html lang="en" class="bg-gray-900 text-gray-100">
+<html lang="en" class="bg-gray-800 text-gray-100 font-body">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
@@ -47,23 +51,59 @@ const description = [Astro.props.description, appDescription]
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
-  <body>
-    <div
-      style={`background-image: url(${backgroundUrl})`}
-      class="fixed inset-0 bg-center bg-cover brightness-[25%] blur-md scale-105"
-    >
-    </div>
-    <div class="relative py-16 px-4 max-w-screen-lg mx-auto flex gap-4">
-      <main
-        class="bg-zinc-700 p-4 rounded-md shadow-md shadow-[rgba(0,0,0,0.25)] flex-1 self-start h-[150vh]"
-      >
-        main content
-      </main>
-      <div
-        class="w-64 h-[calc(100vh-8rem)] sticky top-16 bg-zinc-700 p-4 rounded-md shadow-md shadow-[rgba(0,0,0,0.25)]"
-      >
-        the
-      </div>
-    </div>
+  <body class="px-4 py-16 max-w-screen-md mx-auto grid gap-8">
+    <main class="grid gap-8">
+      <Card title="Eveline City">
+        <p>
+          Sit aliqua cillum et irure reprehenderit irure tempor eu amet. Tempor
+          sunt excepteur tempor sint culpa irure. Cillum esse laboris sunt esse.
+          Deserunt cillum cupidatat aliqua consequat aliqua esse deserunt
+          laboris magna aliqua ex nostrud anim est.
+        </p>
+        <p>
+          Fugiat tempor nostrud Lorem est dolor deserunt eu fugiat nostrud sint
+          quis id elit. Dolore culpa sit tempor sunt mollit eu ad ea. Dolore do
+          deserunt sit enim deserunt proident quis adipisicing ad culpa anim.
+          Nostrud in culpa veniam elit cupidatat ad fugiat nostrud qui et
+          incididunt officia mollit mollit. Consectetur magna magna enim aliquip
+          incididunt. Reprehenderit culpa laboris exercitation nostrud. Ea sint
+          ullamco velit nostrud ipsum.
+        </p>
+      </Card>
+      <Card title="Clocks">
+        <div
+          class="flex gap-4 flex-wrap justify-center [&>*>*]:w-full [&>*>*]:max-w-[16rem]"
+        >
+          <Clock name="Public Trust" client:load slices={8} filledSlices={1} />
+          <Clock name="Stress" client:load slices={4} filledSlices={1} />
+          <Clock
+            name="Incoming Typhoon"
+            client:load
+            slices={12}
+            filledSlices={5}
+          />
+        </div>
+        <div class="flex justify-center">
+          <AddClockButton />
+        </div>
+      </Card>
+      <Card title="Characters">
+        <p>
+          Sit aliqua cillum et irure reprehenderit irure tempor eu amet. Tempor
+          sunt excepteur tempor sint culpa irure. Cillum esse laboris sunt esse.
+          Deserunt cillum cupidatat aliqua consequat aliqua esse deserunt
+          laboris magna aliqua ex nostrud anim est.
+        </p>
+        <p>
+          Fugiat tempor nostrud Lorem est dolor deserunt eu fugiat nostrud sint
+          quis id elit. Dolore culpa sit tempor sunt mollit eu ad ea. Dolore do
+          deserunt sit enim deserunt proident quis adipisicing ad culpa anim.
+          Nostrud in culpa veniam elit cupidatat ad fugiat nostrud qui et
+          incididunt officia mollit mollit. Consectetur magna magna enim aliquip
+          incididunt. Reprehenderit culpa laboris exercitation nostrud. Ea sint
+          ullamco velit nostrud ipsum.
+        </p>
+      </Card>
+    </main>
   </body>
 </html>

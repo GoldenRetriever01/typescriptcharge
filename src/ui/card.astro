@@ -1,0 +1,13 @@
+---
+export type Props = {
+  title: string
+}
+const { title } = Astro.props
+---
+
+<div
+  class="bg-gray-700 border-2 border-gray-600 p-4 shadow-md shadow-[rgba(0,0,0,0.25)] grid gap-4"
+>
+  <h1 class="font-header uppercase tracking-wide text-3xl">{title}</h1>
+  <slot />
+</div>

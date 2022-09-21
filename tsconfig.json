@@ -1,5 +1,9 @@
 {
   "extends": "@itsmapleleaf/configs/tsconfig.base",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact"
+  },
   "include": [
     "**/*.ts",
     "**/*.tsx",

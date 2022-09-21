@@ -17,16 +17,22 @@
   },
   "dependencies": {
     "@astrojs/node": "^1.0.1",
+    "@astrojs/preact": "^1.1.0",
     "@prisma/client": "^4.3.1",
     "@trpc/client": "10.0.0-proxy-beta.0",
     "@trpc/server": "10.0.0-proxy-beta.0",
     "chalk": "^5.0.1",
+    "clsx": "^1.2.1",
     "express": "^4.18.1",
+    "preact": "^10.6.5",
+    "preact-feather": "^4.2.1",
     "ws": "^8.8.1",
     "zod": "^3.19.1"
   },
   "devDependencies": {
     "@astrojs/tailwind": "^2.0.1",
+    "@fontsource/oswald": "^4.5.10",
+    "@fontsource/rubik": "^4.5.11",
     "@itsmapleleaf/configs": "^1.1.5",
     "@rushstack/eslint-patch": "^1.2.0",
     "@types/eslint": "^8.4.6",
