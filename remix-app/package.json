@@ -5,17 +5,25 @@
     "node": ">=16"
   },
   "scripts": {
-    "build": "remix build",
-    "dev": "remix build && cross-env NODE_ENV=development run-p --print-label --race \"dev:*\"",
+    "prepare": "prisma generate",
+    "clean": "rm -rf build public/build",
+    "dev": "pnpm clean && node scripts/fonts.mjs && cross-env NODE_ENV=development run-p --print-label --race \"dev:*\"",
     "dev:server": "nodemon server.mjs --watch server.mjs",
     "dev:remix": "remix watch",
+    "dev:tailwind": "pnpm run tailwind --watch",
+    "dev:docker": "docker-compose up",
+    "build": "pnpm clean && node scripts/fonts.mjs && pnpm run tailwind --minify && remix build",
     "start": "cross-env NODE_ENV=production node server.mjs",
     "lint": "eslint --ext js,ts,tsx .",
     "lint-fix": "pnpm lint --fix",
     "format": "prettier --write .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "tailwind": "tailwindcss -o ./app/generated/tailwind.css -c tailwind.config.cjs"
   },
   "dependencies": {
+    "@fontsource/oswald": "^4.5.10",
+    "@fontsource/rubik": "^4.5.11",
+    "@prisma/client": "^4.3.1",
     "@remix-run/express": "^1.7.2",
     "@remix-run/node": "^1.7.2",
     "@remix-run/react": "^1.7.2",
@@ -41,10 +49,15 @@
     "@types/prettier": "^2.7.0",
     "@types/react": "^18.0.15",
     "@types/react-dom": "^18.0.6",
+    "esbuild": "^0.15.8",
     "eslint": "^8.23.1",
     "nodemon": "^2.0.19",
     "npm-run-all": "^4.1.5",
+    "postcss": "^8.4.16",
+    "postcss-import": "^15.0.0",
     "prettier": "^2.7.1",
+    "prisma": "^4.3.1",
+    "tailwindcss": "^3.1.8",
     "typescript": "^4.8.3"
   },
   "prettier": "@itsmapleleaf/configs/prettier"

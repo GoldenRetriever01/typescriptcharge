@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model World {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name        String @default("New World")
+  description String @default("")
+
+  characters Character[]
+  clocks     Clock[]
+}
+
+model Character {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name String @default("New Character")
+
+  world   World  @relation(fields: [worldId], references: [id])
+  worldId String
+}
+
+model Clock {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name        String @default("New Clock")
+  progress    Int    @default(0)
+  maxProgress Int    @default(4)
+
+  world   World  @relation(fields: [worldId], references: [id])
+  worldId String
+}

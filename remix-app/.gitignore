@@ -8,3 +8,4 @@ build
 dist
 .cache
 .vscode
+/app/generated
