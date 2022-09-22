@@ -19,7 +19,14 @@ app.use(
 )
 
 if (process.env.NODE_ENV === "production") {
-  app.use(compression())
+  app.use(
+    compression({
+      filter: (req, res) => {
+        const values = [res.getHeader("Content-Type")].flat()
+        return !values.includes("text/event-stream")
+      },
+    }),
+  )
   app.use(express.static("dist/client"))
   app.use(handler)
 } else {
