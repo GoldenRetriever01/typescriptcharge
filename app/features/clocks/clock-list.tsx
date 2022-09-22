@@ -7,10 +7,15 @@ import { solidButton } from "~/ui/styles"
 import { Clock } from "./clock"
 import type { ClockState } from "./clock-state"
 
+const authorId = typeof crypto !== "undefined" ? crypto.randomUUID() : "server"
+
 export function ClockList(props: { clocks: ClockState[] }) {
   const [clocks, setClocks] = useState<ClockState[]>(props.clocks)
 
-  useEventSource<typeof clocksSseLoader>("/clocks/events", (clocks) => {
+  useEventSource<typeof clocksSseLoader>("/clocks/events", (event) => {
+    // don't update if we're the one who sent this event
+    if (event.authorId === authorId) return
+
     setClocks(clocks)
   })
 
@@ -19,7 +24,7 @@ export function ClockList(props: { clocks: ClockState[] }) {
   const handleClocksUpdate = (clocks: ClockState[]) => {
     setClocks(clocks)
     fetcher.submit(
-      { clocks: JSON.stringify(clocks) },
+      { clocks: JSON.stringify(clocks), authorId },
       { method: "post", action: "/clocks/update", replace: true },
     )
   }
