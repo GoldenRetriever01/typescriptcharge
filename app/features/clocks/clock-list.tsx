@@ -16,7 +16,7 @@ export function ClockList(props: { clocks: ClockState[] }) {
     // don't update if we're the one who sent this event
     if (event.authorId === authorId) return
 
-    setClocks(clocks)
+    setClocks(event.clocks)
   })
 
   const fetcher = useFetcher()
