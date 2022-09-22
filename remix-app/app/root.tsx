@@ -44,12 +44,12 @@ export default function App() {
       <head>
         <Meta />
         <Links />
+        <Scripts />
+        <LiveReload />
+        <ScrollRestoration />
       </head>
       <body>
         <Outlet />
-        <ScrollRestoration />
-        <Scripts />
-        <LiveReload />
       </body>
     </html>
   )
