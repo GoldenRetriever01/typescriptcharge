@@ -7,6 +7,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react"
+import { ActionScrollRestoration } from "~/ui/action-scroll-restoration"
 import tailwind from "./generated/tailwind.css"
 
 const appName = "Charge Worlds"
@@ -50,6 +51,7 @@ export default function App() {
       </head>
       <body className="px-4 py-16 max-w-screen-md mx-auto grid gap-8">
         <Outlet />
+        <ActionScrollRestoration />
       </body>
     </html>
   )
