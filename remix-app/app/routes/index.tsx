@@ -1,8 +1,9 @@
 import { useLoaderData } from "@remix-run/react"
-import { useEffect, useState } from "react"
 import { getClocks } from "~/features/clocks/actions.server"
 import { ClockList } from "~/features/clocks/clock-list"
 import { getWorld } from "~/features/worlds/db.server"
+import { useEventSourceState } from "~/helpers/sse"
+import type { clocksSseLoader } from "./clocks.events"
 
 export async function loader() {
   const world = await getWorld()
@@ -13,14 +14,10 @@ export async function loader() {
 export default function Index() {
   const data = useLoaderData<typeof loader>()
 
-  const [clocks, setClocks] = useState(data.clocks)
-  useEffect(() => {
-    const eventStream = new EventSource("/clocks/sse")
-    eventStream.addEventListener("message", (event) => {
-      setClocks(JSON.parse(event.data))
-    })
-    return () => eventStream.close()
-  }, [])
+  const clocks = useEventSourceState<typeof clocksSseLoader>(
+    "/clocks/events",
+    data.clocks,
+  )
 
   return (
     <main className="grid gap-8">
