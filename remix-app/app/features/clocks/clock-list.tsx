@@ -1,3 +1,4 @@
+import { Form } from "@remix-run/react"
 import { Plus } from "react-feather"
 import { solidButton } from "~/ui/styles"
 import { Clock } from "./clock"
@@ -13,12 +14,12 @@ export function ClockList({ clocks }: { clocks: ClockState[] }) {
           ))}
         </div>
       )}
-      <div className="flex justify-center">
-        <button type="button" className={solidButton} onClick={() => {}}>
+      <Form method="post" action="/clocks" className="flex justify-center">
+        <button type="submit" className={solidButton} onClick={() => {}}>
           <Plus />
           Add clock
         </button>
-      </div>
+      </Form>
     </div>
   )
 }

@@ -39,6 +39,7 @@ specifiers:
   react-feather: ^2.0.10
   tailwindcss: ^3.1.8
   typescript: ^4.8.3
+  zod: ^3.19.1
 
 dependencies:
   '@fontsource/oswald': 4.5.10
@@ -56,6 +57,7 @@ dependencies:
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
   react-feather: 2.0.10_react@18.2.0
+  zod: 3.19.1
 
 devDependencies:
   '@itsmapleleaf/configs': 1.1.5_irgkl5vooow2ydyo6aokmferha
@@ -8548,6 +8550,10 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
+
+  /zod/3.19.1:
+    resolution: {integrity: sha512-LYjZsEDhCdYET9ikFu6dVPGp2YH9DegXjdJToSzD9rO6fy4qiRYFoyEYwps88OseJlPyl2NOe2iJuhEhL7IpEA==}
+    dev: false
 
   /zwitch/2.0.2:
     resolution: {integrity: sha512-JZxotl7SxAJH0j7dN4pxsTV6ZLXoLdGME+PsjkL/DaBrVryK9kTGq06GfKrwcSOqypP+fdXGoCHE36b99fWVoA==}

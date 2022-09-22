@@ -1,7 +1,7 @@
 import { useLoaderData } from "@remix-run/react"
 import { ClockList } from "~/features/clocks/clock-list"
-import { getClocks } from "~/features/clocks/db"
-import { getWorld } from "~/features/worlds/db"
+import { getClocks } from "~/features/clocks/db.server"
+import { getWorld } from "~/features/worlds/db.server"
 
 export async function loader() {
   const world = await getWorld()

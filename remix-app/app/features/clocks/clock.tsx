@@ -1,3 +1,4 @@
+import { Form, useFetcher, useSubmit } from "@remix-run/react"
 import clsx from "clsx"
 import { useEffect, useRef } from "react"
 import { MinusCircle, PlusCircle, X } from "react-feather"
@@ -9,8 +10,8 @@ export function Clock({ clock }: { clock: ClockState }) {
   const pointerDownRef = useRef(false)
   const lastSliceInput = useRef<number>()
 
-  const updateClock = { mutate: (data: any) => {} }
-  const deleteClock = { mutate: (data: any) => {} }
+  const submit = useSubmit()
+  const fetcher = useFetcher()
 
   const updateFilledSlices = (
     event: React.PointerEvent,
@@ -24,16 +25,17 @@ export function Clock({ clock }: { clock: ClockState }) {
 
     const angle = Math.atan2(y, x) + Math.PI / 2
 
-    let progress = Math.ceil((angle / (2 * Math.PI)) * clock.maxProgress)
+    let progress =
+      Math.ceil((angle / (2 * Math.PI)) * clock.maxProgress) % clock.maxProgress
 
     // to ensure we can't turn off a slice
     // then immediately turn it back on when dragging a pixel
     if (progress === lastSliceInput.current) return
     lastSliceInput.current = progress
 
-    // the slice being 0 means we actually filled the chart, due to atan2 math
-    if (progress === 0) {
-      progress = clock.maxProgress
+    // the slice being < 0 means we actually filled the chart, due to atan2 math
+    if (progress <= 0) {
+      progress += clock.maxProgress
     }
 
     // need to be able to turn the current slice off
@@ -41,11 +43,10 @@ export function Clock({ clock }: { clock: ClockState }) {
       progress -= 1
     }
 
-    updateClock.mutate({ id: clock.id, progress })
-  }
-
-  const updateMaxProgress = (delta: number) => {
-    updateClock.mutate({ id: clock.id, maxProgress: clock.maxProgress + delta })
+    submit(
+      { id: clock.id, progress: String(progress) },
+      { method: "patch", action: "/clocks" },
+    )
   }
 
   useEffect(() => {
@@ -120,8 +121,11 @@ export function Clock({ clock }: { clock: ClockState }) {
         className="tracking-wide text-xl leading-tight bg-transparent transition hover:bg-black/25 focus:bg-black/25 focus:outline-none text-center w-full p-2 -my-2 rounded-md"
         placeholder="Clock name"
         value={clock.name}
-        onInput={(event) => {
-          updateClock.mutate({ id: clock.id, name: event.currentTarget.value })
+        onChange={(event) => {
+          fetcher.submit(
+            { id: clock.id, name: event.currentTarget.value },
+            { method: "patch", action: "/clocks" },
+          )
         }}
       />
       <canvas
@@ -150,37 +154,49 @@ export function Clock({ clock }: { clock: ClockState }) {
         className="cursor-pointer opacity-75 hover:opacity-100 transition-opacity select-none"
       />
       <div className="flex items-center justify-center gap-4">
-        <button
-          type="button"
-          title="Remove slice"
-          className={countButtonClass}
-          onClick={() => updateMaxProgress(-1)}
-        >
-          <MinusCircle />
-        </button>
+        <Form action="/clocks" method="patch">
+          <input type="hidden" name="id" value={clock.id} />
+          <input
+            type="hidden"
+            name="maxProgress"
+            value={clock.maxProgress - 1}
+          />
+          <button
+            type="submit"
+            title="Remove slice"
+            className={countButtonClass}
+          >
+            <MinusCircle />
+          </button>
+        </Form>
         <p className="leading-none tabular-nums min-w-[1.5rem]">
           {clock.maxProgress}
         </p>
-        <button
-          type="button"
-          title="Add slice"
-          className={countButtonClass}
-          onClick={() => updateMaxProgress(1)}
-        >
-          <PlusCircle />
-        </button>
+        <Form action="/clocks" method="patch">
+          <input type="hidden" name="id" value={clock.id} />
+          <input
+            type="hidden"
+            name="maxProgress"
+            value={clock.maxProgress + 1}
+          />
+          <button type="submit" title="Add slice" className={countButtonClass}>
+            <PlusCircle />
+          </button>
+        </Form>
       </div>
-      <button
-        className={clsx(
-          "absolute top-0 right-0 p-2 opacity-0 group-hover:opacity-75 focus:opacity-75 focus:ring-2 focus:outline-none rounded-md ring-blue-500 transition",
-          activePress,
-        )}
-        type="button"
-        title="Remove clock"
-        onClick={() => deleteClock.mutate({ id: clock.id })}
-      >
-        <X />
-      </button>
+      <Form action="/clocks" method="delete" className="contents">
+        <input type="hidden" name="id" value={clock.id} />
+        <button
+          className={clsx(
+            "absolute top-0 right-0 p-2 opacity-0 group-hover:opacity-75 focus:opacity-75 focus:ring-2 focus:outline-none rounded-md ring-blue-500 transition",
+            activePress,
+          )}
+          type="submit"
+          title="Remove clock"
+        >
+          <X />
+        </button>
+      </Form>
     </div>
   )
 }
