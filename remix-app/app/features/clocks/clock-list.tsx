@@ -1,23 +1,21 @@
 import { Form, useTransition } from "@remix-run/react"
 import { Plus } from "react-feather"
+import type { clockActions } from "~/features/clocks/actions.server"
+import { createCrudClient } from "~/helpers/crud"
 import { solidButton } from "~/ui/styles"
 import { Clock } from "./clock"
 import type { ClockState } from "./clock-state"
 
+const crud = createCrudClient<typeof clockActions>("/clocks")
+
 export function ClockList(props: { clocks: ClockState[] }) {
   const transition = useTransition()
 
-  const deletedClockId =
-    transition.submission?.action === "/clocks" &&
-    transition.submission?.method === "DELETE" &&
-    transition.submission.formData.get("id")
+  const creatingClock = crud.post.getSubmissionInput(transition)
+  const deletingClockId = crud.delete.getSubmissionInput(transition)?.id
 
-  let clocks = props.clocks.filter((clock) => clock.id !== deletedClockId)
-
-  if (
-    transition.submission?.action === "/clocks" &&
-    transition.submission?.method === "POST"
-  ) {
+  let clocks = props.clocks.filter((clock) => clock.id !== deletingClockId)
+  if (creatingClock) {
     clocks = [
       ...clocks,
       { id: "placeholder", name: "New Clock", progress: 0, maxProgress: 4 },

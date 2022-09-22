@@ -1,22 +1,14 @@
-import { Form, useFetcher, useSubmit, useTransition } from "@remix-run/react"
+import { useSubmit, useTransition } from "@remix-run/react"
 import clsx from "clsx"
 import { useEffect, useRef } from "react"
 import { MinusCircle, PlusCircle, X } from "react-feather"
+import { createCrudClient } from "~/helpers/crud"
 import { activePress } from "~/ui/styles"
+import type { clockActions } from "./actions.server"
 import type { ClockState } from "./clock-state"
+import { clockUpdateSchema } from "./clock-state"
 
-function clockStateFromPatch(
-  formData: FormData,
-  baseClock: ClockState,
-): ClockState {
-  const data = Object.fromEntries(formData)
-  return {
-    id: (data.id as string | null) || baseClock.id,
-    name: (data.name as string | null) || baseClock.name,
-    progress: Number(data.progress || baseClock.progress),
-    maxProgress: Number(data.maxProgress || baseClock.maxProgress),
-  }
-}
+const crud = createCrudClient<typeof clockActions>("/clocks")
 
 export function Clock({ clock: clockProp }: { clock: ClockState }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -24,14 +16,13 @@ export function Clock({ clock: clockProp }: { clock: ClockState }) {
   const lastSliceInput = useRef<number>()
 
   const submit = useSubmit()
-  const fetcher = useFetcher()
   const transition = useTransition()
 
-  const clock: ClockState =
-    transition.submission?.action === "/clocks" &&
-    transition.submission.method === "PATCH" &&
-    transition.submission.formData.get("id") === clockProp.id
-      ? clockStateFromPatch(transition.submission.formData, clockProp)
+  const patchInput = crud.patch.getSubmissionInput(transition)
+
+  const clock =
+    patchInput?.id === clockProp.id
+      ? { ...clockProp, ...clockUpdateSchema.parse(patchInput) }
       : clockProp
 
   const updateFilledSlices = (
@@ -66,7 +57,7 @@ export function Clock({ clock: clockProp }: { clock: ClockState }) {
 
     submit(
       { id: clock.id, progress: String(progress) },
-      { method: "patch", action: "/clocks" },
+      { method: "patch", action: "/clocks", replace: true },
     )
   }
 
@@ -143,9 +134,9 @@ export function Clock({ clock: clockProp }: { clock: ClockState }) {
         placeholder="Clock name"
         defaultValue={clock.name}
         onChange={(event) => {
-          fetcher.submit(
+          submit(
             { id: clock.id, name: event.currentTarget.value },
-            { method: "patch", action: "/clocks" },
+            { method: "patch", action: "/clocks", replace: true },
           )
         }}
       />
@@ -175,9 +166,9 @@ export function Clock({ clock: clockProp }: { clock: ClockState }) {
         className="cursor-pointer opacity-75 hover:opacity-100 transition-opacity select-none"
       />
       <div className="flex items-center justify-center gap-4">
-        <Form action="/clocks" method="patch">
-          <input type="hidden" name="id" value={clock.id} />
-          <input
+        <crud.patch.Form replace>
+          <crud.patch.input type="hidden" name="id" value={clock.id} />
+          <crud.patch.input
             type="hidden"
             name="maxProgress"
             value={clock.maxProgress - 1}
@@ -189,13 +180,13 @@ export function Clock({ clock: clockProp }: { clock: ClockState }) {
           >
             <MinusCircle />
           </button>
-        </Form>
+        </crud.patch.Form>
         <p className="leading-none tabular-nums min-w-[1.5rem]">
           {clock.maxProgress}
         </p>
-        <Form action="/clocks" method="patch">
-          <input type="hidden" name="id" value={clock.id} />
-          <input
+        <crud.patch.Form replace>
+          <crud.patch.input type="hidden" name="id" value={clock.id} />
+          <crud.patch.input
             type="hidden"
             name="maxProgress"
             value={clock.maxProgress + 1}
@@ -203,10 +194,10 @@ export function Clock({ clock: clockProp }: { clock: ClockState }) {
           <button type="submit" title="Add slice" className={countButtonClass}>
             <PlusCircle />
           </button>
-        </Form>
+        </crud.patch.Form>
       </div>
-      <Form action="/clocks" method="delete" className="contents">
-        <input type="hidden" name="id" value={clock.id} />
+      <crud.delete.Form replace className="contents">
+        <crud.delete.input type="hidden" name="id" value={clock.id} />
         <button
           className={clsx(
             "absolute top-0 right-0 p-2 opacity-0 group-hover:opacity-75 focus:opacity-75 focus:ring-2 focus:outline-none rounded-md ring-blue-500 transition",
@@ -217,7 +208,7 @@ export function Clock({ clock: clockProp }: { clock: ClockState }) {
         >
           <X />
         </button>
-      </Form>
+      </crud.delete.Form>
     </div>
   )
 }
