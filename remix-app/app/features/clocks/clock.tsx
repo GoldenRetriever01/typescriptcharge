@@ -1,4 +1,4 @@
-import { useSubmit, useTransition } from "@remix-run/react"
+import { useTransition } from "@remix-run/react"
 import clsx from "clsx"
 import { useEffect, useRef } from "react"
 import { MinusCircle, PlusCircle, X } from "react-feather"
@@ -15,10 +15,11 @@ export function Clock({ clock: clockProp }: { clock: ClockState }) {
   const pointerDownRef = useRef(false)
   const lastSliceInput = useRef<number>()
 
-  const submit = useSubmit()
+  const patchFetcher = crud.patch.useFetcher()
+  const deleteFetcher = crud.delete.useFetcher()
   const transition = useTransition()
 
-  const patchInput = crud.patch.getSubmissionInput(transition)
+  const patchInput = crud.patch.getSubmissionInput(transition.submission)
 
   const clock =
     patchInput?.id === clockProp.id
@@ -55,9 +56,9 @@ export function Clock({ clock: clockProp }: { clock: ClockState }) {
       progress -= 1
     }
 
-    submit(
+    patchFetcher.submit(
       { id: clock.id, progress: String(progress) },
-      { method: "patch", action: "/clocks", replace: true },
+      { replace: true },
     )
   }
 
@@ -134,9 +135,9 @@ export function Clock({ clock: clockProp }: { clock: ClockState }) {
         placeholder="Clock name"
         value={clock.name}
         onChange={(event) => {
-          submit(
+          patchFetcher.submit(
             { id: clock.id, name: event.currentTarget.value },
-            { method: "patch", action: "/clocks", replace: true },
+            { replace: true },
           )
         }}
       />
@@ -166,49 +167,49 @@ export function Clock({ clock: clockProp }: { clock: ClockState }) {
         className="cursor-pointer opacity-75 hover:opacity-100 transition-opacity select-none"
       />
       <div className="flex items-center justify-center gap-4">
-        <crud.patch.Form replace>
-          <crud.patch.input type="hidden" name="id" value={clock.id} />
-          <crud.patch.input
-            type="hidden"
-            name="maxProgress"
-            value={clock.maxProgress - 1}
-          />
-          <button
-            type="submit"
-            title="Remove slice"
-            className={countButtonClass}
-          >
-            <MinusCircle />
-          </button>
-        </crud.patch.Form>
+        <button
+          type="button"
+          title="Remove slice"
+          className={countButtonClass}
+          onClick={() => {
+            patchFetcher.submit(
+              { id: clock.id, maxProgress: String(clock.maxProgress - 1) },
+              { replace: true },
+            )
+          }}
+        >
+          <MinusCircle />
+        </button>
         <p className="leading-none tabular-nums min-w-[1.5rem]">
           {clock.maxProgress}
         </p>
-        <crud.patch.Form replace>
-          <crud.patch.input type="hidden" name="id" value={clock.id} />
-          <crud.patch.input
-            type="hidden"
-            name="maxProgress"
-            value={clock.maxProgress + 1}
-          />
-          <button type="submit" title="Add slice" className={countButtonClass}>
-            <PlusCircle />
-          </button>
-        </crud.patch.Form>
-      </div>
-      <crud.delete.Form replace className="contents">
-        <crud.delete.input type="hidden" name="id" value={clock.id} />
         <button
-          className={clsx(
-            "absolute top-0 right-0 p-2 opacity-0 group-hover:opacity-75 focus:opacity-75 focus:ring-2 focus:outline-none rounded-md ring-blue-500 transition",
-            activePress,
-          )}
-          type="submit"
-          title="Remove clock"
+          type="button"
+          title="Add slice"
+          className={countButtonClass}
+          onClick={() => {
+            patchFetcher.submit(
+              { id: clock.id, maxProgress: String(clock.maxProgress + 1) },
+              { replace: true },
+            )
+          }}
         >
-          <X />
+          <PlusCircle />
         </button>
-      </crud.delete.Form>
+      </div>
+      <button
+        className={clsx(
+          "absolute top-0 right-0 p-2 opacity-0 group-hover:opacity-75 focus:opacity-75 focus:ring-2 focus:outline-none rounded-md ring-blue-500 transition",
+          activePress,
+        )}
+        type="button"
+        title="Remove clock"
+        onClick={() => {
+          deleteFetcher.submit({ id: clock.id }, { replace: true })
+        }}
+      >
+        <X />
+      </button>
     </div>
   )
 }

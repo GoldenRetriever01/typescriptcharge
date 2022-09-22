@@ -1,8 +1,15 @@
-import type { FormMethod, FormProps } from "@remix-run/react"
-import { Form } from "@remix-run/react"
-import type { Transition } from "@remix-run/react/dist/transition"
+import type {
+  FetcherWithComponents,
+  FormMethod,
+  FormProps,
+  SubmitOptions,
+} from "@remix-run/react"
+import { Form, useFetcher } from "@remix-run/react"
+import type { Submission } from "@remix-run/react/dist/transition"
+import { useCallback } from "react"
 import type { z } from "zod"
 import type { CrudActionsTemplate } from "./crud.server"
+import { useEvent } from "./react"
 
 type ExtractInputType<
   Method extends FormMethod,
@@ -24,8 +31,17 @@ type CrudClient<CrudActions extends CrudActionsTemplate> = {
       >,
     ) => React.ReactElement
     getSubmissionInput: (
-      transition: Transition,
-    ) => ExtractInputType<Method, CrudActions> | undefined
+      submission: Submission | undefined,
+    ) => ExtractInputType<Method, CrudActions> // | undefined
+    useFetcher: () => Merge<
+      FetcherWithComponents<never>,
+      {
+        submit: (
+          data: ExtractInputType<Method, CrudActions>,
+          options?: SubmitOptions,
+        ) => void
+      }
+    >
   }
 }
 
@@ -37,17 +53,35 @@ export function createCrudClient<CrudActions extends CrudActionsTemplate>(
   for (const method of ["get", "post", "patch", "put", "delete"] as const) {
     client[method] = {
       Form: (props: any) => (
-        <Form method={method} action={routePath} {...props} />
+        <Form {...props} method={method} action={routePath} />
       ),
       input: (props: any) => <input {...props} />,
       textarea: (props: any) => <textarea {...props} />,
 
-      getSubmissionInput: (transition: Transition) => {
+      getSubmissionInput: (submission: Submission | undefined) => {
         if (
-          transition.submission?.action === routePath &&
-          transition.submission.method === method.toUpperCase()
+          submission?.action === routePath &&
+          submission.method === method.toUpperCase()
         ) {
-          return Object.fromEntries(transition.submission.formData) as any
+          return Object.fromEntries(submission.formData) as any
+        }
+      },
+
+      useFetcher: () => {
+        const fetcher = useFetcher()
+        return {
+          ...fetcher,
+          submit: useEvent((data: any, options: SubmitOptions) => {
+            fetcher.submit(data, { ...options, action: routePath, method })
+          }),
+          Form: useCallback(
+            function Form(props: FormProps) {
+              return (
+                <fetcher.Form {...props} action={routePath} method={method} />
+              )
+            },
+            [fetcher],
+          ),
         }
       },
     }

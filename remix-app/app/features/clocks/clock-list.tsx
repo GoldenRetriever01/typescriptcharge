@@ -1,4 +1,4 @@
-import { Form, useTransition } from "@remix-run/react"
+import { useFetcher, useTransition } from "@remix-run/react"
 import { Plus } from "react-feather"
 import type { clockActions } from "~/features/clocks/actions.server"
 import { createCrudClient } from "~/helpers/crud"
@@ -10,9 +10,13 @@ const crud = createCrudClient<typeof clockActions>("/clocks")
 
 export function ClockList(props: { clocks: ClockState[] }) {
   const transition = useTransition()
-  const deletingClockId = crud.delete.getSubmissionInput(transition)?.id
+  const deletingClockId = crud.delete.getSubmissionInput(
+    transition.submission,
+  )?.id
 
   const clocks = props.clocks.filter((clock) => clock.id !== deletingClockId)
+
+  const fetcher = useFetcher()
 
   return (
     <div className="grid gap-4">
@@ -23,12 +27,17 @@ export function ClockList(props: { clocks: ClockState[] }) {
           ))}
         </div>
       )}
-      <Form method="post" action="/clocks" className="flex justify-center">
-        <button type="submit" className={solidButton} onClick={() => {}}>
+      <fetcher.Form
+        method="post"
+        action="/clocks"
+        replace
+        className="flex justify-center"
+      >
+        <button type="submit" className={solidButton}>
           <Plus />
           Add clock
         </button>
-      </Form>
+      </fetcher.Form>
     </div>
   )
 }
