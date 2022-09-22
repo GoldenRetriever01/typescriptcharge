@@ -132,7 +132,7 @@ export function Clock({ clock: clockProp }: { clock: ClockState }) {
       <input
         className="tracking-wide text-xl leading-tight bg-transparent transition hover:bg-black/25 focus:bg-black/25 focus:outline-none text-center w-full p-2 -my-2 rounded-md"
         placeholder="Clock name"
-        defaultValue={clock.name}
+        value={clock.name}
         onChange={(event) => {
           submit(
             { id: clock.id, name: event.currentTarget.value },

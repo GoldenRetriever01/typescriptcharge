@@ -10,17 +10,9 @@ const crud = createCrudClient<typeof clockActions>("/clocks")
 
 export function ClockList(props: { clocks: ClockState[] }) {
   const transition = useTransition()
-
-  const creatingClock = crud.post.getSubmissionInput(transition)
   const deletingClockId = crud.delete.getSubmissionInput(transition)?.id
 
-  let clocks = props.clocks.filter((clock) => clock.id !== deletingClockId)
-  if (creatingClock) {
-    clocks = [
-      ...clocks,
-      { id: "placeholder", name: "New Clock", progress: 0, maxProgress: 4 },
-    ]
-  }
+  const clocks = props.clocks.filter((clock) => clock.id !== deletingClockId)
 
   return (
     <div className="grid gap-4">

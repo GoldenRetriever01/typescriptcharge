@@ -1,9 +1,19 @@
+import type { Clock } from "@prisma/client"
 import { redirect } from "@remix-run/node"
 import { z } from "zod"
 import { defaultWorldId } from "~/features/worlds/db.server"
 import { defineCrudActions } from "~/helpers/crud.server"
+import { Emitter } from "~/helpers/emitter"
 import { prisma } from "~/prisma.server"
 import { clockUpdateSchema } from "./clock-state"
+
+declare global {
+  var clocksEmitter: Emitter<Clock[]> | undefined
+}
+
+export const clocksEmitter = (globalThis.clocksEmitter ??= new Emitter<
+  Clock[]
+>())
 
 export function getClocks() {
   return prisma.clock.findMany({
@@ -23,6 +33,9 @@ export const clockActions = defineCrudActions({
           worldId: defaultWorldId,
         },
       })
+
+      clocksEmitter.emit(await getClocks())
+
       return redirect("/")
     },
   },
@@ -31,6 +44,9 @@ export const clockActions = defineCrudActions({
     input: clockUpdateSchema,
     async action({ id, ...data }) {
       await prisma.clock.update({ where: { id }, data })
+
+      clocksEmitter.emit(await getClocks())
+
       return redirect("/")
     },
   },
@@ -39,6 +55,9 @@ export const clockActions = defineCrudActions({
     input: z.object({ id: z.string() }),
     async action({ id }) {
       await prisma.clock.delete({ where: { id } })
+
+      clocksEmitter.emit(await getClocks())
+
       return redirect("/")
     },
   },

@@ -12,7 +12,14 @@ const buildDir = join(process.cwd(), "build")
 
 const app = express()
 
-app.use(compression())
+app.use(
+  compression({
+    filter: (req, res) => {
+      const values = [res.getHeader("Content-Type")].flat()
+      return !values.includes("text/event-stream")
+    },
+  }),
+)
 
 // http://expressjs.com/en/advanced/best-practice-security.html#at-a-minimum-disable-x-powered-by-header
 app.disable("x-powered-by")
