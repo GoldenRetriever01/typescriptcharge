@@ -1,17 +1,38 @@
-import { Form, useFetcher, useSubmit } from "@remix-run/react"
+import { Form, useFetcher, useSubmit, useTransition } from "@remix-run/react"
 import clsx from "clsx"
 import { useEffect, useRef } from "react"
 import { MinusCircle, PlusCircle, X } from "react-feather"
 import { activePress } from "~/ui/styles"
 import type { ClockState } from "./clock-state"
 
-export function Clock({ clock }: { clock: ClockState }) {
+function clockStateFromPatch(
+  formData: FormData,
+  baseClock: ClockState,
+): ClockState {
+  const data = Object.fromEntries(formData)
+  return {
+    id: (data.id as string | null) || baseClock.id,
+    name: (data.name as string | null) || baseClock.name,
+    progress: Number(data.progress || baseClock.progress),
+    maxProgress: Number(data.maxProgress || baseClock.maxProgress),
+  }
+}
+
+export function Clock({ clock: clockProp }: { clock: ClockState }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const pointerDownRef = useRef(false)
   const lastSliceInput = useRef<number>()
 
   const submit = useSubmit()
   const fetcher = useFetcher()
+  const transition = useTransition()
+
+  const clock: ClockState =
+    transition.submission?.action === "/clocks" &&
+    transition.submission.method === "PATCH" &&
+    transition.submission.formData.get("id") === clockProp.id
+      ? clockStateFromPatch(transition.submission.formData, clockProp)
+      : clockProp
 
   const updateFilledSlices = (
     event: React.PointerEvent,
@@ -120,7 +141,7 @@ export function Clock({ clock }: { clock: ClockState }) {
       <input
         className="tracking-wide text-xl leading-tight bg-transparent transition hover:bg-black/25 focus:bg-black/25 focus:outline-none text-center w-full p-2 -my-2 rounded-md"
         placeholder="Clock name"
-        value={clock.name}
+        defaultValue={clock.name}
         onChange={(event) => {
           fetcher.submit(
             { id: clock.id, name: event.currentTarget.value },
