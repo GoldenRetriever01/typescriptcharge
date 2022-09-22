@@ -2,22 +2,17 @@ import { useLoaderData } from "@remix-run/react"
 import { getClocks } from "~/features/clocks/actions.server"
 import { ClockList } from "~/features/clocks/clock-list"
 import { getWorld } from "~/features/worlds/db.server"
-import { useEventSourceState } from "~/helpers/sse"
-import type { clocksSseLoader } from "./clocks.events"
 
 export async function loader() {
   const world = await getWorld()
-  const clocks = await getClocks()
+  const clocks = await getClocks(world)
   return { world, clocks }
 }
 
+export const unstable_shouldReload = () => false
+
 export default function Index() {
   const data = useLoaderData<typeof loader>()
-
-  const clocks = useEventSourceState<typeof clocksSseLoader>(
-    "/clocks/events",
-    data.clocks,
-  )
 
   return (
     <main className="grid gap-8">
@@ -39,7 +34,7 @@ export default function Index() {
         </p>
       </Card>
       <Card title="Clocks">
-        <ClockList clocks={clocks} />
+        <ClockList clocks={data.clocks} />
       </Card>
       <Card title="Characters">
         <p>

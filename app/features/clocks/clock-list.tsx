@@ -1,43 +1,69 @@
-import { useFetcher, useTransition } from "@remix-run/react"
+import { useFetcher } from "@remix-run/react"
+import { useState } from "react"
 import { Plus } from "react-feather"
-import type { clockActions } from "~/features/clocks/actions.server"
-import { createCrudClient } from "~/helpers/crud"
+import { useEventSource } from "~/helpers/sse"
+import type { clocksSseLoader } from "~/routes/clocks.events"
 import { solidButton } from "~/ui/styles"
 import { Clock } from "./clock"
 import type { ClockState } from "./clock-state"
 
-const crud = createCrudClient<typeof clockActions>("/clocks")
-
 export function ClockList(props: { clocks: ClockState[] }) {
-  const transition = useTransition()
-  const deletingClockId = crud.delete.getSubmissionInput(
-    transition.submission,
-  )?.id
+  const [clocks, setClocks] = useState<ClockState[]>(props.clocks)
 
-  const clocks = props.clocks.filter((clock) => clock.id !== deletingClockId)
+  useEventSource<typeof clocksSseLoader>("/clocks/events", (clocks) => {
+    setClocks(clocks)
+  })
 
   const fetcher = useFetcher()
+
+  const handleClocksUpdate = (clocks: ClockState[]) => {
+    setClocks(clocks)
+    fetcher.submit(
+      { clocks: JSON.stringify(clocks) },
+      { method: "post", action: "/clocks/update", replace: true },
+    )
+  }
 
   return (
     <div className="grid gap-4">
       {clocks.length > 0 && (
         <div className="flex gap-4 flex-wrap justify-center ">
           {clocks.map((clock) => (
-            <Clock key={clock.id} clock={clock} />
+            <Clock
+              key={clock.id}
+              clock={clock}
+              onChange={(clock) => {
+                handleClocksUpdate(
+                  clocks.map((c) => (c.id === clock.id ? clock : c)),
+                )
+              }}
+              onRemove={() => {
+                handleClocksUpdate(clocks.filter((c) => c.id !== clock.id))
+              }}
+            />
           ))}
         </div>
       )}
-      <fetcher.Form
-        method="post"
-        action="/clocks"
-        replace
-        className="flex justify-center"
-      >
-        <button type="submit" className={solidButton}>
+      <div className="flex justify-center">
+        <button
+          type="button"
+          className={solidButton}
+          onClick={() => {
+            handleClocksUpdate([
+              ...clocks,
+              {
+                id: crypto.randomUUID(),
+                name: "New Clock",
+                progress: 0,
+                maxProgress: 4,
+              },
+            ])
+          }}
+        >
           <Plus />
           Add clock
         </button>
-      </fetcher.Form>
+      </div>
     </div>
   )
 }

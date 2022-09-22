@@ -1,64 +1,21 @@
-import type { Clock } from "@prisma/client"
-import { redirect } from "@remix-run/node"
+import type { World } from "@prisma/client"
 import { z } from "zod"
-import { defaultWorldId } from "~/features/worlds/db.server"
-import { defineCrudActions } from "~/helpers/crud.server"
 import { Emitter } from "~/helpers/emitter"
-import { prisma } from "~/prisma.server"
-import { clockUpdateSchema } from "./clock-state"
+import type { ClockState } from "./clock-state"
+import { clockStateSchema } from "./clock-state"
 
 declare global {
-  var clocksEmitter: Emitter<Clock[]> | undefined
+  var clocksEmitter: Emitter<ClockState[]> | undefined
 }
 
 export const clocksEmitter = (globalThis.clocksEmitter ??= new Emitter<
-  Clock[]
+  ClockState[]
 >())
 
-export function getClocks() {
-  return prisma.clock.findMany({
-    where: { worldId: defaultWorldId },
-    orderBy: { createdAt: "asc" },
-  })
+export async function getClocks(world: World): Promise<ClockState[]> {
+  const result = z.array(clockStateSchema).safeParse(world.clocks)
+  if (result.success) return result.data
+
+  console.warn("Invalid clocks:", result.error, world.clocks)
+  return []
 }
-
-export const clockActions = defineCrudActions({
-  post: {
-    async action() {
-      await prisma.clock.create({
-        data: {
-          name: "New Clock",
-          progress: 0,
-          maxProgress: 4,
-          worldId: defaultWorldId,
-        },
-      })
-
-      clocksEmitter.emit(await getClocks())
-
-      return redirect("/")
-    },
-  },
-
-  patch: {
-    input: clockUpdateSchema,
-    async action({ id, ...data }) {
-      await prisma.clock.update({ where: { id }, data })
-
-      clocksEmitter.emit(await getClocks())
-
-      return redirect("/")
-    },
-  },
-
-  delete: {
-    input: z.object({ id: z.string() }),
-    async action({ id }) {
-      await prisma.clock.delete({ where: { id } })
-
-      clocksEmitter.emit(await getClocks())
-
-      return redirect("/")
-    },
-  },
-})

@@ -1,30 +1,21 @@
-import { useTransition } from "@remix-run/react"
 import clsx from "clsx"
 import { useEffect, useRef } from "react"
 import { MinusCircle, PlusCircle, X } from "react-feather"
-import { createCrudClient } from "~/helpers/crud"
 import { activePress } from "~/ui/styles"
-import type { clockActions } from "./actions.server"
 import type { ClockState } from "./clock-state"
-import { clockUpdateSchema } from "./clock-state"
 
-const crud = createCrudClient<typeof clockActions>("/clocks")
-
-export function Clock({ clock: clockProp }: { clock: ClockState }) {
+export function Clock({
+  clock,
+  onChange,
+  onRemove,
+}: {
+  clock: ClockState
+  onChange: (clock: ClockState) => void
+  onRemove: () => void
+}) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const pointerDownRef = useRef(false)
   const lastSliceInput = useRef<number>()
-
-  const patchFetcher = crud.patch.useFetcher()
-  const deleteFetcher = crud.delete.useFetcher()
-  const transition = useTransition()
-
-  const patchInput = crud.patch.getSubmissionInput(transition.submission)
-
-  const clock =
-    patchInput?.id === clockProp.id
-      ? { ...clockProp, ...clockUpdateSchema.parse(patchInput) }
-      : clockProp
 
   const updateFilledSlices = (
     event: React.PointerEvent,
@@ -56,10 +47,7 @@ export function Clock({ clock: clockProp }: { clock: ClockState }) {
       progress -= 1
     }
 
-    patchFetcher.submit(
-      { id: clock.id, progress: String(progress) },
-      { replace: true },
-    )
+    onChange({ ...clock, progress })
   }
 
   useEffect(() => {
@@ -135,10 +123,7 @@ export function Clock({ clock: clockProp }: { clock: ClockState }) {
         placeholder="Clock name"
         value={clock.name}
         onChange={(event) => {
-          patchFetcher.submit(
-            { id: clock.id, name: event.currentTarget.value },
-            { replace: true },
-          )
+          onChange({ ...clock, name: event.currentTarget.value })
         }}
       />
       <canvas
@@ -172,10 +157,7 @@ export function Clock({ clock: clockProp }: { clock: ClockState }) {
           title="Remove slice"
           className={countButtonClass}
           onClick={() => {
-            patchFetcher.submit(
-              { id: clock.id, maxProgress: String(clock.maxProgress - 1) },
-              { replace: true },
-            )
+            onChange({ ...clock, maxProgress: clock.maxProgress - 1 })
           }}
         >
           <MinusCircle />
@@ -188,10 +170,7 @@ export function Clock({ clock: clockProp }: { clock: ClockState }) {
           title="Add slice"
           className={countButtonClass}
           onClick={() => {
-            patchFetcher.submit(
-              { id: clock.id, maxProgress: String(clock.maxProgress + 1) },
-              { replace: true },
-            )
+            onChange({ ...clock, maxProgress: clock.maxProgress + 1 })
           }}
         >
           <PlusCircle />
@@ -204,9 +183,7 @@ export function Clock({ clock: clockProp }: { clock: ClockState }) {
         )}
         type="button"
         title="Remove clock"
-        onClick={() => {
-          deleteFetcher.submit({ id: clock.id }, { replace: true })
-        }}
+        onClick={onRemove}
       >
         <X />
       </button>

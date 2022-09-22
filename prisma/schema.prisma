@@ -17,9 +17,9 @@ model World {
 
   name        String @default("New World")
   description String @default("")
+  clocks      Json   @default("[]")
 
   characters Character[]
-  clocks     Clock[]
 }
 
 model Character {
@@ -28,19 +28,6 @@ model Character {
   updatedAt DateTime @updatedAt
 
   name String @default("New Character")
-
-  world   World  @relation(fields: [worldId], references: [id])
-  worldId String
-}
-
-model Clock {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  name        String @default("New Clock")
-  progress    Int    @default(0)
-  maxProgress Int    @default(4)
 
   world   World  @relation(fields: [worldId], references: [id])
   worldId String
