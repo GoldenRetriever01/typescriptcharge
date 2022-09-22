@@ -42,8 +42,6 @@ specifiers:
   zod: ^3.19.1
 
 dependencies:
-  '@fontsource/oswald': 4.5.10
-  '@fontsource/rubik': 4.5.11
   '@prisma/client': 4.3.1_prisma@4.3.1
   '@remix-run/express': 1.7.2_nawawpklwqjvxe6axdd7matlce
   '@remix-run/node': 1.7.2_biqbaboplfbrettd7655fr4n2y
@@ -60,6 +58,8 @@ dependencies:
   zod: 3.19.1
 
 devDependencies:
+  '@fontsource/oswald': 4.5.10
+  '@fontsource/rubik': 4.5.11
   '@itsmapleleaf/configs': 1.1.5_irgkl5vooow2ydyo6aokmferha
   '@remix-run/dev': 1.7.2_biqbaboplfbrettd7655fr4n2y
   '@remix-run/eslint-config': 1.7.2_j37t4rqwl7h3nhuecgvzwhcgii
@@ -1459,11 +1459,11 @@ packages:
 
   /@fontsource/oswald/4.5.10:
     resolution: {integrity: sha512-FtoogDP/CGnGkw+gx6P1nEZa8kE4RwF0EnY6HJ+3QlIUNMB9mux/tuI5t7piwrpj/Zsd+tM9TiUKDprwlphW2Q==}
-    dev: false
+    dev: true
 
   /@fontsource/rubik/4.5.11:
     resolution: {integrity: sha512-m0/4GKOqJjF9cB4wuLgDhRdRVt35WzqI5n7SgddRjRD+yzsO0eEq/ak0ezgfbR3+f91ydDCek1+RuOVB8dNYwg==}
-    dev: false
+    dev: true
 
   /@gar/promisify/1.1.3:
     resolution: {integrity: sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==}

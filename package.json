@@ -12,7 +12,7 @@
     "dev:remix": "remix watch",
     "dev:tailwind": "pnpm run tailwind --watch",
     "dev:docker": "docker-compose up",
-    "build": "pnpm clean && node scripts/fonts.mjs && pnpm run tailwind --minify && remix build",
+    "build": "pnpm clean && pnpm run tailwind --minify && remix build && node scripts/fonts.mjs",
     "start": "cross-env NODE_ENV=production node server.mjs",
     "lint": "eslint --ext js,ts,tsx .",
     "lint-fix": "pnpm lint --fix",
@@ -21,8 +21,6 @@
     "tailwind": "tailwindcss -o ./app/generated/tailwind.css -c tailwind.config.cjs"
   },
   "dependencies": {
-    "@fontsource/oswald": "^4.5.10",
-    "@fontsource/rubik": "^4.5.11",
     "@prisma/client": "^4.3.1",
     "@remix-run/express": "^1.7.2",
     "@remix-run/node": "^1.7.2",
@@ -39,6 +37,8 @@
     "zod": "^3.19.1"
   },
   "devDependencies": {
+    "@fontsource/oswald": "^4.5.10",
+    "@fontsource/rubik": "^4.5.11",
     "@itsmapleleaf/configs": "^1.1.5",
     "@remix-run/dev": "^1.7.2",
     "@remix-run/eslint-config": "^1.7.2",
