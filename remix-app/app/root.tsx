@@ -40,7 +40,7 @@ export const links: LinksFunction = () => [
 
 export default function App() {
   return (
-    <html lang="en" className="bg-black text-white font-body">
+    <html lang="en" className="bg-gray-800 text-gray-100 font-body">
       <head>
         <Meta />
         <Links />
@@ -48,7 +48,7 @@ export default function App() {
         <LiveReload />
         <ScrollRestoration />
       </head>
-      <body>
+      <body className="px-4 py-16 max-w-screen-md mx-auto grid gap-8">
         <Outlet />
       </body>
     </html>
