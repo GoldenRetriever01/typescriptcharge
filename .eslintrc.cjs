@@ -3,7 +3,11 @@ require("@rushstack/eslint-patch/modern-module-resolution")
 
 /** @type {import('eslint').Linter.Config} */
 module.exports = {
-  extends: [require.resolve("@itsmapleleaf/configs/eslint")],
+  plugins: ["tailwindcss"],
+  extends: [
+    require.resolve("@itsmapleleaf/configs/eslint"),
+    "plugin:tailwindcss/recommended",
+  ],
   ignorePatterns: [
     "**/node_modules/**",
     "**/build/**",

@@ -1,17 +1,25 @@
 import clsx from "clsx"
 import { useEffect, useRef } from "react"
-import { MinusCircle, PlusCircle, X } from "react-feather"
+import { X } from "react-feather"
+import { Counter } from "../../ui/counter"
 import { activePress } from "../../ui/styles"
-import type { ClockState } from "./clock-state"
 
 export function Clock({
-  clock,
-  onChange,
+  name,
+  progress,
+  maxProgress,
+  onNameChange,
+  onProgressChange,
+  onMaxProgressChange,
   onRemove,
 }: {
-  clock: ClockState
-  onChange: (clock: ClockState) => void
-  onRemove: () => void
+  name: string
+  progress: number
+  maxProgress: number
+  onNameChange?: (name: string) => void
+  onProgressChange: (progress: number) => void
+  onMaxProgressChange?: (maxProgress: number) => void
+  onRemove?: () => void
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const pointerDownRef = useRef(false)
@@ -30,7 +38,7 @@ export function Clock({
     const angle = Math.atan2(y, x) + Math.PI / 2
 
     let progress =
-      Math.ceil((angle / (2 * Math.PI)) * clock.maxProgress) % clock.maxProgress
+      Math.ceil((angle / (2 * Math.PI)) * maxProgress) % maxProgress
 
     // to ensure we can't turn off a slice
     // then immediately turn it back on when dragging a pixel
@@ -39,15 +47,15 @@ export function Clock({
 
     // the slice being < 0 means we actually filled the chart, due to atan2 math
     if (progress <= 0) {
-      progress += clock.maxProgress
+      progress += maxProgress
     }
 
     // need to be able to turn the current slice off
-    if (progress === clock.progress && toggleSlice) {
+    if (progress === progress && toggleSlice) {
       progress -= 1
     }
 
-    onChange({ ...clock, progress })
+    onProgressChange(progress)
   }
 
   useEffect(() => {
@@ -73,7 +81,7 @@ export function Clock({
       centerY,
       centerX - lineWidth / 2,
       angleTop,
-      angleTop + (tau * clock.progress) / clock.maxProgress,
+      angleTop + (tau * progress) / maxProgress,
       false,
     )
     context.lineTo(centerX, centerY)
@@ -91,22 +99,22 @@ export function Clock({
     context.restore()
 
     // segments going from inside to outside
-    if (clock.maxProgress > 1) {
+    if (maxProgress > 1) {
       context.save()
       context.globalAlpha = 0.75
       context.strokeStyle = color
       context.lineWidth = lineWidth
 
-      for (let i = 0; i < clock.maxProgress; i++) {
+      for (let i = 0; i < maxProgress; i++) {
         context.beginPath()
         context.moveTo(centerX, centerY)
         context.lineTo(
           centerX +
             (centerX - lineWidth) *
-              Math.cos(angleTop + (tau * i) / clock.maxProgress),
+              Math.cos(angleTop + (tau * i) / maxProgress),
           centerY +
             (centerY - lineWidth) *
-              Math.sin(angleTop + (tau * i) / clock.maxProgress),
+              Math.sin(angleTop + (tau * i) / maxProgress),
         )
         context.stroke()
       }
@@ -114,20 +122,20 @@ export function Clock({
     }
   })
 
-  const countButtonClass = clsx("transition hover:text-blue-300", activePress)
-
   return (
-    <div className="flex flex-col gap-4 items-center justify-center bg-black/20 rounded-md p-4 shadow-inner text-center relative group">
-      <input
-        className="tracking-wide text-xl leading-tight bg-transparent transition hover:bg-black/25 focus:bg-black/25 focus:outline-none text-center w-full p-2 -my-2 rounded-md"
-        placeholder="Clock name"
-        value={clock.name}
-        onChange={(event) => {
-          onChange({ ...clock, name: event.currentTarget.value })
-        }}
-      />
+    <div className="group relative flex flex-col items-center justify-center gap-3 rounded-md bg-black/20 p-4 text-center">
+      {onNameChange ? (
+        <input
+          className="-my-2 w-full rounded-md bg-transparent p-2 text-center text-xl leading-tight tracking-wide transition hover:bg-black/25 focus:bg-black/25 focus:outline-none"
+          placeholder="Clock name"
+          value={name}
+          onChange={(event) => onNameChange(event.target.value)}
+        />
+      ) : (
+        <h3 className="text-xl leading-tight tracking-wide">{name}</h3>
+      )}
       <p className="sr-only">
-        Progress: {clock.progress} / {clock.maxProgress}
+        Progress: {progress} / {maxProgress}
       </p>
       <canvas
         ref={canvasRef}
@@ -152,44 +160,26 @@ export function Clock({
         onPointerMove={(event) => {
           if (pointerDownRef.current) updateFilledSlices(event)
         }}
-        className="cursor-pointer opacity-75 hover:opacity-100 transition-opacity select-none"
+        className="cursor-pointer select-none opacity-75 transition-opacity hover:opacity-100"
       />
-      <div className="flex items-center justify-center gap-4">
+
+      {onMaxProgressChange && (
+        <Counter value={maxProgress} min={2} onChange={onMaxProgressChange} />
+      )}
+
+      {onRemove && (
         <button
+          className={clsx(
+            "absolute top-0 right-0 rounded-md p-2 opacity-0 ring-blue-500 transition focus:opacity-75 focus:outline-none focus:ring-2 group-hover:opacity-75",
+            activePress,
+          )}
           type="button"
-          title="Remove slice"
-          className={countButtonClass}
-          onClick={() => {
-            onChange({ ...clock, maxProgress: clock.maxProgress - 1 })
-          }}
+          title="Remove clock"
+          onClick={onRemove}
         >
-          <MinusCircle />
+          <X />
         </button>
-        <p className="leading-none tabular-nums min-w-[1.5rem]">
-          {clock.maxProgress}
-        </p>
-        <button
-          type="button"
-          title="Add slice"
-          className={countButtonClass}
-          onClick={() => {
-            onChange({ ...clock, maxProgress: clock.maxProgress + 1 })
-          }}
-        >
-          <PlusCircle />
-        </button>
-      </div>
-      <button
-        className={clsx(
-          "absolute top-0 right-0 p-2 opacity-0 group-hover:opacity-75 focus:opacity-75 focus:ring-2 focus:outline-none rounded-md ring-blue-500 transition",
-          activePress,
-        )}
-        type="button"
-        title="Remove clock"
-        onClick={onRemove}
-      >
-        <X />
-      </button>
+      )}
     </div>
   )
 }

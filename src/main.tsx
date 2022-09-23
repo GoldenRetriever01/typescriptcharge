@@ -17,6 +17,7 @@ render(
         initialStorage={{
           world: { name: "New World", description: "A brand new world" },
           clocks: new LiveList(),
+          characters: new LiveList(),
         }}
       >
         <App />

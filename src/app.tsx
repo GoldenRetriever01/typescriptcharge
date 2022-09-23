@@ -1,20 +1,20 @@
 import { Clock, Home, Users } from "react-feather"
 import { Link, Route, useRoute } from "wouter"
-import { CharacterHub } from "./features/characters/character-hub"
+import { CharacterSheet } from "./features/characters/character-sheet"
 import { ClockList } from "./features/clocks/clock-list"
 import { isRendered } from "./helpers/react"
 import { useStorage } from "./liveblocks"
 import { LoadingSuspense } from "./ui/loading"
-import { navLinkClass } from "./ui/styles"
+import { clearButtonClass } from "./ui/styles"
 
 export function App() {
   return (
-    <main className="max-w-screen-md mx-auto px-4 py-16 grid">
-      <nav className="flex gap-6 items-center mb-6">
+    <main className="mx-auto grid max-w-screen-md px-4 py-16">
+      <nav className="mb-6 flex items-center gap-6">
         <HeaderLink to="/">
           <Home size={20} /> Home
         </HeaderLink>
-        <HeaderLink to="/characters">
+        <HeaderLink to="/characters" partial>
           <Users size={20} /> Characters
         </HeaderLink>
         <HeaderLink to="/clocks">
@@ -33,19 +33,24 @@ export function App() {
           </LoadingSuspense>
         </CardSection>
       </Route>
-      <Route path="/characters">
-        <CardSection>
-          <LoadingSuspense>
-            <CharacterHub />
-          </LoadingSuspense>
-        </CardSection>
+      <Route path="/characters/:id?">
+        {(params) => (
+          <CardSection>
+            <LoadingSuspense>
+              <CharacterSheet characterId={params.id} />
+            </LoadingSuspense>
+          </CardSection>
+        )}
       </Route>
     </main>
   )
 }
 
 function HomeCard() {
-  const world = useStorage((root) => root.world)
+  const world = useStorage((root) => root.world) ?? {
+    name: "New World",
+    description: "A brand new world",
+  }
   return (
     <CardSection title={world.name}>
       <p>{world.description}</p>
@@ -56,13 +61,15 @@ function HomeCard() {
 function HeaderLink({
   to,
   children,
+  partial,
 }: {
   to: string
   children: React.ReactNode
+  partial?: boolean
 }) {
-  const [active] = useRoute(to)
+  const [active] = useRoute(partial ? to + "/:rest*" : to)
   return (
-    <Link to={to} className={navLinkClass(active)}>
+    <Link to={to} className={clearButtonClass(active)}>
       {children}
     </Link>
   )
@@ -76,9 +83,9 @@ function CardSection({
   children: React.ReactNode
 }) {
   return (
-    <section className="bg-gray-700 border-2 border-gray-600 p-4 shadow-md shadow-[rgba(0,0,0,0.25)] grid gap-4">
+    <section className="grid gap-4 border-2 border-gray-600 bg-gray-700 p-4 shadow-md shadow-[rgba(0,0,0,0.25)]">
       {isRendered(title) && (
-        <h1 className="font-header uppercase tracking-wide text-3xl">
+        <h1 className="font-header text-3xl uppercase tracking-wide">
           {title}
         </h1>
       )}

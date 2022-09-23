@@ -9,9 +9,10 @@ export const solidButton = clsx(
   activePress,
 )
 
-export const navLinkClass = (active: boolean) =>
+export const clearButtonClass = (active: boolean) =>
   clsx(
     "text-lg inline-flex uppercase items-center gap-1.5 border-b-2 transition",
+    activePress,
     active
       ? "border-current"
       : "opacity-50 border-transparent hover:opacity-75",
