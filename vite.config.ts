@@ -4,6 +4,11 @@ import { defineConfig } from "vite"
 export default defineConfig({
   plugins: [react()],
   build: {
-    target: "esnext",
+    sourcemap: true,
+  },
+  esbuild: {
+    supported: {
+      "top-level-await": true,
+    },
   },
 })
