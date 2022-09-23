@@ -8,7 +8,7 @@
   "scripts": {
     "prepare": "typesync",
     "dev": "vite",
-    "build": "vite build",
+    "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "lint": "eslint --ext js,ts,tsx .",
     "lint-fix": "pnpm lint --fix",
