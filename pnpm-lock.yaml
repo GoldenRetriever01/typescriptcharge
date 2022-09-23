@@ -4,6 +4,8 @@ specifiers:
   '@fontsource/oswald': ^4.5.10
   '@fontsource/rubik': ^4.5.11
   '@itsmapleleaf/configs': ^1.1.5
+  '@liveblocks/client': ^0.18.2
+  '@liveblocks/react': ^0.18.2
   '@prisma/client': ^4.3.1
   '@rushstack/eslint-patch': ^1.2.0
   '@tanstack/react-query': ^4.3.9
@@ -45,6 +47,8 @@ specifiers:
 dependencies:
   '@fontsource/oswald': 4.5.10
   '@fontsource/rubik': 4.5.11
+  '@liveblocks/client': 0.18.2
+  '@liveblocks/react': 0.18.2_ku3zmj76seudio3fm5hgypxz3q
   '@prisma/client': 4.3.1_prisma@4.3.1
   '@tanstack/react-query': 4.3.9_biqbaboplfbrettd7655fr4n2y
   '@trpc/client': 10.0.0-proxy-beta.5_ugp2g7m7agk6bcrfresomzpvju
@@ -521,6 +525,21 @@ packages:
       '@jridgewell/resolve-uri': 3.1.0
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
+
+  /@liveblocks/client/0.18.2:
+    resolution: {integrity: sha512-LDpLbG4TToZItHE6eLwoU2B9OIzIHMsxVvO2/h9ahAkIm7lOaqKKbZpt7FYDN8xeJmhR6jVDRfQK0b2LwgVCug==}
+    dev: false
+
+  /@liveblocks/react/0.18.2_ku3zmj76seudio3fm5hgypxz3q:
+    resolution: {integrity: sha512-Ibzhfn7/iKrbnO7T46/6Ghv35W4IGsEakX9mp4tMCL5qmdzzY9+P9L/WOTJLTyR4tWYrfoAbhx27I+WTyXhKNw==}
+    peerDependencies:
+      '@liveblocks/client': 0.18.2
+      react: ^16.14.0 || ^17 || ^18
+    dependencies:
+      '@liveblocks/client': 0.18.2
+      react: 18.2.0
+      use-sync-external-store: 1.2.0_react@18.2.0
+    dev: false
 
   /@nodelib/fs.scandir/2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}

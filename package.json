@@ -7,7 +7,7 @@
   },
   "scripts": {
     "prepare": "typesync && prisma generate",
-    "dev": "run-p --print-label --race \"dev:*\"",
+    "dev": "vite",
     "dev:server": "nodemon --exec tsx --ignore \"vite.config.ts.*\" server.ts",
     "dev:docker": "docker-compose up",
     "build": "vite build",
@@ -20,6 +20,8 @@
   "dependencies": {
     "@fontsource/oswald": "^4.5.10",
     "@fontsource/rubik": "^4.5.11",
+    "@liveblocks/client": "^0.18.2",
+    "@liveblocks/react": "^0.18.2",
     "@prisma/client": "^4.3.1",
     "@tanstack/react-query": "^4.3.9",
     "@trpc/client": "10.0.0-proxy-beta.5",

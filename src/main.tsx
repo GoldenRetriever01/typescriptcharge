@@ -1,22 +1,18 @@
 import "@fontsource/oswald/variable.css"
 import "@fontsource/rubik/variable.css"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { ClientSideSuspense } from "@liveblocks/react"
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
-import { App } from "./app"
+import { App } from "./app2"
+import { RoomProvider } from "./liveblocks"
 import "./tailwind.css"
-import { clientOptions } from "./trpc/client"
-import { trpc } from "./trpc/react"
-
-const trpcClient = trpc.createClient(clientOptions)
-const queryClient = new QueryClient()
 
 createRoot(document.querySelector("#root")!).render(
   <StrictMode>
-    <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    </trpc.Provider>
+    <RoomProvider id="default" initialPresence={{}}>
+      <ClientSideSuspense fallback={<div>Loading...</div>}>
+        {() => <App />}
+      </ClientSideSuspense>
+    </RoomProvider>
   </StrictMode>,
 )
