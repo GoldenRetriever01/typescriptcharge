@@ -1,3 +1,4 @@
+import type { ReactNode } from "react"
 import { useCallback, useInsertionEffect, useRef } from "react"
 
 export function useEvent<A extends unknown[], R>(fn: (...args: A) => R) {
@@ -10,4 +11,10 @@ export function useEvent<A extends unknown[], R>(fn: (...args: A) => R) {
   })
 
   return useCallback((...args: A) => ref.current(...args), [])
+}
+
+export function isRendered(
+  value: unknown,
+): value is Exclude<ReactNode, undefined | null | boolean> {
+  return value != undefined && typeof value !== "boolean"
 }
