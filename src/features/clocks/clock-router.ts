@@ -1,5 +1,4 @@
 import { observable } from "@trpc/server/observable"
-import { setTimeout } from "node:timers/promises"
 import { z } from "zod"
 import { Emitter } from "../../helpers/emitter"
 import { prisma } from "../../prisma"
@@ -31,7 +30,6 @@ export const clockRouter = t.router({
       }),
     )
     .mutation(async ({ input }) => {
-      await setTimeout(1000)
       await prisma.world.update({
         where: { id: defaultWorldId },
         data: { clocks: input.clocks },
