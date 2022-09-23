@@ -126,6 +126,9 @@ export function Clock({
           onChange({ ...clock, name: event.currentTarget.value })
         }}
       />
+      <p className="sr-only">
+        Progress: {clock.progress} / {clock.maxProgress}
+      </p>
       <canvas
         ref={canvasRef}
         width={100}
