@@ -14,7 +14,9 @@ export const clientOptions = {
       false: httpBatchLink({ url: "/api/http" }),
       true: wsLink({
         client: createWSClient({
-          url: `ws://${window.location.host}/api/socket`,
+          url: `${window.location.protocol === "https:" ? "wss" : "ws"}://${
+            window.location.host
+          }/api/socket`,
         }),
       }),
     }),
