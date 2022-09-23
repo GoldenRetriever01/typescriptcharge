@@ -1,29 +1,16 @@
-import { useState } from "react"
+import { LiveList } from "@liveblocks/client"
 import { Plus } from "react-feather"
-import { proxyClient } from "../../trpc/client"
-import { trpc } from "../../trpc/react"
+import { useMutation, useStorage } from "../../liveblocks"
 import { solidButton } from "../../ui/styles"
 import { Clock } from "./clock"
 import type { ClockState } from "./clock-state"
 
-const initialClocks = await proxyClient.clocks.list.query()
-const userId = typeof crypto !== "undefined" ? crypto.randomUUID() : "server"
-
 export function ClockList() {
-  const [clocks, setClocks] = useState<ClockState[]>(initialClocks)
-  const mutation = trpc.clocks.setList.useMutation()
+  const clocks = useStorage((root) => root.clocks)
 
-  trpc.clocks.listUpdated.useSubscription(undefined, {
-    onData: (event) => {
-      if (event.userId === userId) return
-      setClocks(event.clocks)
-    },
-  })
-
-  const handleClocksUpdate = (clocks: ClockState[]) => {
-    setClocks(clocks)
-    mutation.mutate({ clocks, userId })
-  }
+  const setClocks = useMutation((context, clocks: ClockState[]) => {
+    context.storage.set("clocks", new LiveList(clocks))
+  }, [])
 
   return (
     <div className="grid gap-4">
@@ -34,12 +21,10 @@ export function ClockList() {
               key={clock.id}
               clock={clock}
               onChange={(clock) => {
-                handleClocksUpdate(
-                  clocks.map((c) => (c.id === clock.id ? clock : c)),
-                )
+                setClocks(clocks.map((c) => (c.id === clock.id ? clock : c)))
               }}
               onRemove={() => {
-                handleClocksUpdate(clocks.filter((c) => c.id !== clock.id))
+                setClocks(clocks.filter((c) => c.id !== clock.id))
               }}
             />
           ))}
@@ -50,7 +35,7 @@ export function ClockList() {
           type="button"
           className={solidButton}
           onClick={() => {
-            handleClocksUpdate([
+            setClocks([
               ...clocks,
               {
                 id: crypto.randomUUID(),
