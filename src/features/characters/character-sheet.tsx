@@ -10,6 +10,8 @@ import { clearButtonClass } from "../../ui/styles"
 import { Clock } from "../clocks/clock"
 import type { Character } from "./character-sheet-data"
 
+const dividerClass = "border-gray-600"
+
 export function CharacterSheet({ characterId }: { characterId?: string }) {
   const [, setLocation] = useLocation()
 
@@ -70,7 +72,7 @@ export function CharacterSheet({ characterId }: { characterId?: string }) {
 
       {currentCharacter && (
         <>
-          <hr className="border-gray-600" />
+          <hr className={dividerClass} />
           <CharacterSheetEditor character={currentCharacter} />
         </>
       )}
@@ -93,12 +95,12 @@ function CharacterSheetEditor({ character }: { character: Character }) {
   )
 
   const inputBaseClass = clsx(
-    "block w-full resize-none rounded-md border border-gray-600 bg-black/25 shadow-inner transition focus:bg-black/50 focus:outline-none",
+    "block w-full resize-none rounded-md bg-black/25 transition focus:bg-black/50 focus:outline-none",
   )
 
-  const textInputClass = clsx(inputBaseClass, "p-3 leading-none")
+  const inputClass = clsx(inputBaseClass, "h-12 px-3 leading-none")
 
-  const textAreaClass = clsx(inputBaseClass, "py-2 px-3")
+  const textAreaClass = clsx(inputBaseClass, "p-3")
 
   return (
     <div className="grid gap-4 sm:grid-cols-2">
@@ -109,7 +111,7 @@ function CharacterSheetEditor({ character }: { character: Character }) {
             placeholder="What should we call you?"
             value={character.name}
             onChange={(e) => updateCharacter({ name: e.target.value })}
-            className={textInputClass}
+            className={inputClass}
           />
         </Field>
         <Field label="Group">
@@ -118,11 +120,11 @@ function CharacterSheetEditor({ character }: { character: Character }) {
             placeholder="Whom do you side with?"
             value={character.group}
             onChange={(e) => updateCharacter({ group: e.target.value })}
-            className={textInputClass}
+            className={inputClass}
           />
         </Field>
         <Field as="div" label="Momentum">
-          <div className="rounded-md bg-black/25 p-2">
+          <div className={clsx(inputClass, "grid place-items-center")}>
             <Counter
               value={character.momentum}
               onChange={(momentum) => updateCharacter({ momentum })}
@@ -139,11 +141,11 @@ function CharacterSheetEditor({ character }: { character: Character }) {
           onProgressChange={(stress) => updateCharacter({ stress })}
         />
         <Field label="Condition">
-          <TextArea
+          <input
             placeholder="How're you doing?"
             value={character.condition}
             onChange={(e) => updateCharacter({ condition: e.target.value })}
-            className={textAreaClass}
+            className={inputClass}
           />
         </Field>
       </div>

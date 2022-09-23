@@ -9,7 +9,7 @@ import { clearButtonClass } from "./ui/styles"
 
 export function App() {
   return (
-    <main className="mx-auto grid max-w-screen-md px-4 py-16">
+    <main className="mx-auto grid max-w-screen-md px-4 py-6">
       <nav className="mb-6 flex items-center gap-6">
         <HeaderLink to="/">
           <Home size={20} /> Home

@@ -123,7 +123,7 @@ export function Clock({
   })
 
   return (
-    <div className="group relative flex flex-col items-center justify-center gap-3 rounded-md bg-black/20 p-4 text-center">
+    <div className="group relative flex flex-col items-center justify-center gap-3 rounded-md bg-black/25 p-4 text-center">
       {onNameChange ? (
         <input
           className="-my-2 w-full rounded-md bg-transparent p-2 text-center text-xl leading-tight tracking-wide transition hover:bg-black/25 focus:bg-black/25 focus:outline-none"
