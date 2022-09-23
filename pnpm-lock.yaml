@@ -15,6 +15,7 @@ specifiers:
   '@types/express': ^4.17.14
   '@types/morgan': ^1.9.3
   '@types/node': ^18.7.18
+  '@types/nodemon': ^1.19.2
   '@types/prettier': ^2.7.0
   '@types/react': ^18.0.15
   '@types/react-dom': ^18.0.6
@@ -69,6 +70,7 @@ devDependencies:
   '@types/express': 4.17.14
   '@types/morgan': 1.9.3
   '@types/node': 18.7.18
+  '@types/nodemon': 1.19.2
   '@types/prettier': 2.7.0
   '@types/react': 18.0.20
   '@types/react-dom': 18.0.6
@@ -687,6 +689,12 @@ packages:
 
   /@types/node/18.7.18:
     resolution: {integrity: sha512-m+6nTEOadJZuTPkKR/SYK3A2d7FZrgElol9UP1Kae90VVU4a6mxnPuLiIW1m4Cq4gZ/nWb9GrdVXJCoCazDAbg==}
+    dev: true
+
+  /@types/nodemon/1.19.2:
+    resolution: {integrity: sha512-4GWiTN3HevkxMIxEQ7OpD3MAHhlVsX2tairCMRmf8oYZxmhHw9+UpQpIdGdJrjsMT2Ty26FtJzUUcP/qM5fR8A==}
+    dependencies:
+      '@types/node': 18.7.18
     dev: true
 
   /@types/normalize-package-data/2.4.1:
