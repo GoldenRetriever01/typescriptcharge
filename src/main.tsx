@@ -1,7 +1,6 @@
 import "@fontsource/oswald/variable.css"
 import "@fontsource/rubik/variable.css"
 import { LiveList } from "@liveblocks/client"
-import { ClientSideSuspense } from "@liveblocks/react"
 import { render } from "preact"
 import { StrictMode } from "preact/compat"
 import { Router } from "wouter"
@@ -13,16 +12,14 @@ render(
   <StrictMode>
     <Router>
       <RoomProvider
-        id="default"
+        id={import.meta.env.PROD ? "default" : "default-dev"}
         initialPresence={{}}
         initialStorage={{
           world: { name: "New World", description: "A brand new world" },
           clocks: new LiveList(),
         }}
       >
-        <ClientSideSuspense fallback={<div>Loading...</div>}>
-          {() => <App />}
-        </ClientSideSuspense>
+        <App />
       </RoomProvider>
     </Router>
   </StrictMode>,

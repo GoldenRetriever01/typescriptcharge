@@ -1,15 +1,11 @@
+import { ClientSideSuspense } from "@liveblocks/react"
 import clsx from "clsx"
 import { Clock, Home, Users } from "react-feather"
 import { Link, Route, useRoute } from "wouter"
 import { ClockList } from "./features/clocks/clock-list"
 import { useStorage } from "./liveblocks"
 
-const headerLinkClass = clsx(
-  "font-header text-2xl uppercase tracking-wide inline-flex items-center gap-2 border-b-2",
-)
-
 export function App() {
-  const world = useStorage((root) => root.world)
   return (
     <main className="max-w-screen-md mx-auto px-4 py-16 grid">
       <nav className="flex gap-6 items-center mb-6">
@@ -24,13 +20,15 @@ export function App() {
         </HeaderLink>
       </nav>
       <Route path="/">
-        <Card title={world.name}>
-          <p>{world.description}</p>
-        </Card>
+        <LoadingSuspense>
+          <HomeCard />
+        </LoadingSuspense>
       </Route>
       <Route path="/clocks">
         <Card title="Clocks">
-          <ClockList />
+          <LoadingSuspense>
+            <ClockList />
+          </LoadingSuspense>
         </Card>
       </Route>
       <Route path="/characters">
@@ -53,6 +51,42 @@ export function App() {
         </Card>
       </Route>
     </main>
+  )
+}
+
+function HomeCard() {
+  const world = useStorage((root) => root.world)
+  return (
+    <Card title={world.name}>
+      <p>{world.description}</p>
+    </Card>
+  )
+}
+
+function LoadingSpinner() {
+  return (
+    <div className="grid grid-rows-[1rem,1rem] grid-cols-[1rem,1rem] animate-spin w-fit gap-2">
+      <div className="bg-blue-200 rounded-full" />
+      <div className="bg-blue-400 rounded-full" />
+      <div className="bg-blue-400 rounded-full" />
+      <div className="bg-blue-200 rounded-full" />
+    </div>
+  )
+}
+
+function LoadingPlaceholder() {
+  return (
+    <div className="flex justify-center p-8">
+      <LoadingSpinner />
+    </div>
+  )
+}
+
+function LoadingSuspense({ children }: { children: React.ReactNode }) {
+  return (
+    <ClientSideSuspense fallback={<LoadingPlaceholder />}>
+      {() => children}
+    </ClientSideSuspense>
   )
 }
 
