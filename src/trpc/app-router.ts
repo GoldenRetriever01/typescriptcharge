@@ -1,7 +1,6 @@
-import { initTRPC } from "@trpc/server"
-
-export const t = initTRPC.create()
+import { clockRouter } from "../features/clocks/clock-router"
+import { t } from "./init"
 
 export const appRouter = t.router({
-  message: t.procedure.query(() => "sup"),
+  clocks: clockRouter,
 })
