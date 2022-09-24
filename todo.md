@@ -14,3 +14,5 @@
 - [ ] import character from fari
 - [ ] cursor presence
 - [ ] chat
+- [ ] dice rolls
+- [ ] dice history
