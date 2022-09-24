@@ -21,6 +21,7 @@
     "@astrojs/vercel": "^2.0.0",
     "@fontsource/oswald": "^4.5.10",
     "@fontsource/rubik": "^4.5.11",
+    "@headlessui/react": "^1.7.2",
     "@liveblocks/client": "^0.18.2",
     "@liveblocks/react": "^0.18.2",
     "chalk": "^5.0.1",

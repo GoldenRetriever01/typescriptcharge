@@ -1,7 +1,9 @@
+import { Dialog, Transition } from "@headlessui/react"
 import { LiveList } from "@liveblocks/client"
 import clsx from "clsx"
+import { Fragment, useState } from "react"
 import TextArea from "react-expanding-textarea"
-import { Plus } from "react-feather"
+import { Plus, Trash, X } from "react-feather"
 import { Link, useLocation } from "wouter"
 import { entriesTyped } from "../../helpers/entries-typed"
 import { useMutation, useStorage } from "../../liveblocks/react"
@@ -12,6 +14,7 @@ import {
   clearButtonClass,
   inputClass,
   labelTextClass,
+  solidButton,
   textAreaClass,
 } from "../../ui/styles"
 import { Clock } from "../clocks/clock"
@@ -226,6 +229,96 @@ function CharacterSheetEditor({ character }: { character: Character }) {
           />
         </Field>
       </div>
+
+      <hr className={dividerClass} />
+
+      <section>
+        <DeleteButton
+          characterId={character.id}
+          characterName={character.name}
+        />
+      </section>
     </div>
+  )
+}
+
+function DeleteButton({
+  characterName,
+  characterId,
+}: {
+  characterName: string
+  characterId: string
+}) {
+  const [visible, setVisible] = useState(false)
+  const [, setLocation] = useLocation()
+
+  const deleteCharacter = useMutation(
+    (context) => {
+      const characters = context.storage.get("characters")
+      if (!characters) return
+
+      const characterIndex = characters.findIndex((c) => c.id === characterId)
+      if (characterIndex === -1) return
+
+      characters.delete(characterIndex)
+      setVisible(false)
+      setLocation("/characters")
+    },
+    [characterId],
+  )
+
+  return (
+    <>
+      <button className={solidButton} onClick={() => setVisible(true)}>
+        <Trash />
+        Delete
+      </button>
+      <Transition.Root show={visible}>
+        <Dialog onClose={() => setVisible(false)}>
+          <Transition.Child
+            enter="transition"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="transition"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black/50" />
+          </Transition.Child>
+
+          <div className="pointer-events-none fixed inset-0 flex flex-col">
+            <Transition.Child
+              enter="transition ease-out duration-300"
+              enterFrom="opacity-0 translate-y-4"
+              enterTo="opacity-100 translate-y-0"
+              leave="transition ease-in duration-200"
+              leaveFrom="opacity-100 translate-y-0"
+              leaveTo="opacity-0 translate-y-4"
+              as={Fragment}
+            >
+              <Dialog.Panel className="pointer-events-auto m-auto flex flex-col items-center gap-4 rounded-md bg-gray-800 p-4 shadow-md">
+                <Dialog.Title>
+                  Are you sure you want to delete{" "}
+                  {characterName || "this character"}?
+                </Dialog.Title>
+                <div className="flex items-center gap-4">
+                  <button
+                    className={solidButton}
+                    onClick={() => setVisible(false)}
+                  >
+                    <X />
+                    Cancel
+                  </button>
+                  <button className={solidButton} onClick={deleteCharacter}>
+                    <Trash />
+                    Delete
+                  </button>
+                </div>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </Dialog>
+      </Transition.Root>
+    </>
   )
 }

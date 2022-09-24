@@ -7,6 +7,7 @@ specifiers:
   '@babel/core': ^7.19.1
   '@fontsource/oswald': ^4.5.10
   '@fontsource/rubik': ^4.5.11
+  '@headlessui/react': ^1.7.2
   '@itsmapleleaf/configs': ^1.1.5
   '@liveblocks/client': ^0.18.2
   '@liveblocks/react': ^0.18.2
@@ -49,6 +50,7 @@ dependencies:
   '@astrojs/vercel': 2.0.0
   '@fontsource/oswald': 4.5.10
   '@fontsource/rubik': 4.5.11
+  '@headlessui/react': 1.7.2_biqbaboplfbrettd7655fr4n2y
   '@liveblocks/client': 0.18.2
   '@liveblocks/react': 0.18.2_ku3zmj76seudio3fm5hgypxz3q
   chalk: 5.0.1
@@ -517,6 +519,17 @@ packages:
 
   /@fontsource/rubik/4.5.11:
     resolution: {integrity: sha512-m0/4GKOqJjF9cB4wuLgDhRdRVt35WzqI5n7SgddRjRD+yzsO0eEq/ak0ezgfbR3+f91ydDCek1+RuOVB8dNYwg==}
+    dev: false
+
+  /@headlessui/react/1.7.2_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-snLv2lxwsf2HNTOBNgHYdvoYZ3ChJE8QszPi1d/hl9js8KrFrUulTaQBfSyPbJP5BybVreWh9DxCgz9S0Z6hKQ==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: ^16 || ^17 || ^18
+      react-dom: ^16 || ^17 || ^18
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
     dev: false
 
   /@humanwhocodes/config-array/0.10.5:
