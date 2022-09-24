@@ -16,7 +16,7 @@ export type Storage = {
 }
 
 export const liveblocksClient = createClient({
-  publicApiKey: "pk_live_OAgJktGmVcbhIXbgW8CNuS9Z",
+  publicApiKey: import.meta.env.PUBLIC_LIVEBLOCKS_KEY!,
 })
 
 export const {
