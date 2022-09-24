@@ -1,16 +1,16 @@
 ---
 import "@fontsource/oswald/variable.css"
 import "@fontsource/rubik/variable.css"
-import { AppRoot } from "../app"
+import { AppRoot } from "../features/core/app"
 import favicon from "../assets/favicon.svg"
-import { getDiscordAuthUser } from "../discord"
+import { getDiscordAuthUser } from "../helpers/discord"
 import { truthyJoin } from "../helpers/truthy-join"
 import {
   defaultRoomId,
   defaultRoomInit,
   liveblocksClient,
 } from "../liveblocks/client"
-import { getSession } from "../session"
+import { getSession } from "../features/auth/session"
 
 async function getAuth() {
   const session = getSession(Astro.request)

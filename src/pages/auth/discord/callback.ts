@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro"
-import { discordLogin } from "../../../discord"
-import { createSessionCookie } from "../../../session"
+import { discordLogin } from "../../../helpers/discord"
+import { createSessionCookie } from "../../../features/auth/session"
 
 export const get: APIRoute = async ({ request }) => {
   const url = new URL(request.url)

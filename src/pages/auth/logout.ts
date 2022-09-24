@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro"
-import { createLogoutCookie } from "../../session"
+import { createLogoutCookie } from "../../features/auth/session"
 
 export const get: APIRoute = async () => {
   return new Response(undefined, {

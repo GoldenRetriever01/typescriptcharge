@@ -2,23 +2,23 @@ import { StrictMode, Suspense, useEffect } from "react"
 import TextArea from "react-expanding-textarea"
 import { Book, Clock, Users } from "react-feather"
 import { Link, Route, useRoute } from "wouter"
-import { CharacterSheet } from "./features/characters/character-sheet"
-import { ClockList } from "./features/clocks/clock-list"
-import type { World } from "./features/world/world"
-import { truthyJoin } from "./helpers/truthy-join"
-import { defaultRoomId, defaultRoomInit } from "./liveblocks/client"
+import { truthyJoin } from "../../helpers/truthy-join"
+import { defaultRoomId, defaultRoomInit } from "../../liveblocks/client"
 import {
   RoomProvider,
   useMutation,
   useOthers,
   useStorage,
   useUpdateMyPresence,
-} from "./liveblocks/react"
-import { Cursor } from "./ui/cursor"
-import { Field } from "./ui/field"
-import { LoadingSuspense } from "./ui/loading"
-import { Portal } from "./ui/portal"
-import { clearButtonClass, inputClass, textAreaClass } from "./ui/styles"
+} from "../../liveblocks/react"
+import { Cursor } from "../../ui/cursor"
+import { Field } from "../../ui/field"
+import { LoadingSuspense } from "../../ui/loading"
+import { Portal } from "../../ui/portal"
+import { clearButtonClass, inputClass, textAreaClass } from "../../ui/styles"
+import { CharacterSheet } from "../characters/character-sheet"
+import { ClockList } from "../clocks/clock-list"
+import type { World } from "../world/world"
 
 export const AppRoot = ({ name }: { name: string }) => (
   <RoomProvider id={defaultRoomId} {...defaultRoomInit}>
