@@ -1,8 +1,9 @@
 ---
 import "@fontsource/oswald/variable.css"
 import "@fontsource/rubik/variable.css"
-import { AppRoot } from "../features/core/app"
 import favicon from "../assets/favicon.svg"
+import { getSession } from "../features/auth/session"
+import { AppRoot } from "../features/core/app"
 import { getDiscordAuthUser } from "../helpers/discord"
 import { truthyJoin } from "../helpers/truthy-join"
 import {
@@ -10,7 +11,6 @@ import {
   defaultRoomInit,
   liveblocksClient,
 } from "../liveblocks/client"
-import { getSession } from "../features/auth/session"
 
 async function getAuth() {
   const session = getSession(Astro.request)
@@ -47,7 +47,7 @@ const description = "Virtual environment for the Charge RPG system"
 ---
 
 <!DOCTYPE html>
-<html lang="en" class="font-body bg-gray-800 text-gray-100">
+<html lang="en" class="font-body overflow-y-scroll bg-gray-800 text-gray-100">
   <head>
     {/* eslint-disable-next-line unicorn/text-encoding-identifier-case */}
     <meta charset="utf-8" />
