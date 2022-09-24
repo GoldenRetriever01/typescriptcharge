@@ -1,7 +1,7 @@
 export function Cursor({ name, x, y }: { name: string; x: number; y: number }) {
   return (
     <div
-      className="pointer-events-none fixed top-0 left-0 flex items-center gap-2 text-gray-200 drop-shadow-md transition-transform duration-[0.25s] ease-out"
+      className="pointer-events-none absolute top-0 left-0 flex items-center gap-2 text-gray-200 drop-shadow-md transition-transform duration-[0.25s] ease-out"
       style={{
         transform: `translate(${x}px, ${y}px)`,
       }}
