@@ -2,7 +2,7 @@
 import "@fontsource/oswald/variable.css"
 import "@fontsource/rubik/variable.css"
 import { AppRoot } from "../app"
-import { getDiscordUser } from "../discord"
+import { getDiscordAuthUser } from "../discord"
 import { getSession } from "../session"
 
 const title = "Charge Worlds"
@@ -12,7 +12,7 @@ const session = getSession(Astro.request)
 
 const discordUser =
   session &&
-  (await getDiscordUser(session.discordAccessToken).catch((error) => {
+  (await getDiscordAuthUser(session.discordAccessToken).catch((error) => {
     console.warn("Failed to fetch Discord user", error)
   }))
 
