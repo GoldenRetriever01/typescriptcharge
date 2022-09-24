@@ -4,6 +4,8 @@ import { X } from "react-feather"
 import { Counter } from "../../ui/counter"
 import { activePress } from "../../ui/styles"
 
+const positiveMod = (n: number, m: number) => ((n % m) + m) % m
+
 export function Clock({
   name,
   progress,
@@ -35,27 +37,26 @@ export function Clock({
     const x = offsetX - width / 2
     const y = offsetY - height / 2
 
-    const angle = Math.atan2(y, x) + Math.PI / 2
+    const angle = positiveMod(Math.atan2(y, x) + Math.PI / 2, Math.PI * 2)
 
-    let progress =
-      Math.ceil((angle / (2 * Math.PI)) * maxProgress) % maxProgress
+    let progressInput = Math.ceil((angle / (Math.PI * 2)) * maxProgress)
 
     // to ensure we can't turn off a slice
     // then immediately turn it back on when dragging a pixel
-    if (progress === lastSliceInput.current) return
-    lastSliceInput.current = progress
+    if (progressInput === lastSliceInput.current) return
+    lastSliceInput.current = progressInput
 
     // the slice being < 0 means we actually filled the chart, due to atan2 math
-    if (progress <= 0) {
-      progress += maxProgress
+    if (progressInput <= 0) {
+      progressInput += maxProgress
     }
 
     // need to be able to turn the current slice off
-    if (progress === progress && toggleSlice) {
-      progress -= 1
+    if (progressInput === progress && toggleSlice) {
+      progressInput -= 1
     }
 
-    onProgressChange(progress)
+    onProgressChange(progressInput)
   }
 
   useEffect(() => {
