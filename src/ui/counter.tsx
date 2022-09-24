@@ -1,7 +1,7 @@
 import clsx from "clsx"
 import { MinusCircle, PlusCircle } from "react-feather"
 import { range } from "../helpers/range"
-import { clearButtonClass } from "./styles"
+import { activePress, clearButtonClass } from "./styles"
 
 export function Counter({
   value,
@@ -59,8 +59,9 @@ export function DotCounter({
           title={value === n ? `Set to ${n - 1}` : `Set to ${n}`}
           onClick={() => onChange(value === n ? n - 1 : n)}
           className={clsx(
-            "h-5 w-5 rounded-full",
-            n <= value ? "bg-white" : "border-2 opacity-50",
+            "h-5 w-5 rounded-full border-2",
+            n <= value ? "bg-white" : "opacity-50",
+            activePress,
           )}
         />
       ))}
