@@ -9,6 +9,7 @@
     "**/*.js",
     "**/*.cjs",
     "**/*.mjs",
+    "**/*.astro",
     ".eslintrc.cjs"
   ],
   "exclude": ["**/node_modules/**", "**/build/**", "**/dist/**", "**/.cache/**"]

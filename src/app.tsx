@@ -1,15 +1,33 @@
+import { LiveList } from "@liveblocks/client"
+import { StrictMode } from "react"
+import TextArea from "react-expanding-textarea"
 import { Book, Clock, Users } from "react-feather"
 import { Link, Route, useRoute } from "wouter"
 import { CharacterSheet } from "./features/characters/character-sheet"
 import { ClockList } from "./features/clocks/clock-list"
 import type { World } from "./features/world/world"
-import { isRendered } from "./helpers/react"
-import { useMutation, useStorage } from "./liveblocks"
+import { RoomProvider, useMutation, useStorage } from "./liveblocks"
 import { Field } from "./ui/field"
 import { LoadingSuspense } from "./ui/loading"
 import { clearButtonClass, inputClass, textAreaClass } from "./ui/styles"
 
-export function App() {
+export const AppRoot = () => (
+  <RoomProvider
+    id={import.meta.env.PROD ? "default" : "default-dev"}
+    initialPresence={{}}
+    initialStorage={{
+      world: { name: "New World", description: "A brand new world" },
+      clocks: new LiveList(),
+      characters: new LiveList(),
+    }}
+  >
+    <StrictMode>
+      <App />
+    </StrictMode>
+  </RoomProvider>
+)
+
+function App() {
   return (
     <main className="mx-auto grid max-w-screen-md px-4 py-6">
       <nav className="mb-6 flex items-center gap-6">
@@ -24,12 +42,14 @@ export function App() {
         </HeaderLink>
       </nav>
       <Route path="/">
-        <LoadingSuspense>
-          <WorldEditor />
-        </LoadingSuspense>
+        <CardSection>
+          <LoadingSuspense>
+            <WorldEditor />
+          </LoadingSuspense>
+        </CardSection>
       </Route>
       <Route path="/clocks">
-        <CardSection title="Clocks">
+        <CardSection>
           <LoadingSuspense>
             <ClockList />
           </LoadingSuspense>
@@ -54,12 +74,15 @@ function WorldEditor() {
     description: "A brand new world",
   }
 
-  const updateWorld = useMutation((context, updates: Partial<World>) => {
-    context.storage.set("world", { ...world, ...updates })
-  }, [])
+  const updateWorld = useMutation(
+    (context, updates: Partial<World>) => {
+      context.storage.set("world", { ...world, ...updates })
+    },
+    [world],
+  )
 
   return (
-    <CardSection>
+    <>
       <Field label="Name">
         <input
           placeholder="What is this place?"
@@ -69,14 +92,14 @@ function WorldEditor() {
         />
       </Field>
       <Field label="Description">
-        <textarea
+        <TextArea
           placeholder="How's the weather?"
           className={textAreaClass}
           value={world.description}
           onChange={(e) => updateWorld({ description: e.target.value })}
         />
       </Field>
-    </CardSection>
+    </>
   )
 }
 
@@ -97,21 +120,10 @@ function HeaderLink({
   )
 }
 
-function CardSection({
-  title,
-  children,
-}: {
-  title?: React.ReactNode
-  children: React.ReactNode
-}) {
+function CardSection({ children }: { children: React.ReactNode }) {
   return (
     // eslint-disable-next-line tailwindcss/no-contradicting-classname
     <section className="grid gap-4 border-2 border-gray-600 bg-gray-700 p-4 shadow-md shadow-[rgba(0,0,0,0.25)]">
-      {isRendered(title) && (
-        <h1 className="font-header text-3xl uppercase tracking-wide">
-          {title}
-        </h1>
-      )}
       {children}
     </section>
   )
