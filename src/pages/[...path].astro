@@ -2,9 +2,14 @@
 import "@fontsource/oswald/variable.css"
 import "@fontsource/rubik/variable.css"
 import { AppRoot } from "../app"
+import { getSession } from "../session"
 
 const title = "Charge Worlds"
 const description = "Virtual environment for the Charge RPG system"
+
+console.log(Astro.request.headers)
+
+const session = getSession(Astro.request)
 ---
 
 <!DOCTYPE html>
@@ -39,6 +44,20 @@ const description = "Virtual environment for the Charge RPG system"
     <title>{title}</title>
   </head>
   <body>
-    <AppRoot client:only="react" />
+    {
+      session ? (
+        <AppRoot client:only="react" />
+      ) : (
+        <main class="p-8 grid gap-4">
+          <p>
+            To access this world, please{" "}
+            <a href="/auth/discord/login" class="underline">
+              Login with Discord
+            </a>
+          </p>
+          <p class="opacity-75">{`(i'll make this less jank later)`}</p>
+        </main>
+      )
+    }
   </body>
 </html>
