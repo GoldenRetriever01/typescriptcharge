@@ -14,6 +14,8 @@
 - [ ] import character from fari
 - [ ] cursor presence
 - [ ] chat
+- [ ] audit log: say who did what
 - [ ] dice rolls
 - [ ] dice history
 - [ ] export data
+- [ ] edit mode toggle
