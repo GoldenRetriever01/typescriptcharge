@@ -2,6 +2,7 @@
 import "@fontsource/oswald/variable.css"
 import "@fontsource/rubik/variable.css"
 import { AppRoot } from "../app"
+import favicon from "../assets/favicon.svg"
 import { getDiscordAuthUser } from "../discord"
 import { getSession } from "../session"
 
@@ -57,6 +58,8 @@ const isAllowed = discordUser && allowList.includes(discordUser.id)
     /> -->
 
     <title>{title}</title>
+
+    <link rel="icon" href={favicon} />
   </head>
   <body>
     {
