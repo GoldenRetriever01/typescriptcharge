@@ -2,12 +2,29 @@
 import "@fontsource/oswald/variable.css"
 import "@fontsource/rubik/variable.css"
 import { AppRoot } from "../app"
+import { getDiscordUser } from "../discord"
 import { getSession } from "../session"
 
 const title = "Charge Worlds"
 const description = "Virtual environment for the Charge RPG system"
 
 const session = getSession(Astro.request)
+
+const discordUser =
+  session &&
+  (await getDiscordUser(session.discordAccessToken).catch((error) => {
+    console.warn("Failed to fetch Discord user", error)
+  }))
+
+let allowList = []
+try {
+  allowList = JSON.parse(import.meta.env.DISCORD_ALLOWLIST)
+} catch (error) {
+  console.warn("Failed to parse DISCORD_ALLOWLIST", error)
+  console.warn("Allowlist:", import.meta.env.DISCORD_ALLOWLIST)
+}
+
+const isAllowed = discordUser && allowList.includes(discordUser.id)
 ---
 
 <!DOCTYPE html>
@@ -43,9 +60,7 @@ const session = getSession(Astro.request)
   </head>
   <body>
     {
-      session ? (
-        <AppRoot client:only="react" />
-      ) : (
+      session == undefined ? (
         <main class="grid gap-4 p-8">
           <p>
             To access this world, please{" "}
@@ -55,6 +70,18 @@ const session = getSession(Astro.request)
           </p>
           <p class="opacity-75">{`(i'll make this less jank later)`}</p>
         </main>
+      ) : !isAllowed ? (
+        <main class="grid gap-4 p-8">
+          <p>
+            {`Sorry, you're not authorized to enter this world.`}
+            <a href="/auth/logout" class="underline">
+              Log out
+            </a>
+          </p>
+          <p class="opacity-75">{`(i'll make this less jank later)`}</p>
+        </main>
+      ) : (
+        <AppRoot client:only="react" />
       )
     }
   </body>

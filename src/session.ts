@@ -48,3 +48,7 @@ export function getSession(request: Request): Session | undefined {
 
   return result.data
 }
+
+export function createLogoutCookie() {
+  return cookie.serialize("session", "", { ...cookieOptions, maxAge: 0 })
+}
