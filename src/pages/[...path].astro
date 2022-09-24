@@ -1,0 +1,61 @@
+---
+import "@fontsource/oswald/variable.css"
+import "@fontsource/rubik/variable.css"
+import { AppRoot } from "../app"
+import { getSession } from "../session"
+
+const title = "Charge Worlds"
+const description = "Virtual environment for the Charge RPG system"
+
+const session = getSession(Astro.request)
+---
+
+<!DOCTYPE html>
+<html lang="en" class="font-body bg-gray-800 text-gray-100">
+  <head>
+    {/* eslint-disable-next-line unicorn/text-encoding-identifier-case */}
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={Astro.site} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <!-- <meta
+      property="og:image"
+      content="https://metatags.io/assets/meta-tags-16a33a6a8531e519cc0936fbba0ad904e52d35f34a46c97a2c9f6f7dd7d336f2.png"
+    /> -->
+
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={Astro.site} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <!-- <meta
+      property="twitter:image"
+      content="https://metatags.io/assets/meta-tags-16a33a6a8531e519cc0936fbba0ad904e52d35f34a46c97a2c9f6f7dd7d336f2.png"
+    /> -->
+
+    <title>{title}</title>
+  </head>
+  <body>
+    {
+      session ? (
+        <AppRoot client:only="react" />
+      ) : (
+        <main class="grid gap-4 p-8">
+          <p>
+            To access this world, please{" "}
+            <a href="/auth/discord/login" class="underline">
+              Login with Discord
+            </a>
+          </p>
+          <p class="opacity-75">{`(i'll make this less jank later)`}</p>
+        </main>
+      )
+    }
+  </body>
+</html>
