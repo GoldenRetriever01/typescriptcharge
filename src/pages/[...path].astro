@@ -81,7 +81,7 @@ const isAllowed = discordUser && allowList.includes(discordUser.id)
           <p class="opacity-75">{`(i'll make this less jank later)`}</p>
         </main>
       ) : (
-        <AppRoot client:only="react" />
+        <AppRoot name={discordUser.username} client:only="react" />
       )
     }
   </body>

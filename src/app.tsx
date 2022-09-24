@@ -1,17 +1,25 @@
 import { LiveList } from "@liveblocks/client"
-import { StrictMode } from "react"
+import { StrictMode, Suspense, useEffect } from "react"
 import TextArea from "react-expanding-textarea"
 import { Book, Clock, Users } from "react-feather"
 import { Link, Route, useRoute } from "wouter"
 import { CharacterSheet } from "./features/characters/character-sheet"
 import { ClockList } from "./features/clocks/clock-list"
 import type { World } from "./features/world/world"
-import { RoomProvider, useMutation, useStorage } from "./liveblocks"
+import {
+  RoomProvider,
+  useMutation,
+  useOthers,
+  useStorage,
+  useUpdateMyPresence,
+} from "./liveblocks"
+import { Cursor } from "./ui/cursor"
 import { Field } from "./ui/field"
 import { LoadingSuspense } from "./ui/loading"
+import { Portal } from "./ui/portal"
 import { clearButtonClass, inputClass, textAreaClass } from "./ui/styles"
 
-export const AppRoot = () => (
+export const AppRoot = ({ name }: { name: string }) => (
   <RoomProvider
     id={import.meta.env.PROD ? "default" : "default-dev"}
     initialPresence={{}}
@@ -24,6 +32,9 @@ export const AppRoot = () => (
     <StrictMode>
       <App />
     </StrictMode>
+    <Suspense>
+      <LiveCursors name={name} />
+    </Suspense>
   </RoomProvider>
 )
 
@@ -126,5 +137,27 @@ function CardSection({ children }: { children: React.ReactNode }) {
     <section className="grid gap-4 border-2 border-gray-600 bg-gray-700 p-4 shadow-md shadow-[rgba(0,0,0,0.25)]">
       {children}
     </section>
+  )
+}
+
+function LiveCursors({ name }: { name: string }) {
+  const others = useOthers()
+  const update = useUpdateMyPresence()
+
+  useEffect(() => {
+    const handleMove = (event: MouseEvent) => {
+      update({ cursor: { x: event.pageX, y: event.pageY, name } })
+    }
+    document.addEventListener("pointermove", handleMove)
+    return () => document.removeEventListener("pointermove", handleMove)
+  })
+
+  return (
+    <Portal>
+      {others.map((other) => {
+        if (!other.presence.cursor) return
+        return <Cursor key={other.id} {...other.presence.cursor} />
+      })}
+    </Portal>
   )
 }
