@@ -11,7 +11,7 @@ type Session = z.infer<typeof sessionSchema>
 const cookieOptions: CookieSerializeOptions = {
   httpOnly: true,
   secure: import.meta.env.PROD,
-  sameSite: "strict",
+  sameSite: "lax",
   path: "/",
 }
 
