@@ -1,3 +1,5 @@
+## mvp
+
 - [x] editable world title
 - [x] editable world description
 - [x] clocks
@@ -11,6 +13,11 @@
   - [x] condition / stress clock
   - [x] actions
   - [x] talents
+- [ ] require discord login
+- [ ] configurable discord user list
+
+## nice to have
+
 - [ ] import character from fari
 - [ ] cursor presence
 - [ ] chat
