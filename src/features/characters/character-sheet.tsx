@@ -7,6 +7,7 @@ import { entriesTyped } from "../../helpers/entries-typed"
 import { useMutation, useStorage } from "../../liveblocks"
 import { Button } from "../../ui/button"
 import { Counter, DotCounter } from "../../ui/counter"
+import { Field } from "../../ui/field"
 import {
   clearButtonClass,
   inputClass,
@@ -226,22 +227,5 @@ function CharacterSheetEditor({ character }: { character: Character }) {
         </Field>
       </div>
     </div>
-  )
-}
-
-function Field({
-  label,
-  children,
-  className,
-}: {
-  label: React.ReactNode
-  children: React.ReactNode
-  className?: string
-}) {
-  return (
-    <label className={className}>
-      <div className={labelTextClass}>{label}</div>
-      {children}
-    </label>
   )
 }

@@ -1,5 +1,5 @@
-- [ ] editable world title
-- [ ] editable world description
+- [x] editable world title
+- [x] editable world description
 - [x] clocks
 - [x] character list
   - [x] name

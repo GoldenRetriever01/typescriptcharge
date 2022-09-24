@@ -3,13 +3,14 @@ import { createClient } from "@liveblocks/client"
 import { createRoomContext } from "@liveblocks/react"
 import type { Character } from "./features/characters/character-sheet-data"
 import type { ClockState } from "./features/clocks/clock-state"
+import type { World } from "./features/world/world"
 
 export type Presence = {
   cursor?: { x: number; y: number }
 }
 
 export type Storage = {
-  world?: { name: string; description: string }
+  world?: World
   clocks?: LiveList<ClockState>
   characters?: LiveList<Character>
 }

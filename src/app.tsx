@@ -1,18 +1,20 @@
-import { Clock, Home, Users } from "react-feather"
+import { Book, Clock, Users } from "react-feather"
 import { Link, Route, useRoute } from "wouter"
 import { CharacterSheet } from "./features/characters/character-sheet"
 import { ClockList } from "./features/clocks/clock-list"
+import type { World } from "./features/world/world"
 import { isRendered } from "./helpers/react"
-import { useStorage } from "./liveblocks"
+import { useMutation, useStorage } from "./liveblocks"
+import { Field } from "./ui/field"
 import { LoadingSuspense } from "./ui/loading"
-import { clearButtonClass } from "./ui/styles"
+import { clearButtonClass, inputClass, textAreaClass } from "./ui/styles"
 
 export function App() {
   return (
     <main className="mx-auto grid max-w-screen-md px-4 py-6">
       <nav className="mb-6 flex items-center gap-6">
         <HeaderLink to="/">
-          <Home size={20} /> Home
+          <Book size={20} /> World
         </HeaderLink>
         <HeaderLink to="/characters" partial>
           <Users size={20} /> Characters
@@ -23,7 +25,7 @@ export function App() {
       </nav>
       <Route path="/">
         <LoadingSuspense>
-          <HomeCard />
+          <WorldEditor />
         </LoadingSuspense>
       </Route>
       <Route path="/clocks">
@@ -46,14 +48,34 @@ export function App() {
   )
 }
 
-function HomeCard() {
+function WorldEditor() {
   const world = useStorage((root) => root.world) ?? {
     name: "New World",
     description: "A brand new world",
   }
+
+  const updateWorld = useMutation((context, updates: Partial<World>) => {
+    context.storage.set("world", { ...world, ...updates })
+  }, [])
+
   return (
-    <CardSection title={world.name}>
-      <p>{world.description}</p>
+    <CardSection>
+      <Field label="Name">
+        <input
+          placeholder="What is this place?"
+          className={inputClass}
+          value={world.name}
+          onChange={(e) => updateWorld({ name: e.target.value })}
+        />
+      </Field>
+      <Field label="Description">
+        <textarea
+          placeholder="How's the weather?"
+          className={textAreaClass}
+          value={world.description}
+          onChange={(e) => updateWorld({ description: e.target.value })}
+        />
+      </Field>
     </CardSection>
   )
 }
