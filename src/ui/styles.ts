@@ -5,15 +5,25 @@ export const activePress = clsx(
 )
 
 export const solidButton = clsx(
-  "bg-black/25 hover:bg-black/40 focus:outline-none focus-visible:ring-2 ring-blue-500 p-3 rounded-md leading-none inline-flex items-center gap-2",
+  "inline-flex items-center gap-2 rounded-md bg-black/25 p-3 leading-none ring-blue-500 hover:bg-black/40 focus:outline-none focus-visible:ring-2",
   activePress,
 )
 
 export const clearButtonClass = (active: boolean) =>
   clsx(
-    "text-lg inline-flex uppercase items-center gap-1.5 border-b-2 transition",
+    "inline-flex items-center gap-1.5 border-b-2 text-lg uppercase transition",
     activePress,
     active
       ? "border-current"
-      : "opacity-50 border-transparent hover:opacity-75",
+      : "border-transparent opacity-50 hover:opacity-75",
   )
+
+export const inputBaseClass = clsx(
+  "block w-full resize-none rounded-md bg-black/25 transition focus:bg-black/50 focus:outline-none focus:ring-2 focus:ring-blue-500",
+)
+
+export const inputClass = clsx(inputBaseClass, "h-12 px-3 leading-none")
+
+export const textAreaClass = clsx(inputBaseClass, "p-3")
+
+export const labelTextClass = clsx("mb-1.5 text-sm font-medium leading-none")

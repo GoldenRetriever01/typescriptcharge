@@ -7,7 +7,12 @@ import { entriesTyped } from "../../helpers/entries-typed"
 import { useMutation, useStorage } from "../../liveblocks"
 import { Button } from "../../ui/button"
 import { Counter, DotCounter } from "../../ui/counter"
-import { clearButtonClass } from "../../ui/styles"
+import {
+  clearButtonClass,
+  inputClass,
+  labelTextClass,
+  textAreaClass,
+} from "../../ui/styles"
 import { Clock } from "../clocks/clock"
 import { characterActionLibrary } from "./character-actions"
 import type { Character } from "./character-sheet-data"
@@ -96,14 +101,6 @@ function CharacterSheetEditor({ character }: { character: Character }) {
     [character],
   )
 
-  const inputBaseClass = clsx(
-    "block w-full resize-none rounded-md bg-black/25 transition focus:bg-black/50 focus:outline-none",
-  )
-
-  const inputClass = clsx(inputBaseClass, "h-12 px-3 leading-none")
-
-  const textAreaClass = clsx(inputBaseClass, "p-3")
-
   return (
     <div className="grid gap-4">
       <div className="grid gap-4 sm:grid-cols-2">
@@ -126,14 +123,15 @@ function CharacterSheetEditor({ character }: { character: Character }) {
               className={inputClass}
             />
           </Field>
-          <Field as="div" label="Momentum">
+          <section>
+            <h2 className={labelTextClass}>Momentum</h2>
             <div className={clsx(inputClass, "grid place-items-center")}>
               <Counter
                 value={character.momentum}
                 onChange={(momentum) => updateCharacter({ momentum })}
               />
             </div>
-          </Field>
+          </section>
         </div>
 
         <div className="grid gap-4">
@@ -156,19 +154,21 @@ function CharacterSheetEditor({ character }: { character: Character }) {
 
       <hr className={dividerClass} />
 
-      <Field as="section" label="Actions">
+      <section>
+        <h3 className={labelTextClass}>Actions</h3>
         <div className="grid gap-4 sm:grid-cols-3">
           {entriesTyped(characterActionLibrary).map(([category, actions]) => (
-            <div
+            <section
               key={category}
               className="flex flex-col items-center rounded-md bg-black/25 p-4 text-center"
             >
               <h4 className="font-header mb-4 text-center text-xl leading-tight tracking-wide">
                 {category}
               </h4>
-              <ul className="grid gap-4">
+              <div className="grid gap-4">
                 {actions.map((action) => (
-                  <Field as="li" key={action} label={action}>
+                  <section key={action}>
+                    <h5 className={labelTextClass}>{action}</h5>
                     <DotCounter
                       value={character.actions[action]?.level ?? 0}
                       max={4}
@@ -181,13 +181,13 @@ function CharacterSheetEditor({ character }: { character: Character }) {
                         })
                       }}
                     />
-                  </Field>
+                  </section>
                 ))}
-              </ul>
-            </div>
+              </div>
+            </section>
           ))}
         </div>
-      </Field>
+      </section>
 
       <hr className={dividerClass} />
 
@@ -233,17 +233,15 @@ function Field({
   label,
   children,
   className,
-  as: As = "label",
 }: {
   label: React.ReactNode
   children: React.ReactNode
   className?: string
-  as?: React.ElementType
 }) {
   return (
-    <As className={className}>
-      <div className="mb-1.5 text-sm font-medium leading-none">{label}</div>
+    <label className={className}>
+      <div className={labelTextClass}>{label}</div>
       {children}
-    </As>
+    </label>
   )
 }
