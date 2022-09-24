@@ -1,0 +1,16 @@
+- [ ] editable world title
+- [ ] editable world description
+- [x] clocks
+- [x] character list
+  - [x] name
+  - [x] group
+  - [x] concept
+  - [x] appearance
+  - [x] ties
+  - [x] momentum
+  - [x] condition / stress clock
+  - [x] actions
+  - [x] talents
+- [ ] import character from fari
+- [ ] cursor presence
+- [ ] chat
