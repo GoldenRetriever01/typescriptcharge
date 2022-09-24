@@ -7,8 +7,6 @@ import { getSession } from "../session"
 const title = "Charge Worlds"
 const description = "Virtual environment for the Charge RPG system"
 
-console.log(Astro.request.headers)
-
 const session = getSession(Astro.request)
 ---
 
@@ -48,7 +46,7 @@ const session = getSession(Astro.request)
       session ? (
         <AppRoot client:only="react" />
       ) : (
-        <main class="p-8 grid gap-4">
+        <main class="grid gap-4 p-8">
           <p>
             To access this world, please{" "}
             <a href="/auth/discord/login" class="underline">
