@@ -1,4 +1,3 @@
-import { LiveList } from "@liveblocks/client"
 import { StrictMode, Suspense, useEffect } from "react"
 import TextArea from "react-expanding-textarea"
 import { Book, Clock, Users } from "react-feather"
@@ -6,13 +5,15 @@ import { Link, Route, useRoute } from "wouter"
 import { CharacterSheet } from "./features/characters/character-sheet"
 import { ClockList } from "./features/clocks/clock-list"
 import type { World } from "./features/world/world"
+import { truthyJoin } from "./helpers/truthy-join"
+import { defaultRoomId, defaultRoomInit } from "./liveblocks/client"
 import {
   RoomProvider,
   useMutation,
   useOthers,
   useStorage,
   useUpdateMyPresence,
-} from "./liveblocks"
+} from "./liveblocks/react"
 import { Cursor } from "./ui/cursor"
 import { Field } from "./ui/field"
 import { LoadingSuspense } from "./ui/loading"
@@ -20,17 +21,10 @@ import { Portal } from "./ui/portal"
 import { clearButtonClass, inputClass, textAreaClass } from "./ui/styles"
 
 export const AppRoot = ({ name }: { name: string }) => (
-  <RoomProvider
-    id={import.meta.env.PROD ? "default" : "default-dev"}
-    initialPresence={{}}
-    initialStorage={{
-      world: { name: "New World", description: "A brand new world" },
-      clocks: new LiveList(),
-      characters: new LiveList(),
-    }}
-  >
+  <RoomProvider id={defaultRoomId} {...defaultRoomInit}>
     <StrictMode>
       <App />
+      <WorldTitleUpdater />
     </StrictMode>
     <Suspense>
       <LiveCursors name={name} />
@@ -77,6 +71,14 @@ function App() {
       </Route>
     </main>
   )
+}
+
+function WorldTitleUpdater() {
+  const worldName = useStorage((root) => root.world?.name)
+  useEffect(() => {
+    document.title = truthyJoin(" | ", [worldName, "Charge Worlds"])
+  }, [worldName])
+  return <></>
 }
 
 function WorldEditor() {

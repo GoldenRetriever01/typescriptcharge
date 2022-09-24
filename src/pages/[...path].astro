@@ -4,28 +4,46 @@ import "@fontsource/rubik/variable.css"
 import { AppRoot } from "../app"
 import favicon from "../assets/favicon.svg"
 import { getDiscordAuthUser } from "../discord"
+import { truthyJoin } from "../helpers/truthy-join"
+import {
+  defaultRoomId,
+  defaultRoomInit,
+  liveblocksClient,
+} from "../liveblocks/client"
 import { getSession } from "../session"
 
-const title = "Charge Worlds"
-const description = "Virtual environment for the Charge RPG system"
+async function getAuth() {
+  const session = getSession(Astro.request)
 
-const session = getSession(Astro.request)
+  const discordUser =
+    session &&
+    (await getDiscordAuthUser(session.discordAccessToken).catch((error) => {
+      console.warn("Failed to fetch Discord user", error)
+    }))
 
-const discordUser =
-  session &&
-  (await getDiscordAuthUser(session.discordAccessToken).catch((error) => {
-    console.warn("Failed to fetch Discord user", error)
-  }))
+  let allowList = []
+  try {
+    allowList = JSON.parse(import.meta.env.DISCORD_ALLOWLIST)
+  } catch (error) {
+    console.warn("Failed to parse DISCORD_ALLOWLIST", error)
+    console.warn("Allowlist:", import.meta.env.DISCORD_ALLOWLIST)
+  }
 
-let allowList = []
-try {
-  allowList = JSON.parse(import.meta.env.DISCORD_ALLOWLIST)
-} catch (error) {
-  console.warn("Failed to parse DISCORD_ALLOWLIST", error)
-  console.warn("Allowlist:", import.meta.env.DISCORD_ALLOWLIST)
+  const isAllowed = discordUser && allowList.includes(discordUser.id)
+
+  return { session, discordUser, isAllowed }
 }
 
-const isAllowed = discordUser && allowList.includes(discordUser.id)
+async function getWorldData() {
+  const room = liveblocksClient.enter(defaultRoomId, defaultRoomInit)
+  const storage = await room.getStorage()
+  return storage.root.get("world")
+}
+
+const [auth, world] = await Promise.all([getAuth(), getWorldData()])
+
+const title = truthyJoin(" | ", [world?.name, "Charge Worlds"])
+const description = "Virtual environment for the Charge RPG system"
 ---
 
 <!DOCTYPE html>
@@ -63,7 +81,7 @@ const isAllowed = discordUser && allowList.includes(discordUser.id)
   </head>
   <body>
     {
-      session == undefined ? (
+      !auth.discordUser ? (
         <main class="grid gap-4 p-8">
           <p>
             To access this world, please{" "}
@@ -73,7 +91,7 @@ const isAllowed = discordUser && allowList.includes(discordUser.id)
           </p>
           <p class="opacity-75">{`(i'll make this less jank later)`}</p>
         </main>
-      ) : !isAllowed ? (
+      ) : !auth.isAllowed ? (
         <main class="grid gap-4 p-8">
           <p>
             {`Sorry, you're not authorized to enter this world.`}
@@ -84,7 +102,7 @@ const isAllowed = discordUser && allowList.includes(discordUser.id)
           <p class="opacity-75">{`(i'll make this less jank later)`}</p>
         </main>
       ) : (
-        <AppRoot name={discordUser.username} client:only="react" />
+        <AppRoot name={auth.discordUser.username} client:only="react" />
       )
     }
   </body>
