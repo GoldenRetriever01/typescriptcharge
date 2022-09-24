@@ -3,11 +3,13 @@ import clsx from "clsx"
 import TextArea from "react-expanding-textarea"
 import { Plus } from "react-feather"
 import { Link, useLocation } from "wouter"
+import { entriesTyped } from "../../helpers/entries-typed"
 import { useMutation, useStorage } from "../../liveblocks"
 import { Button } from "../../ui/button"
-import { Counter } from "../../ui/counter"
+import { Counter, DotCounter } from "../../ui/counter"
 import { clearButtonClass } from "../../ui/styles"
 import { Clock } from "../clocks/clock"
+import { characterActionLibrary } from "./character-actions"
 import type { Character } from "./character-sheet-data"
 
 const dividerClass = "border-gray-600"
@@ -37,7 +39,7 @@ export function CharacterSheet({ characterId }: { characterId?: string }) {
       momentum: 2,
       stress: 0,
       condition: "",
-      actions: [],
+      actions: {},
       talents: "",
     }
 
@@ -103,54 +105,93 @@ function CharacterSheetEditor({ character }: { character: Character }) {
   const textAreaClass = clsx(inputBaseClass, "p-3")
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
-      <div className="grid content-between gap-4">
-        <Field label="Name">
-          <input
-            type="text"
-            placeholder="What should we call you?"
-            value={character.name}
-            onChange={(e) => updateCharacter({ name: e.target.value })}
-            className={inputClass}
-          />
-        </Field>
-        <Field label="Group">
-          <input
-            type="text"
-            placeholder="Whom do you side with?"
-            value={character.group}
-            onChange={(e) => updateCharacter({ group: e.target.value })}
-            className={inputClass}
-          />
-        </Field>
-        <Field as="div" label="Momentum">
-          <div className={clsx(inputClass, "grid place-items-center")}>
-            <Counter
-              value={character.momentum}
-              onChange={(momentum) => updateCharacter({ momentum })}
+    <div className="grid gap-4">
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid content-between gap-4">
+          <Field label="Name">
+            <input
+              type="text"
+              placeholder="What should we call you?"
+              value={character.name}
+              onChange={(e) => updateCharacter({ name: e.target.value })}
+              className={inputClass}
             />
-          </div>
-        </Field>
+          </Field>
+          <Field label="Group">
+            <input
+              type="text"
+              placeholder="Whom do you side with?"
+              value={character.group}
+              onChange={(e) => updateCharacter({ group: e.target.value })}
+              className={inputClass}
+            />
+          </Field>
+          <Field as="div" label="Momentum">
+            <div className={clsx(inputClass, "grid place-items-center")}>
+              <Counter
+                value={character.momentum}
+                onChange={(momentum) => updateCharacter({ momentum })}
+              />
+            </div>
+          </Field>
+        </div>
+
+        <div className="grid gap-4">
+          <Clock
+            name="Stress"
+            progress={character.stress}
+            maxProgress={4}
+            onProgressChange={(stress) => updateCharacter({ stress })}
+          />
+          <Field label="Condition">
+            <input
+              placeholder="How're you doing?"
+              value={character.condition}
+              onChange={(e) => updateCharacter({ condition: e.target.value })}
+              className={inputClass}
+            />
+          </Field>
+        </div>
       </div>
+
+      <hr className={dividerClass} />
+
+      <Field as="section" label="Actions">
+        <div className="grid gap-4 sm:grid-cols-3">
+          {entriesTyped(characterActionLibrary).map(([category, actions]) => (
+            <div
+              key={category}
+              className="flex flex-col items-center rounded-md bg-black/25 p-4 text-center"
+            >
+              <h4 className="font-header mb-4 text-center text-xl leading-tight tracking-wide">
+                {category}
+              </h4>
+              <ul className="grid gap-4">
+                {actions.map((action) => (
+                  <Field as="li" key={action} label={action}>
+                    <DotCounter
+                      value={character.actions[action]?.level ?? 0}
+                      max={4}
+                      onChange={(level) => {
+                        updateCharacter({
+                          actions: {
+                            ...character.actions,
+                            [action]: { level },
+                          },
+                        })
+                      }}
+                    />
+                  </Field>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </Field>
+
+      <hr className={dividerClass} />
 
       <div className="grid gap-4">
-        <Clock
-          name="Stress"
-          progress={character.stress}
-          maxProgress={4}
-          onProgressChange={(stress) => updateCharacter({ stress })}
-        />
-        <Field label="Condition">
-          <input
-            placeholder="How're you doing?"
-            value={character.condition}
-            onChange={(e) => updateCharacter({ condition: e.target.value })}
-            className={inputClass}
-          />
-        </Field>
-      </div>
-
-      <div className="grid gap-4 sm:col-span-2">
         <Field label="Concept">
           <TextArea
             placeholder="Describe yourself."
@@ -172,6 +213,14 @@ function CharacterSheetEditor({ character }: { character: Character }) {
             placeholder="Who are your friends and enemies?"
             value={character.ties}
             onChange={(e) => updateCharacter({ ties: e.target.value })}
+            className={textAreaClass}
+          />
+        </Field>
+        <Field label="Talents">
+          <TextArea
+            placeholder="stat buffs stat buffs stat buffs"
+            value={character.talents}
+            onChange={(e) => updateCharacter({ talents: e.target.value })}
             className={textAreaClass}
           />
         </Field>

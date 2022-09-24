@@ -1,3 +1,5 @@
+import type { CharacterActionName } from "./character-actions"
+
 export type Character = {
   id: string
   name: string
@@ -8,12 +10,6 @@ export type Character = {
   momentum: number
   stress: number
   condition: string
-  actions: CharacterAction[]
+  actions: Partial<Record<CharacterActionName, { level: number }>>
   talents: string
-}
-
-export type CharacterAction = {
-  category: string
-  name: string
-  level: number
 }

@@ -1,4 +1,6 @@
+import clsx from "clsx"
 import { MinusCircle, PlusCircle } from "react-feather"
+import { range } from "../helpers/range"
 import { clearButtonClass } from "./styles"
 
 export function Counter({
@@ -22,9 +24,11 @@ export function Counter({
       >
         <MinusCircle />
       </button>
+
       <p className="min-w-[1.5rem] text-center tabular-nums leading-none">
         {value}
       </p>
+
       <button
         type="button"
         title="Add slice"
@@ -33,6 +37,33 @@ export function Counter({
       >
         <PlusCircle />
       </button>
+    </div>
+  )
+}
+
+export function DotCounter({
+  value,
+  max,
+  onChange,
+}: {
+  value: number
+  max: number
+  onChange: (value: number) => void
+}) {
+  return (
+    <div className="flex items-center gap-2">
+      {range(1, max).map((n) => (
+        <button
+          key={n}
+          type="button"
+          title={value === n ? `Set to ${n - 1}` : `Set to ${n}`}
+          onClick={() => onChange(value === n ? n - 1 : n)}
+          className={clsx(
+            "h-5 w-5 rounded-full",
+            n <= value ? "bg-white" : "border-2 opacity-50",
+          )}
+        />
+      ))}
     </div>
   )
 }
