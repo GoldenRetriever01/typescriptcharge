@@ -13,13 +13,13 @@
   - [x] condition / stress clock
   - [x] actions
   - [x] talents
-- [ ] require discord login
-- [ ] configurable discord user list
+- [x] require discord login
+- [x] configurable discord user list
 
 ## nice to have
 
 - [ ] import character from fari
-- [ ] cursor presence
+- [x] cursor presence
 - [ ] chat
 - [ ] audit log: say who did what
 - [ ] dice rolls
