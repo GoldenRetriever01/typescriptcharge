@@ -16,3 +16,4 @@
 - [ ] chat
 - [ ] dice rolls
 - [ ] dice history
+- [ ] export data
