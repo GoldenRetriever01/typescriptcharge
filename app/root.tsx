@@ -1,4 +1,3 @@
-import { ClientSideSuspense } from "@liveblocks/react"
 import type { LinksFunction, LoaderArgs, MetaFunction } from "@remix-run/node"
 import {
   Links,
@@ -31,6 +30,7 @@ import { getWorldData } from "./features/world/actions.server"
 import tailwind from "./generated/tailwind.css"
 import type { DiscordUser } from "./helpers/discord"
 import { getDiscordAuthUser } from "./helpers/discord"
+import { EmptySuspense } from "./ui/loading"
 
 export async function loader({ request }: LoaderArgs) {
   const session = await getSession(request)
@@ -100,14 +100,10 @@ export default function App() {
               <RoomProvider id={defaultRoomId} {...defaultRoomInit}>
                 <MainNav />
                 <Outlet />
-                <ClientSideSuspense fallback={<></>}>
-                  {() => (
-                    <>
-                      <LiveCursors name={discordUser.username} />
-                      <WorldTitleUpdater />
-                    </>
-                  )}
-                </ClientSideSuspense>
+                <EmptySuspense>
+                  <LiveCursors name={discordUser.username} />
+                  <WorldTitleUpdater />
+                </EmptySuspense>
               </RoomProvider>
             )}
           </AuthGuard>

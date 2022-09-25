@@ -1,4 +1,4 @@
-import { Suspense } from "react"
+import { ClientSideSuspense } from "@liveblocks/react"
 
 export function LoadingSpinner() {
   return (
@@ -20,5 +20,15 @@ export function LoadingPlaceholder() {
 }
 
 export function LoadingSuspense({ children }: { children: React.ReactNode }) {
-  return <Suspense fallback={<LoadingPlaceholder />}>{children}</Suspense>
+  return (
+    <ClientSideSuspense fallback={<LoadingPlaceholder />}>
+      {() => children}
+    </ClientSideSuspense>
+  )
+}
+
+export function EmptySuspense({ children }: { children: React.ReactNode }) {
+  return (
+    <ClientSideSuspense fallback={<></>}>{() => children}</ClientSideSuspense>
+  )
 }
