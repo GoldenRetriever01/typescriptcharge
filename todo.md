@@ -28,6 +28,7 @@
 - [ ] dice rolls
 - [ ] audit log: say who did what + dice rolls
 - [ ] cheatsheet for roll mechanics and momentum usages
+- [ ] error pages
 
 ### improve administration
 
