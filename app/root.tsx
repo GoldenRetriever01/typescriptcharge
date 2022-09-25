@@ -111,10 +111,10 @@ export default function App() {
               </RoomProvider>
             )}
           </AuthGuard>
-          <ScrollRestoration />
-          <Scripts />
-          <LiveReload />
         </main>
+        <ScrollRestoration />
+        <Scripts />
+        <LiveReload />
       </body>
     </html>
   )
