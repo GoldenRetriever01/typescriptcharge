@@ -1,19 +1,14 @@
 import TextArea from "react-expanding-textarea"
+import {
+  useMutation,
+  useStorage,
+} from "~/features/multiplayer/liveblocks-react"
 import type { World } from "~/features/world/world"
-import { useMutation, useStorage } from "~/features/multiplayer/liveblocks-react"
-import { CardSection } from "~/ui/card-section"
 import { Field } from "~/ui/field"
-import { LoadingSuspense } from "~/ui/loading"
 import { inputClass, textAreaClass } from "~/ui/styles"
 
 export default function WorldPage() {
-  return (
-    <CardSection>
-      <LoadingSuspense>
-        <WorldEditor />
-      </LoadingSuspense>
-    </CardSection>
-  )
+  return <WorldEditor />
 }
 
 function WorldEditor() {

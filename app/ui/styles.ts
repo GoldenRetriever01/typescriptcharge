@@ -27,3 +27,8 @@ export const inputClass = clsx(inputBaseClass, "h-12 px-3 leading-none")
 export const textAreaClass = clsx(inputBaseClass, "p-3")
 
 export const labelTextClass = clsx("mb-1.5 text-sm font-medium leading-none")
+
+// eslint-disable-next-line tailwindcss/no-contradicting-classname
+export const raisedPanelClass = clsx(
+  "grid gap-4 border-2 border-gray-600 bg-gray-700 p-4 shadow-md shadow-[rgba(0,0,0,0.25)]",
+)

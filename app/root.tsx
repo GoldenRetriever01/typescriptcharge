@@ -19,7 +19,8 @@ import {
 } from "~/features/multiplayer/liveblocks-client"
 import { RoomProvider } from "~/features/multiplayer/liveblocks-react"
 import { truthyJoin } from "~/helpers/truthy-join"
-import { clearButtonClass } from "~/ui/styles"
+import { LoadingSuspense } from "~/ui/loading"
+import { clearButtonClass, raisedPanelClass } from "~/ui/styles"
 import favicon from "./assets/favicon.svg"
 import { discordUserAllowList } from "./features/auth/discord-allow-list"
 import { getSession } from "./features/auth/session"
@@ -90,21 +91,23 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body>
-        <main className="mx-auto grid max-w-screen-md px-4 py-6">
-          <AuthGuard>
-            {({ discordUser }) => (
-              <RoomProvider id={defaultRoomId} {...defaultRoomInit}>
-                <MainNav />
-                <Outlet />
-                <EmptySuspense>
-                  <LiveCursors name={discordUser.username} />
-                  <WorldTitle />
-                </EmptySuspense>
-              </RoomProvider>
-            )}
-          </AuthGuard>
-        </main>
+      <body className="mx-auto flex min-h-screen max-w-screen-md flex-col px-4 py-6">
+        <AuthGuard>
+          {({ discordUser }) => (
+            <RoomProvider id={defaultRoomId} {...defaultRoomInit}>
+              <MainNav />
+              <main className={raisedPanelClass}>
+                <LoadingSuspense>
+                  <Outlet />
+                </LoadingSuspense>
+              </main>
+              <EmptySuspense>
+                <LiveCursors name={discordUser.username} />
+                <WorldTitle />
+              </EmptySuspense>
+            </RoomProvider>
+          )}
+        </AuthGuard>
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
