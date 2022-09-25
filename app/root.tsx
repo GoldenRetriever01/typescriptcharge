@@ -10,23 +10,17 @@ import {
   useLoaderData,
 } from "@remix-run/react"
 import type { ReactNode } from "react"
-import { useEffect } from "react"
 import { Book, Clock, Users } from "react-feather"
 import { truthyJoin } from "~/helpers/truthy-join"
 import { defaultRoomId, defaultRoomInit } from "~/liveblocks/client"
-import {
-  RoomProvider,
-  useOthers,
-  useStorage,
-  useUpdateMyPresence,
-} from "~/liveblocks/react"
-import { Cursor } from "~/ui/cursor"
-import { Portal } from "~/ui/portal"
+import { RoomProvider } from "~/liveblocks/react"
 import { clearButtonClass } from "~/ui/styles"
 import favicon from "./assets/favicon.svg"
 import { discordUserAllowList } from "./features/auth/discord-allow-list"
 import { getSession } from "./features/auth/session"
+import { LiveCursors } from "./features/multiplayer/live-cursors"
 import { getWorldData } from "./features/world/actions.server"
+import { WorldTitle } from "./features/world/world-title"
 import tailwind from "./generated/tailwind.css"
 import type { DiscordUser } from "./helpers/discord"
 import { getDiscordAuthUser } from "./helpers/discord"
@@ -102,7 +96,7 @@ export default function App() {
                 <Outlet />
                 <EmptySuspense>
                   <LiveCursors name={discordUser.username} />
-                  <WorldTitleUpdater />
+                  <WorldTitle />
                 </EmptySuspense>
               </RoomProvider>
             )}
@@ -188,34 +182,4 @@ function AuthGuard({
   }
 
   return <>{children({ discordUser: data.discordUser })}</>
-}
-
-function WorldTitleUpdater() {
-  const worldName = useStorage((root) => root.world?.name)
-  useEffect(() => {
-    document.title = truthyJoin(" | ", [worldName, "Charge Worlds"])
-  }, [worldName])
-  return <></>
-}
-
-function LiveCursors({ name }: { name: string }) {
-  const others = useOthers()
-  const update = useUpdateMyPresence()
-
-  useEffect(() => {
-    const handleMove = (event: MouseEvent) => {
-      update({ cursor: { x: event.pageX, y: event.pageY, name } })
-    }
-    document.addEventListener("pointermove", handleMove)
-    return () => document.removeEventListener("pointermove", handleMove)
-  })
-
-  return (
-    <Portal>
-      {others.map((other) => {
-        if (!other.presence.cursor) return
-        return <Cursor key={other.id} {...other.presence.cursor} />
-      })}
-    </Portal>
-  )
 }
