@@ -9,7 +9,7 @@
     "dev": "node scripts/fonts.mjs && run-p --print-label --race dev:*",
     "dev:remix": "remix dev",
     "dev:tailwind": "pnpm run tailwind --watch",
-    "build": "tsc --noEmit && pnpm run tailwind --minify && remix build && node scripts/fonts.mjs && mkdir -p build",
+    "build": "tsc --noEmit && pnpm run tailwind --minify && remix build && node scripts/fonts.mjs",
     "lint": "eslint --ext js,ts,tsx,astro .",
     "lint-fix": "pnpm lint --fix",
     "format": "prettier --write .",
