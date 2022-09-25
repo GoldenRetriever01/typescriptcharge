@@ -10,7 +10,7 @@ const supabase = createClient(
 
 cron.schedule(`0 1 * * *`, async () => {
   const data = await fetch(
-    "https://api.liveblocks.io/v2/rooms/{roomId}/storage",
+    `https://api.liveblocks.io/v2/rooms/default/storage`,
     {
       headers: {
         Authorization: `Bearer ${process.env.LIVEBLOCKS_SECRET_KEY}`,
