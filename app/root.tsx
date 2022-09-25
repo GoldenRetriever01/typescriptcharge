@@ -9,6 +9,7 @@ import {
   ScrollRestoration,
   useLoaderData,
 } from "@remix-run/react"
+import clsx from "clsx"
 import type { ReactNode } from "react"
 import { Book, Clock, Users } from "react-feather"
 import type { DiscordUser } from "~/features/auth/discord"
@@ -25,6 +26,7 @@ import favicon from "./assets/favicon.svg"
 import { discordUserAllowList } from "./features/auth/discord-allow-list"
 import { getSession } from "./features/auth/session"
 import { LiveCursors } from "./features/multiplayer/live-cursors"
+import { LogsButton } from "./features/multiplayer/logs"
 import { getWorldData } from "./features/world/actions.server"
 import { WorldTitle } from "./features/world/world-title"
 import tailwind from "./generated/tailwind.css"
@@ -91,23 +93,30 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className="mx-auto flex min-h-screen max-w-screen-md flex-col px-4 py-6">
-        <AuthGuard>
-          {({ discordUser }) => (
-            <RoomProvider id={defaultRoomId} {...defaultRoomInit}>
-              <MainNav />
-              <main className={raisedPanelClass}>
-                <LoadingSuspense>
-                  <Outlet />
-                </LoadingSuspense>
-              </main>
-              <EmptySuspense>
-                <LiveCursors name={discordUser.username} />
-                <WorldTitle />
-              </EmptySuspense>
-            </RoomProvider>
-          )}
-        </AuthGuard>
+      <body>
+        <div className=" flex min-h-screen flex-col gap-4 px-4 pb-4 pt-6">
+          <AuthGuard>
+            {({ discordUser }) => (
+              <RoomProvider id={defaultRoomId} {...defaultRoomInit}>
+                <div className="mx-auto w-full max-w-screen-md">
+                  <MainNav />
+                  <main className={clsx(raisedPanelClass, "p-4")}>
+                    <LoadingSuspense>
+                      <Outlet />
+                    </LoadingSuspense>
+                  </main>
+                </div>
+                <EmptySuspense>
+                  <LiveCursors name={discordUser.username} />
+                  <WorldTitle />
+                </EmptySuspense>
+                <section className="sticky bottom-4 mt-auto">
+                  <LogsButton />
+                </section>
+              </RoomProvider>
+            )}
+          </AuthGuard>
+        </div>
         <ScrollRestoration />
         <Scripts />
         <LiveReload />

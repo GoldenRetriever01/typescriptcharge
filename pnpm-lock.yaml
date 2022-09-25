@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@floating-ui/react-dom': ^1.0.0
   '@fontsource/oswald': ^4.5.10
   '@fontsource/rubik': ^4.5.11
   '@headlessui/react': ^1.7.2
@@ -42,6 +43,7 @@ specifiers:
   zod: ^3.19.1
 
 dependencies:
+  '@floating-ui/react-dom': 1.0.0_biqbaboplfbrettd7655fr4n2y
   '@fontsource/oswald': 4.5.10
   '@fontsource/rubik': 4.5.11
   '@headlessui/react': 1.7.2_biqbaboplfbrettd7655fr4n2y
@@ -1450,6 +1452,27 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /@floating-ui/core/1.0.1:
+    resolution: {integrity: sha512-bO37brCPfteXQfFY0DyNDGB3+IMe4j150KFQcgJ5aBP295p9nBGeHEs/p0czrRbtlHq4Px/yoPXO/+dOCcF4uA==}
+    dev: false
+
+  /@floating-ui/dom/1.0.2:
+    resolution: {integrity: sha512-5X9WSvZ8/fjy3gDu8yx9HAA4KG1lazUN2P4/VnaXLxTO9Dz53HI1oYoh1OlhqFNlHgGDiwFX5WhFCc2ljbW3yA==}
+    dependencies:
+      '@floating-ui/core': 1.0.1
+    dev: false
+
+  /@floating-ui/react-dom/1.0.0_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-uiOalFKPG937UCLm42RxjESTWUVpbbatvlphQAU6bsv+ence6IoVG8JOUZcy8eW81NkU+Idiwvx10WFLmR4MIg==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+    dependencies:
+      '@floating-ui/dom': 1.0.2
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+    dev: false
 
   /@fontsource/oswald/4.5.10:
     resolution: {integrity: sha512-FtoogDP/CGnGkw+gx6P1nEZa8kE4RwF0EnY6HJ+3QlIUNMB9mux/tuI5t7piwrpj/Zsd+tM9TiUKDprwlphW2Q==}
