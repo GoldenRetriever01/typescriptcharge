@@ -1,7 +1,5 @@
 import { createClient, LiveList } from "@liveblocks/client"
 import type { RoomInitializers } from "@liveblocks/client/internal"
-import fetch from "cross-fetch"
-import WebSocket from "isomorphic-ws"
 import type { Character } from "../features/characters/character-sheet-data"
 import type { ClockState } from "../features/clocks/clock-state"
 import type { World } from "../features/world/world"
@@ -16,11 +14,11 @@ export type Storage = {
   characters?: LiveList<Character>
 }
 
-export const liveblocksClient = createClient({
-  publicApiKey: import.meta.env.PUBLIC_LIVEBLOCKS_KEY!,
-  fetchPolyfill: fetch,
-  WebSocketPolyfill: WebSocket,
-})
+export function createLiveblocksClient() {
+  return createClient({
+    authEndpoint: "/auth/liveblocks",
+  })
+}
 
 export const defaultRoomId = import.meta.env.PROD ? "default" : "default-dev"
 

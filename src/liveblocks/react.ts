@@ -1,6 +1,6 @@
 import { createRoomContext } from "@liveblocks/react"
 import type { Presence, Storage } from "./client"
-import { liveblocksClient } from "./client"
+import { createLiveblocksClient } from "./client"
 
 export const {
   suspense: {
@@ -10,4 +10,4 @@ export const {
     useStorage,
     useMutation,
   },
-} = createRoomContext<Presence, Storage>(liveblocksClient)
+} = createRoomContext<Presence, Storage>(createLiveblocksClient())

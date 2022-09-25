@@ -1,16 +1,14 @@
 ---
 import "@fontsource/oswald/variable.css"
 import "@fontsource/rubik/variable.css"
+import { z } from "zod"
 import favicon from "../assets/favicon.svg"
+import { discordUserAllowList } from "../features/auth/discord-allow-list"
 import { getSession } from "../features/auth/session"
 import { AppRoot } from "../features/core/app"
 import { getDiscordAuthUser } from "../helpers/discord"
 import { truthyJoin } from "../helpers/truthy-join"
-import {
-  defaultRoomId,
-  defaultRoomInit,
-  liveblocksClient,
-} from "../liveblocks/client"
+import { defaultRoomId } from "../liveblocks/client"
 
 async function getAuth() {
   const session = getSession(Astro.request)
@@ -21,23 +19,43 @@ async function getAuth() {
       console.warn("Failed to fetch Discord user", error)
     }))
 
-  let allowList = []
-  try {
-    allowList = JSON.parse(import.meta.env.DISCORD_ALLOWLIST)
-  } catch (error) {
-    console.warn("Failed to parse DISCORD_ALLOWLIST", error)
-    console.warn("Allowlist:", import.meta.env.DISCORD_ALLOWLIST)
-  }
-
-  const isAllowed = discordUser && allowList.includes(discordUser.id)
+  const isAllowed = discordUser && discordUserAllowList.includes(discordUser.id)
 
   return { session, discordUser, isAllowed }
 }
 
 async function getWorldData() {
-  const room = liveblocksClient.enter(defaultRoomId, defaultRoomInit)
-  const storage = await room.getStorage()
-  return storage.root.get("world")
+  const response = await fetch(
+    `https://api.liveblocks.io/v2/rooms/${defaultRoomId}/storage`,
+    {
+      headers: {
+        Authorization: `Bearer ${import.meta.env.LIVEBLOCKS_SECRET_KEY}`,
+      },
+    },
+  )
+  const data = await response.json()
+
+  const schema = z
+    .object({
+      data: z
+        .object({
+          world: z
+            .object({
+              name: z.string(),
+              description: z.string(),
+            })
+            .passthrough(),
+        })
+        .passthrough(),
+    })
+    .passthrough()
+
+  const result = schema.safeParse(data)
+  if (!result.success) {
+    console.warn("Failed to parse world data", result.error)
+  } else {
+    return result.data.data.world
+  }
 }
 
 const [auth, world] = await Promise.all([getAuth(), getWorldData()])
