@@ -7,7 +7,6 @@ module.exports = {
   extends: [
     require.resolve("@itsmapleleaf/configs/eslint"),
     "plugin:tailwindcss/recommended",
-    "plugin:astro/recommended",
   ],
   ignorePatterns: [
     "**/node_modules/**",
@@ -18,21 +17,7 @@ module.exports = {
   ],
   parserOptions: {
     project: require.resolve("./tsconfig.json"),
-    extraFileExtensions: [".astro"],
   },
-  overrides: [
-    {
-      files: ["**/*.astro"],
-      parser: "astro-eslint-parser",
-      parserOptions: {
-        parser: "@typescript-eslint/parser",
-        extraFileExtensions: [".astro"],
-      },
-      rules: {
-        "react/no-unknown-property": "off",
-      },
-    },
-  ],
   settings: {
     tailwindcss: {
       whitelist: ["font-body", "font-header"],
