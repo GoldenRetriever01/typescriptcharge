@@ -8,7 +8,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  useLoaderData
+  useLoaderData,
 } from "@remix-run/react"
 import type { ReactNode } from "react"
 import { useEffect } from "react"
@@ -19,7 +19,7 @@ import {
   RoomProvider,
   useOthers,
   useStorage,
-  useUpdateMyPresence
+  useUpdateMyPresence,
 } from "~/liveblocks/react"
 import { Cursor } from "~/ui/cursor"
 import { Portal } from "~/ui/portal"
@@ -27,6 +27,7 @@ import { clearButtonClass } from "~/ui/styles"
 import favicon from "./assets/favicon.svg"
 import { discordUserAllowList } from "./features/auth/discord-allow-list"
 import { getSession } from "./features/auth/session"
+import { getWorldData } from "./features/world/actions.server"
 import tailwind from "./generated/tailwind.css"
 import type { DiscordUser } from "./helpers/discord"
 import { getDiscordAuthUser } from "./helpers/discord"
@@ -42,15 +43,38 @@ export async function loader({ request }: LoaderArgs) {
 
   const isAllowed = discordUser && discordUserAllowList.includes(discordUser.id)
 
-  return { discordUser, isAllowed }
+  const world = await getWorldData()
+
+  return { discordUser, isAllowed, world }
 }
 
-export const meta: MetaFunction = () => ({
-  // eslint-disable-next-line unicorn/text-encoding-identifier-case
-  charset: "utf-8",
-  title: "New Remix App",
-  viewport: "width=device-width,initial-scale=1",
-})
+export const unstable_shouldReload = () => false
+
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  const title = truthyJoin(" | ", [data.world?.name, "Charge Worlds"])
+  const description = "Virtual environment for the Charge RPG system"
+  const siteUrl = "https://charge-worlds.netlify.app/"
+
+  return {
+    // eslint-disable-next-line unicorn/text-encoding-identifier-case
+    "charset": "utf-8",
+    "viewport": "width=device-width,initial-scale=1",
+
+    title,
+    description,
+    "theme-color": "#1e293b",
+
+    "og:type": "website",
+    "og:url": siteUrl,
+    "og:title": title,
+    "og:description": description,
+
+    "twitter:card": "summary_large_image",
+    "twitter:url": siteUrl,
+    "twitter:title": title,
+    "twitter:description": description,
+  }
+}
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: "/build/fonts/rubik/variable.css" },
