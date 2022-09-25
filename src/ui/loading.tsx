@@ -2,11 +2,11 @@ import { Suspense } from "react"
 
 export function LoadingSpinner() {
   return (
-    <div className="grid grid-rows-[1rem,1rem] grid-cols-[1rem,1rem] animate-spin w-fit gap-2">
-      <div className="bg-blue-200 rounded-full" />
-      <div className="bg-blue-400 rounded-full" />
-      <div className="bg-blue-400 rounded-full" />
-      <div className="bg-blue-200 rounded-full" />
+    <div className="grid w-fit animate-spin grid-cols-[1rem,1rem] grid-rows-[1rem,1rem] gap-2">
+      <div className="rounded-full bg-blue-200" />
+      <div className="rounded-full bg-blue-400" />
+      <div className="rounded-full bg-blue-400" />
+      <div className="rounded-full bg-blue-200" />
     </div>
   )
 }
