@@ -41,8 +41,6 @@
     "@remix-run/serve": "^1.7.2",
     "@rushstack/eslint-patch": "^1.2.0",
     "@types/babel__core": "^7.1.19",
-    "@types/cookie": "^0.5.1",
-    "@types/cookie-signature": "^1.0.4",
     "@types/eslint": "^8.4.6",
     "@types/node": "^18.7.18",
     "@types/prettier": "^2.7.0",
