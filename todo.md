@@ -46,3 +46,4 @@
 - [ ] chat (like in Fari app with the message next to your cursor)
 - [ ] rich text editor with markdown and shit
 - [ ] fade other cursors if they are on a different page
+- [ ] DnD to reorder clocks
