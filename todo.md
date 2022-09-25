@@ -21,7 +21,7 @@
 ## high priority
 
 - [x] use liveblocks auth to better restrict room access (at the moment, anyone can update the room via the one public key)
-- [ ] room storage backup cron job
+- [x] room storage backup cron job
 
 ## medium priority
 
