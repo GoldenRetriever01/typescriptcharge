@@ -118,7 +118,7 @@ export default function App() {
 
 function MainNav() {
   return (
-    <nav className="mb-6 flex items-center gap-6">
+    <nav className="mb-6 flex flex-wrap items-center gap-6">
       <HeaderLink to="/">
         <Book size={20} /> World
       </HeaderLink>
