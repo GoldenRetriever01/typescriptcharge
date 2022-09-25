@@ -11,3 +11,6 @@ dist
 .vscode
 /app/generated
 .vercel
+
+# Local Netlify folder
+.netlify

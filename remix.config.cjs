@@ -1,13 +1,13 @@
 /** @type {import('@remix-run/dev').AppConfig} */
 module.exports = {
-  serverBuildTarget: "vercel",
-  // When running locally in development mode, we use the built in remix
-  // server. This does not understand the vercel lambda module format,
-  // so we default back to the standard build output.
-  server: process.env.NODE_ENV === "development" ? undefined : "./server.js",
+  serverBuildTarget: "netlify",
+  server:
+    process.env.NETLIFY || process.env.NETLIFY_LOCAL
+      ? "./server.js"
+      : undefined,
   ignoredRouteFiles: ["**/.*"],
-  // serverBuildPath: "build/index.js",
   // appDirectory: "app",
   // assetsBuildDirectory: "public/build",
+  // serverBuildPath: ".netlify/functions-internal/server.js",
   // publicPath: "/build/",
 }
