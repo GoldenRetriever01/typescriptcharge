@@ -8,7 +8,11 @@ const supabase = createClient(
   process.env.SUPABASE_KEY,
 )
 
+console.info("Starting backup cron job")
+
 cron.schedule(`0 1 * * *`, async () => {
+  console.info("Running backup...")
+
   const data = await fetch(
     `https://api.liveblocks.io/v2/rooms/default/storage`,
     {
@@ -25,4 +29,5 @@ cron.schedule(`0 1 * * *`, async () => {
   if (error) {
     console.error("Supabase upload failed:", error)
   }
+  console.info("Done")
 })
