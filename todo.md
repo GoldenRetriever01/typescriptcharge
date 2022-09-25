@@ -16,26 +16,33 @@
 - [x] require discord login
 - [x] configurable discord user list
 
-## nice to have
+- [x] cursor presence
+
+## high priority
 
 - [ ] use liveblocks auth to better restrict room access (at the moment, anyone can update the room via the one public key)
-- [ ] flavor: show logged in user at the top right, with a menu to log out
-- [ ] import character from fari
-- [x] cursor presence
-- [ ] chat (like in Fari app with the message next to your cursor)
-- [ ] audit log: say who did what
-- [ ] dice rolls (?)
-- [ ] dice history (?)
-- [ ] export data
-- [ ] rich text editor with markdown and shit
-- [ ] fade other cursors if they are on a different page
+- [ ] room storage backup cron job
+
+## medium priority
+
+- [ ] dice rolls
+- [ ] audit log: say who did what + dice rolls
 - [ ] cheatsheet for roll mechanics and momentum usages
+
+### improve administration
+
 - [ ] admin dashboard, configure discord user IDs allowed to write
   - configure discord admin ID as an environment variable
 - [ ] admin dashboard, configure discord user IDs allowed to read (or everyone)
 - [ ] attach nicknames to discord user IDs ^
-- [ ] link discord users to characters
-- [ ] in a discord bot, users can `/roll <action>[+<bonus>][-<bonus>]` and it will roll the appropriate dice pool from the character sheet
 - [ ] public/private visibility on characters
 - [ ] public/private visibility on clocks
-- [ ] room storage backup cron job
+
+## nice to have
+
+- [ ] export data
+- [ ] flavor: show logged in user at the top right, with a menu to log out
+- [ ] import character from fari
+- [ ] chat (like in Fari app with the message next to your cursor)
+- [ ] rich text editor with markdown and shit
+- [ ] fade other cursors if they are on a different page
