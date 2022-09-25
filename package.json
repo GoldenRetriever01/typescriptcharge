@@ -34,7 +34,6 @@
     "react-dom": "^18.2.0",
     "react-expanding-textarea": "^2.3.6",
     "react-feather": "^2.0.10",
-    "wouter": "2.8.0-alpha.2",
     "zod": "^3.19.1"
   },
   "devDependencies": {
