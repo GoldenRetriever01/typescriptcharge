@@ -20,7 +20,8 @@ export function createLiveblocksClient() {
   })
 }
 
-export const defaultRoomId = import.meta.env.PROD ? "default" : "default-dev"
+export const defaultRoomId =
+  process.env.NODE_ENV === "production" ? "default" : "default-dev"
 
 export const defaultRoomInit: RoomInitializers<Presence, Storage> = {
   initialPresence: {},

@@ -4,3 +4,5 @@ dist
 .cache
 pnpm-lock.yaml
 .vercel
+/api
+/app/generated

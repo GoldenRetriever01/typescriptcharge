@@ -1,7 +1,9 @@
+import { env } from "~/env.server"
+
 export function getAuthorizeUrl() {
   const url = new URL("https://discord.com/api/oauth2/authorize")
-  url.searchParams.set("client_id", import.meta.env.DISCORD_CLIENT_ID!)
-  url.searchParams.set("redirect_uri", import.meta.env.DISCORD_REDIRECT_URI!)
+  url.searchParams.set("client_id", env.DISCORD_CLIENT_ID!)
+  url.searchParams.set("redirect_uri", env.DISCORD_REDIRECT_URI!)
   url.searchParams.set("scope", "identify")
   url.searchParams.set("response_type", "code")
   return url.toString()
@@ -14,10 +16,10 @@ export async function discordLogin(authCode: string) {
       "Content-Type": "application/x-www-form-urlencoded",
     },
     body: new URLSearchParams({
-      client_id: import.meta.env.DISCORD_CLIENT_ID!,
-      client_secret: import.meta.env.DISCORD_CLIENT_SECRET!,
+      client_id: env.DISCORD_CLIENT_ID!,
+      client_secret: env.DISCORD_CLIENT_SECRET!,
       grant_type: "authorization_code",
-      redirect_uri: import.meta.env.DISCORD_REDIRECT_URI!,
+      redirect_uri: env.DISCORD_REDIRECT_URI!,
       code: authCode,
     }),
   })

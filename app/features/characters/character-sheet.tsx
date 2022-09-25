@@ -1,10 +1,10 @@
 import { Dialog, Transition } from "@headlessui/react"
 import { LiveList } from "@liveblocks/client"
+import { Link, useNavigate } from "@remix-run/react"
 import clsx from "clsx"
 import { Fragment, useState } from "react"
 import TextArea from "react-expanding-textarea"
 import { Plus, Trash, X } from "react-feather"
-import { Link, useLocation } from "wouter"
 import { entriesTyped } from "../../helpers/entries-typed"
 import { useMutation, useStorage } from "../../liveblocks/react"
 import { Button } from "../../ui/button"
@@ -24,7 +24,7 @@ import type { Character } from "./character-sheet-data"
 const dividerClass = "border-gray-600"
 
 export function CharacterSheet({ characterId }: { characterId?: string }) {
-  const [, setLocation] = useLocation()
+  const navigate = useNavigate()
 
   const characters = useStorage((root) => root.characters) ?? []
 
@@ -54,7 +54,7 @@ export function CharacterSheet({ characterId }: { characterId?: string }) {
 
     characters.push(character)
 
-    setLocation(`/characters/${character.id}`)
+    navigate(`/characters/${character.id}`)
   }, [])
 
   return (
@@ -250,7 +250,7 @@ function DeleteButton({
   characterId: string
 }) {
   const [visible, setVisible] = useState(false)
-  const [, setLocation] = useLocation()
+  const navigate = useNavigate()
 
   const deleteCharacter = useMutation(
     (context) => {
@@ -262,7 +262,7 @@ function DeleteButton({
 
       characters.delete(characterIndex)
       setVisible(false)
-      setLocation("/characters")
+      navigate("/characters")
     },
     [characterId],
   )
