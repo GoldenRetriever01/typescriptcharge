@@ -8,7 +8,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  useLoaderData,
+  useLoaderData
 } from "@remix-run/react"
 import type { ReactNode } from "react"
 import { useEffect } from "react"
@@ -19,7 +19,7 @@ import {
   RoomProvider,
   useOthers,
   useStorage,
-  useUpdateMyPresence,
+  useUpdateMyPresence
 } from "~/liveblocks/react"
 import { Cursor } from "~/ui/cursor"
 import { Portal } from "~/ui/portal"
@@ -71,10 +71,10 @@ export default function App() {
       </head>
       <body>
         <main className="mx-auto grid max-w-screen-md px-4 py-6">
-          <MainNav />
           <AuthGuard>
             {({ discordUser }) => (
               <RoomProvider id={defaultRoomId} {...defaultRoomInit}>
+                <MainNav />
                 <Outlet />
                 <ClientSideSuspense fallback={<></>}>
                   {() => (
