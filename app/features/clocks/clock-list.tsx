@@ -1,6 +1,6 @@
 import { LiveList } from "@liveblocks/client"
 import { Plus } from "react-feather"
-import { useMutation, useStorage } from "../../liveblocks/react"
+import { useMutation, useStorage } from "~/features/multiplayer/liveblocks-react"
 import { clearButtonClass } from "../../ui/styles"
 import { Clock } from "./clock"
 import type { ClockState } from "./clock-state"

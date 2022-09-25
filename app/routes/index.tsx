@@ -1,6 +1,6 @@
 import TextArea from "react-expanding-textarea"
 import type { World } from "~/features/world/world"
-import { useMutation, useStorage } from "~/liveblocks/react"
+import { useMutation, useStorage } from "~/features/multiplayer/liveblocks-react"
 import { CardSection } from "~/ui/card-section"
 import { Field } from "~/ui/field"
 import { LoadingSuspense } from "~/ui/loading"

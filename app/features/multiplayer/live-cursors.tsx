@@ -2,7 +2,7 @@ import { useLocation } from "@remix-run/react"
 import clsx from "clsx"
 import { useScroll } from "~/helpers/use-scroll"
 import { useWindowEvent } from "~/helpers/use-window-event"
-import { useOthers, useUpdateMyPresence } from "~/liveblocks/react"
+import { useOthers, useUpdateMyPresence } from "~/features/multiplayer/liveblocks-react"
 import { Portal } from "~/ui/portal"
 
 export function LiveCursors({ name }: { name: string }) {

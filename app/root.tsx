@@ -11,9 +11,14 @@ import {
 } from "@remix-run/react"
 import type { ReactNode } from "react"
 import { Book, Clock, Users } from "react-feather"
+import type { DiscordUser } from "~/features/auth/discord"
+import { getDiscordAuthUser } from "~/features/auth/discord"
+import {
+  defaultRoomId,
+  defaultRoomInit,
+} from "~/features/multiplayer/liveblocks-client"
+import { RoomProvider } from "~/features/multiplayer/liveblocks-react"
 import { truthyJoin } from "~/helpers/truthy-join"
-import { defaultRoomId, defaultRoomInit } from "~/liveblocks/client"
-import { RoomProvider } from "~/liveblocks/react"
 import { clearButtonClass } from "~/ui/styles"
 import favicon from "./assets/favicon.svg"
 import { discordUserAllowList } from "./features/auth/discord-allow-list"
@@ -22,8 +27,6 @@ import { LiveCursors } from "./features/multiplayer/live-cursors"
 import { getWorldData } from "./features/world/actions.server"
 import { WorldTitle } from "./features/world/world-title"
 import tailwind from "./generated/tailwind.css"
-import type { DiscordUser } from "./helpers/discord"
-import { getDiscordAuthUser } from "./helpers/discord"
 import { EmptySuspense } from "./ui/loading"
 
 export async function loader({ request }: LoaderArgs) {

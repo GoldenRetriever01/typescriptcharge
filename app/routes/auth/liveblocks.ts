@@ -3,8 +3,8 @@ import type { ActionArgs } from "@remix-run/node"
 import { env } from "~/env.server"
 import { discordUserAllowList } from "../../features/auth/discord-allow-list"
 import { getSession } from "../../features/auth/session"
-import { getDiscordAuthUser } from "../../helpers/discord"
-import { defaultRoomId } from "../../liveblocks/client"
+import { getDiscordAuthUser } from "~/features/auth/discord"
+import { defaultRoomId } from "~/features/multiplayer/liveblocks-client"
 
 export async function action({ request }: ActionArgs) {
   const session = await getSession(request)

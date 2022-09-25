@@ -1,8 +1,8 @@
 import { createClient, LiveList } from "@liveblocks/client"
 import type { RoomInitializers } from "@liveblocks/client/internal"
-import type { Character } from "../features/characters/character-sheet-data"
-import type { ClockState } from "../features/clocks/clock-state"
-import type { World } from "../features/world/world"
+import type { Character } from "~/features/characters/character-sheet-data"
+import type { ClockState } from "~/features/clocks/clock-state"
+import type { World } from "~/features/world/world"
 
 export type Presence = {
   cursor?: { name: string; x: number; y: number; route: string }

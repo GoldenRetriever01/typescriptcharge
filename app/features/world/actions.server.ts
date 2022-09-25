@@ -1,6 +1,6 @@
 import { z } from "zod"
 import { env } from "~/env.server"
-import { defaultRoomId } from "~/liveblocks/client"
+import { defaultRoomId } from "~/features/multiplayer/liveblocks-client"
 
 const schema = z.object({
   data: z.object({

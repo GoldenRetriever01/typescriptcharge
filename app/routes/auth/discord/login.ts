@@ -1,4 +1,4 @@
-import { getAuthorizeUrl } from "../../../helpers/discord"
+import { getAuthorizeUrl } from "~/features/auth/discord"
 
 export function loader() {
   return new Response(undefined, {
