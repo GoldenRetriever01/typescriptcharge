@@ -23,8 +23,10 @@ specifiers:
   '@types/prettier': ^2.7.1
   '@types/react': ^18.0.21
   '@types/react-dom': ^18.0.6
+  chalk: ^5.0.1
   clsx: ^1.2.1
   cross-fetch: ^3.1.5
+  dotenv: ^16.0.2
   esbuild: ^0.15.9
   eslint: ^8.24.0
   eslint-plugin-tailwindcss: ^3.6.2
@@ -53,8 +55,10 @@ dependencies:
   '@remix-run/node': 1.7.2_biqbaboplfbrettd7655fr4n2y
   '@remix-run/react': 1.7.2_biqbaboplfbrettd7655fr4n2y
   '@supabase/supabase-js': 1.35.7
+  chalk: 5.0.1
   clsx: 1.2.1
   cross-fetch: 3.1.5
+  dotenv: 16.0.2
   node-cron: 3.0.2
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
@@ -4244,7 +4248,6 @@ packages:
   /chalk/5.0.1:
     resolution: {integrity: sha512-Fo07WOYGqMfCWHOzSXOt2CxDbC6skS/jO9ynEcmpANMoPrD+W1r1K6Vx7iNm+AQmETU1Xr2t+n8nzkV9t6xh3w==}
     engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
-    dev: true
 
   /character-entities-html4/2.1.0:
     resolution: {integrity: sha512-1v7fgQRj6hnSwFpq1Eu0ynr/CDEw0rXo2B61qXrLNdHZmPKgb7fqS1a2JwF0rISo9q77jDI8VMEHoApn8qDoZA==}
@@ -5298,7 +5301,6 @@ packages:
   /dotenv/16.0.2:
     resolution: {integrity: sha512-JvpYKUmzQhYoIFgK2MOnF3bciIZoItIIoryihy0rIA+H4Jy0FmgyKYAHCTN98P5ybGSJcIFbh6QKeJdtZd1qhA==}
     engines: {node: '>=12'}
-    dev: true
 
   /download/8.0.0:
     resolution: {integrity: sha512-ASRY5QhDk7FK+XrQtQyvhpDKanLluEEQtWl/J7Lxuf/b+i8RYh997QeXvL85xitrmRKVlx9c7eTrcRdq2GS4eA==}
