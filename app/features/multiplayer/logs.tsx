@@ -76,9 +76,15 @@ export function LogsButton({
       <Button
         type="button"
         title="View logs"
-        onClick={() => setVisible(!visible)}
+        onClick={() => {
+          setVisible(!visible)
+          setUnread(false)
+        }}
         ref={floating.reference}
-        className={blackCircleIconButtonClass}
+        className={clsx(
+          blackCircleIconButtonClass,
+          unread && "animate-pulse text-blue-400",
+        )}
       >
         <List />
       </Button>
