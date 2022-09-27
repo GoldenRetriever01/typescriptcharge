@@ -18,6 +18,11 @@ export const clearButtonClass = (active: boolean) =>
       : "border-transparent opacity-50 hover:opacity-75",
   )
 
+export const blackCircleIconButtonClass = clsx(
+  "rounded-full bg-black/25 p-3 transition hover:bg-black/50",
+  activePress,
+)
+
 export const inputBaseClass = clsx(
   "block w-full resize-none rounded-md bg-black/25 transition focus:bg-black/50 focus:outline-none focus:ring-2 focus:ring-blue-500",
 )

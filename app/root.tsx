@@ -20,6 +20,7 @@ import { clearButtonClass, raisedPanelClass } from "~/ui/styles"
 import favicon from "./assets/favicon.svg"
 import { discordUserAllowList } from "./features/auth/discord-allow-list"
 import { getSession } from "./features/auth/session"
+import { DiceButton } from "./features/multiplayer/dice"
 import { LiveCursors } from "./features/multiplayer/live-cursors"
 import {
   defaultRoomId,
@@ -117,6 +118,7 @@ export default function App() {
                   {process.env.NODE_ENV !== "production" && (
                     <LiveblocksConnectionToggle />
                   )}
+                  <DiceButton />
                   <LogsButton />
                 </div>
                 <EmptySuspense>

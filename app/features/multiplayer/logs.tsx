@@ -1,10 +1,9 @@
 import { autoUpdate, offset, useFloating } from "@floating-ui/react-dom"
-import clsx from "clsx"
 import { List } from "react-feather"
 import { z } from "zod"
 import { useLocalStorage } from "~/helpers/use-local-storage"
 import { Button } from "~/ui/button"
-import { activePress } from "~/ui/styles"
+import { blackCircleIconButtonClass } from "~/ui/styles"
 
 type DiceRollLog = {
   id: string
@@ -80,10 +79,7 @@ export function LogsButton() {
         title="View logs"
         onClick={() => setVisible(!visible)}
         ref={floating.reference}
-        className={clsx(
-          "rounded-full bg-black/25 p-3 transition hover:bg-black/50",
-          activePress,
-        )}
+        className={blackCircleIconButtonClass}
       >
         <List />
       </Button>
@@ -99,7 +95,7 @@ export function LogsButton() {
         {logs.map((log) => (
           <li
             key={log.id}
-            className="flex items-center gap-6 rounded-md bg-black/50 px-6 py-4 shadow-md"
+            className="flex items-center gap-6 rounded-md bg-black/75 px-6 py-4 shadow-md"
           >
             <div className="flex flex-col gap-1">
               <p className="text-sm leading-none">
@@ -126,19 +122,19 @@ export function LogsButton() {
                 = {log.dice.reduce((sum, die) => sum + die.result, 0)}
               </p>
             </div>
-            <div className="-my-2 w-1 self-stretch rounded bg-white/25" />
-            <div className="flex flex-col items-center gap-1 text-center leading-none">
+            <div className="-my-1 w-1 self-stretch rounded bg-white/25" />
+            <div className="flex flex-col items-center gap-0.5 text-center leading-none">
               <p>
-                <span className="mb-0.5 inline-block text-xs">Max</span>
+                <span className="inline-block text-xs opacity-75">Max</span>
                 <br />
-                <span className="font-medium">
+                <span className="text-lg font-medium leading-tight">
                   {Math.max(...log.dice.map((die) => die.result))}
                 </span>
               </p>
               <p>
-                <span className="mb-0.5 inline-block text-xs">Min</span>
+                <span className="inline-block text-xs opacity-75">Min</span>
                 <br />
-                <span className="font-medium">
+                <span className="text-lg font-medium leading-tight">
                   {Math.min(...log.dice.map((die) => die.result))}
                 </span>
               </p>
