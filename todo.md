@@ -25,8 +25,22 @@
 
 ## medium priority
 
-- [ ] dice rolls
-- [ ] audit log: say who did what + dice rolls
+- dice rolls
+  - button which opens a popover for rolling dice
+    - [ ] buttons per kind of dice, click to add one to the pool
+    - [ ] x button to clear dice
+    - [ ] optional description for what's being rolled
+    - [ ] roll button posts to server
+  - dice logs
+    - [ ] all dice results
+    - [x] normalized dice string (e.g. 2d6+1d8+3)
+    - [x] dice total
+    - [x] dice min
+    - [x] dice max
+    - [ ] rolled by
+    - [ ] scrollable
+    - [ ] subscribe to realtime dice logs
+    - [ ] toggle panel visibility
 - [ ] cheatsheet for roll mechanics and momentum usages
 - [ ] error pages
 
