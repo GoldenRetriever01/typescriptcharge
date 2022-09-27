@@ -9,6 +9,7 @@ import {
   ScrollRestoration,
   useLoaderData,
 } from "@remix-run/react"
+import clsx from "clsx"
 import type { ReactNode } from "react"
 import { Book, Clock, Users } from "react-feather"
 import type { DiscordUser } from "~/features/auth/discord"
@@ -106,7 +107,7 @@ export default function App() {
                   <div className="my-2">
                     <MainNav />
                   </div>
-                  <div className={raisedPanelClass}>
+                  <div className={clsx(raisedPanelClass, "p-4")}>
                     <LoadingSuspense>
                       <Outlet />
                     </LoadingSuspense>
