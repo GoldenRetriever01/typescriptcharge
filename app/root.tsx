@@ -13,11 +13,6 @@ import type { ReactNode } from "react"
 import { Book, Clock, Users } from "react-feather"
 import type { DiscordUser } from "~/features/auth/discord"
 import { getDiscordAuthUser } from "~/features/auth/discord"
-import {
-  defaultRoomId,
-  defaultRoomInit,
-} from "~/features/multiplayer/liveblocks-client"
-import { RoomProvider } from "~/features/multiplayer/liveblocks-react"
 import { truthyJoin } from "~/helpers/truthy-join"
 import { LoadingSuspense } from "~/ui/loading"
 import { clearButtonClass, raisedPanelClass } from "~/ui/styles"
@@ -25,6 +20,15 @@ import favicon from "./assets/favicon.svg"
 import { discordUserAllowList } from "./features/auth/discord-allow-list"
 import { getSession } from "./features/auth/session"
 import { LiveCursors } from "./features/multiplayer/live-cursors"
+import {
+  defaultRoomId,
+  defaultRoomInit,
+} from "./features/multiplayer/liveblocks-client"
+import {
+  LiveblocksConnectionToggle,
+  useLiveblocksEnabled,
+} from "./features/multiplayer/liveblocks-connection-toggle"
+import { RoomProvider } from "./features/multiplayer/liveblocks-react"
 import { getWorldData } from "./features/world/actions.server"
 import { WorldTitle } from "./features/world/world-title"
 import tailwind from "./generated/tailwind.css"
@@ -82,6 +86,7 @@ export const links: LinksFunction = () => [
 ]
 
 export default function App() {
+  const liveblocksEnabled = useLiveblocksEnabled()
   return (
     <html
       lang="en"
@@ -91,23 +96,38 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className="mx-auto flex min-h-screen max-w-screen-md flex-col px-4 py-6">
-        <AuthGuard>
-          {({ discordUser }) => (
-            <RoomProvider id={defaultRoomId} {...defaultRoomInit}>
-              <MainNav />
-              <main className={raisedPanelClass}>
-                <LoadingSuspense>
-                  <Outlet />
-                </LoadingSuspense>
-              </main>
-              <EmptySuspense>
-                <LiveCursors name={discordUser.username} />
-                <WorldTitle />
-              </EmptySuspense>
-            </RoomProvider>
-          )}
-        </AuthGuard>
+      <body>
+        <div className="mx-auto flex min-h-screen flex-col gap-4 p-4">
+          <AuthGuard>
+            {({ discordUser }) => (
+              <>
+                <div className="mx-auto grid w-full max-w-screen-md gap-4">
+                  <div className="my-2">
+                    <MainNav />
+                  </div>
+                  <div className={raisedPanelClass}>
+                    <LoadingSuspense>
+                      <Outlet />
+                    </LoadingSuspense>
+                  </div>
+                </div>
+                <div className="sticky bottom-4 mt-auto">
+                  {process.env.NODE_ENV !== "production" && (
+                    <LiveblocksConnectionToggle />
+                  )}
+                </div>
+                <EmptySuspense>
+                  {liveblocksEnabled && (
+                    <RoomProvider id={defaultRoomId} {...defaultRoomInit}>
+                      <LiveCursors name={discordUser.username} />
+                    </RoomProvider>
+                  )}
+                  <WorldTitle />
+                </EmptySuspense>
+              </>
+            )}
+          </AuthGuard>
+        </div>
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
@@ -118,7 +138,7 @@ export default function App() {
 
 function MainNav() {
   return (
-    <nav className="mb-6 flex flex-wrap items-center gap-6">
+    <nav className="flex flex-wrap items-center gap-6">
       <HeaderLink to="/">
         <Book size={20} /> World
       </HeaderLink>

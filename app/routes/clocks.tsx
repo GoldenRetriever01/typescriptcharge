@@ -1,19 +1,25 @@
 import { LiveList } from "@liveblocks/client"
+import { useStore } from "@nanostores/react"
+import { atom } from "nanostores"
 import { Plus } from "react-feather"
 import { Clock } from "~/features/clocks/clock"
 import type { ClockState } from "~/features/clocks/clock-state"
-import {
-  useMutation,
-  useStorage,
-} from "~/features/multiplayer/liveblocks-react"
+import { syncStoreWithLiveblocks } from "~/features/multiplayer/liveblocks-client"
 import { clearButtonClass } from "~/ui/styles"
 
-export default function ClocksPage() {
-  const clocks = useStorage((root) => root.clocks) ?? []
+const store = atom<ClockState[]>([])
+syncStoreWithLiveblocks(
+  store,
+  (storage) => storage.root.get("clocks")?.toArray() ?? [],
+  (storage, clocks) => {
+    storage.root.set("clocks", new LiveList(clocks))
+  },
+)
 
-  const setClocks = useMutation((context, clocks: ClockState[]) => {
-    context.storage.set("clocks", new LiveList(clocks))
-  }, [])
+const setClocks = (clocks: ClockState[]) => store.set(clocks)
+
+export default function ClocksPage() {
+  const clocks = useStore(store)
 
   const updateClock = (id: string, update: Partial<ClockState>) => {
     setClocks(

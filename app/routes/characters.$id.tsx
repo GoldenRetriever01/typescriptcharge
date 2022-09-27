@@ -1,17 +1,16 @@
 import { Dialog, Transition } from "@headlessui/react"
 import { LiveList } from "@liveblocks/client"
+import { useStore } from "@nanostores/react"
 import { Link, useNavigate, useParams } from "@remix-run/react"
 import clsx from "clsx"
+import { atom } from "nanostores"
 import { Fragment, useState } from "react"
 import TextArea from "react-expanding-textarea"
 import { Plus, Trash, X } from "react-feather"
 import { characterActionLibrary } from "~/features/characters/character-actions"
 import type { Character } from "~/features/characters/character-sheet-data"
 import { Clock } from "~/features/clocks/clock"
-import {
-  useMutation,
-  useStorage,
-} from "~/features/multiplayer/liveblocks-react"
+import { syncStoreWithLiveblocks } from "~/features/multiplayer/liveblocks-client"
 import { entriesTyped } from "~/helpers/entries-typed"
 import { Button } from "~/ui/button"
 import { Counter, DotCounter } from "~/ui/counter"
@@ -26,41 +25,61 @@ import {
 
 const dividerClass = "border-gray-600"
 
+const store = atom<Character[]>([])
+syncStoreWithLiveblocks(
+  store,
+  (storage) => storage.root.get("characters")?.toArray() ?? [],
+  (storage, data) => storage.root.set("characters", new LiveList(data)),
+)
+
+function addCharacter() {
+  const character: Character = {
+    id: crypto.randomUUID(),
+    name: "New Character",
+    group: "",
+    concept: "",
+    appearance: "",
+    ties: "",
+    momentum: 2,
+    stress: 0,
+    condition: "",
+    actions: {},
+    talents: "",
+  }
+
+  store.set([...store.get(), character])
+
+  return character
+}
+
+function updateCharacter(id: string, updates: Partial<Omit<Character, "id">>) {
+  store.set(
+    store
+      .get()
+      .map((character) =>
+        character.id === id ? { ...character, ...updates } : character,
+      ),
+  )
+}
+
+function deleteCharacter(id: string) {
+  store.set(store.get().filter((character) => character.id !== id))
+}
+
 export default function CharactersPage() {
   const params = useParams<{ id?: string }>()
   const navigate = useNavigate()
 
-  const characters = useStorage((root) => root.characters) ?? []
+  const characters = useStore(store)
 
   const characterId = params.id
   const currentCharacter =
     characters.find((c) => c.id === characterId) ?? characters[0]
 
-  const createCharacter = useMutation((context) => {
-    let characters = context.storage.get("characters")
-    if (!characters) {
-      characters = new LiveList()
-      context.storage.set("characters", characters)
-    }
-
-    const character: Character = {
-      id: crypto.randomUUID(),
-      name: "New Character",
-      group: "",
-      concept: "",
-      appearance: "",
-      ties: "",
-      momentum: 2,
-      stress: 0,
-      condition: "",
-      actions: {},
-      talents: "",
-    }
-
-    characters.push(character)
-
+  const createCharacter = () => {
+    const character = addCharacter()
     navigate(`/characters/${character.id}`)
-  }, [])
+  }
 
   return (
     <>
@@ -97,19 +116,6 @@ export default function CharactersPage() {
 }
 
 function CharacterSheetEditor({ character }: { character: Character }) {
-  const updateCharacter = useMutation(
-    (context, updates: Partial<Omit<Character, "id">>) => {
-      const characters = context.storage.get("characters")
-      if (!characters) return
-
-      const characterIndex = characters.findIndex((c) => c.id === character.id)
-      if (characterIndex === -1) return
-
-      characters.set(characterIndex, { ...character, ...updates })
-    },
-    [character],
-  )
-
   return (
     <div className="grid gap-4">
       <div className="grid gap-4 sm:grid-cols-2">
@@ -119,7 +125,9 @@ function CharacterSheetEditor({ character }: { character: Character }) {
               type="text"
               placeholder="What should we call you?"
               value={character.name}
-              onChange={(e) => updateCharacter({ name: e.target.value })}
+              onChange={(e) =>
+                updateCharacter(character.id, { name: e.target.value })
+              }
               className={inputClass}
             />
           </Field>
@@ -128,7 +136,9 @@ function CharacterSheetEditor({ character }: { character: Character }) {
               type="text"
               placeholder="Whom do you side with?"
               value={character.group}
-              onChange={(e) => updateCharacter({ group: e.target.value })}
+              onChange={(e) =>
+                updateCharacter(character.id, { group: e.target.value })
+              }
               className={inputClass}
             />
           </Field>
@@ -137,7 +147,9 @@ function CharacterSheetEditor({ character }: { character: Character }) {
             <div className={clsx(inputClass, "grid place-items-center")}>
               <Counter
                 value={character.momentum}
-                onChange={(momentum) => updateCharacter({ momentum })}
+                onChange={(momentum) =>
+                  updateCharacter(character.id, { momentum })
+                }
               />
             </div>
           </section>
@@ -148,13 +160,17 @@ function CharacterSheetEditor({ character }: { character: Character }) {
             name="Stress"
             progress={character.stress}
             maxProgress={4}
-            onProgressChange={(stress) => updateCharacter({ stress })}
+            onProgressChange={(stress) =>
+              updateCharacter(character.id, { stress })
+            }
           />
           <Field label="Condition">
             <input
               placeholder="How're you doing?"
               value={character.condition}
-              onChange={(e) => updateCharacter({ condition: e.target.value })}
+              onChange={(e) =>
+                updateCharacter(character.id, { condition: e.target.value })
+              }
               className={inputClass}
             />
           </Field>
@@ -182,7 +198,7 @@ function CharacterSheetEditor({ character }: { character: Character }) {
                       value={character.actions[action]?.level ?? 0}
                       max={4}
                       onChange={(level) => {
-                        updateCharacter({
+                        updateCharacter(character.id, {
                           actions: {
                             ...character.actions,
                             [action]: { level },
@@ -205,7 +221,9 @@ function CharacterSheetEditor({ character }: { character: Character }) {
           <TextArea
             placeholder="Describe yourself."
             value={character.concept}
-            onChange={(e) => updateCharacter({ concept: e.target.value })}
+            onChange={(e) =>
+              updateCharacter(character.id, { concept: e.target.value })
+            }
             className={textAreaClass}
           />
         </Field>
@@ -213,7 +231,9 @@ function CharacterSheetEditor({ character }: { character: Character }) {
           <TextArea
             placeholder="How do you look? What do you like to wear?"
             value={character.appearance}
-            onChange={(e) => updateCharacter({ appearance: e.target.value })}
+            onChange={(e) =>
+              updateCharacter(character.id, { appearance: e.target.value })
+            }
             className={textAreaClass}
           />
         </Field>
@@ -221,7 +241,9 @@ function CharacterSheetEditor({ character }: { character: Character }) {
           <TextArea
             placeholder="Who are your friends and enemies?"
             value={character.ties}
-            onChange={(e) => updateCharacter({ ties: e.target.value })}
+            onChange={(e) =>
+              updateCharacter(character.id, { ties: e.target.value })
+            }
             className={textAreaClass}
           />
         </Field>
@@ -229,7 +251,9 @@ function CharacterSheetEditor({ character }: { character: Character }) {
           <TextArea
             placeholder="stat buffs stat buffs stat buffs"
             value={character.talents}
-            onChange={(e) => updateCharacter({ talents: e.target.value })}
+            onChange={(e) =>
+              updateCharacter(character.id, { talents: e.target.value })
+            }
             className={textAreaClass}
           />
         </Field>
@@ -257,20 +281,11 @@ function DeleteButton({
   const [visible, setVisible] = useState(false)
   const navigate = useNavigate()
 
-  const deleteCharacter = useMutation(
-    (context) => {
-      const characters = context.storage.get("characters")
-      if (!characters) return
-
-      const characterIndex = characters.findIndex((c) => c.id === characterId)
-      if (characterIndex === -1) return
-
-      characters.delete(characterIndex)
-      setVisible(false)
-      navigate("/characters")
-    },
-    [characterId],
-  )
+  const handleConfirm = () => {
+    deleteCharacter(characterId)
+    setVisible(false)
+    navigate("/characters")
+  }
 
   return (
     <>
@@ -314,7 +329,7 @@ function DeleteButton({
                     <X />
                     Cancel
                   </button>
-                  <button className={solidButton} onClick={deleteCharacter}>
+                  <button className={solidButton} onClick={handleConfirm}>
                     <Trash />
                     Delete
                   </button>
