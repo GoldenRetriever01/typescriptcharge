@@ -37,7 +37,7 @@
     - [x] dice total
     - [x] dice min
     - [x] dice max
-    - [ ] rolled by
+    - [x] rolled by
     - [x] scrollable
     - [x] stay scrolled at bottom
     - [x] subscribe to realtime dice logs

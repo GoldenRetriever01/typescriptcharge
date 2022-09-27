@@ -107,6 +107,7 @@ export function LogsButton({
             className="overlay-scrollbar h-full w-96"
             followOutput="smooth"
             initialTopMostItemIndex={logs.length - 1}
+            alignToBottom
           />
         </div>
       </Portal>

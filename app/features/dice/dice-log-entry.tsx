@@ -1,14 +1,21 @@
 import { z } from "zod"
 import type { DatabaseDiceLog } from "./dice-data"
 
+import { Suspense } from "react"
+import { createFetchStore } from "react-suspense-fetch"
+import type { DiscordUser } from "../auth/discord"
+
 export function DiceLogEntry({ log }: { log: DatabaseDiceLog }): JSX.Element {
   const dice = parseDiceJson(log.dice)
   return (
     <div className="flex items-center gap-6 rounded-md bg-black/75 px-6 py-4">
       <div className="flex flex-col gap-1">
-        <p className="text-sm leading-none">
-          <span className="opacity-70">Rolled by</span> {log.discordUserId}
-        </p>
+        <Suspense>
+          <p className="text-sm leading-none">
+            <span className="opacity-70">Rolled by</span>{" "}
+            <DiscordUsername id={log.discordUserId} />
+          </p>
+        </Suspense>
 
         {dice ? (
           <>
@@ -59,6 +66,17 @@ export function DiceLogEntry({ log }: { log: DatabaseDiceLog }): JSX.Element {
       )}
     </div>
   )
+}
+
+const usernameStore = createFetchStore(async (discordUserId: string) => {
+  const res = await fetch(`/api/discord-user/${discordUserId}`)
+  const data = (await res.json()) as { user?: DiscordUser }
+  return data.user
+})
+
+function DiscordUsername({ id }: { id: string }) {
+  const user = usernameStore.get(id, { forcePrefetch: true })
+  return <>{user?.username ?? "unknown"}</>
 }
 
 function HexagonFilled(props: React.SVGAttributes<SVGElement>) {

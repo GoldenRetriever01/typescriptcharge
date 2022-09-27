@@ -42,6 +42,7 @@ specifiers:
   react-dom: ^18.2.0
   react-expanding-textarea: ^2.3.6
   react-feather: ^2.0.10
+  react-suspense-fetch: ^0.6.0
   react-virtuoso: ^2.19.0
   tailwind-scrollbar: ^2.0.1
   tailwindcss: ^3.1.8
@@ -74,6 +75,7 @@ dependencies:
   react-dom: 18.2.0_react@18.2.0
   react-expanding-textarea: 2.3.6_react@18.2.0
   react-feather: 2.0.10_react@18.2.0
+  react-suspense-fetch: 0.6.0
   react-virtuoso: 2.19.0_biqbaboplfbrettd7655fr4n2y
   zod: 3.19.1
 
@@ -11132,6 +11134,10 @@ packages:
     dependencies:
       history: 5.3.0
       react: 18.2.0
+
+  /react-suspense-fetch/0.6.0:
+    resolution: {integrity: sha512-1genoJSIt9sIxa8kTPxgVORxXJUHdCBss9afP8QSfR4syFoofpT5XBpkcHOANTTBLLpZWOf00DNQSASH9GQerA==}
+    dev: false
 
   /react-virtuoso/2.19.0_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-GeCleV9cmpYGh1Ldfgdu+4gADLzdWJ48qc4tWguFzYz7FvUSAoELe8268rR8zfIb5FcV3tqpsdvFS5i51c8jyA==}
