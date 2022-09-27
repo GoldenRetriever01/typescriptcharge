@@ -113,11 +113,11 @@ export default function App() {
                     </LoadingSuspense>
                   </div>
                 </div>
-                <div className="sticky bottom-4 mt-auto">
-                  <LogsButton />
+                <div className="sticky bottom-4 mt-auto flex flex-wrap items-center justify-end gap-2">
                   {process.env.NODE_ENV !== "production" && (
                     <LiveblocksConnectionToggle />
                   )}
+                  <LogsButton />
                 </div>
                 <EmptySuspense>
                   {liveblocksEnabled && (

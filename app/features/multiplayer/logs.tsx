@@ -1,14 +1,54 @@
-import { autoUpdate, offset, size, useFloating } from "@floating-ui/react-dom"
-import { Transition } from "@headlessui/react"
-import { Disclosure, DisclosureContent, useDisclosureState } from "ariakit"
+import { autoUpdate, offset, useFloating } from "@floating-ui/react-dom"
 import clsx from "clsx"
-import { Fragment } from "react"
-import { List, X } from "react-feather"
+import { List } from "react-feather"
 import { z } from "zod"
 import { useLocalStorage } from "~/helpers/use-local-storage"
-import { Portal } from "~/ui/portal"
-import { activePress, raisedPanelClass } from "~/ui/styles"
-import { simpleTransition } from "~/ui/transition"
+import { Button } from "~/ui/button"
+import { activePress } from "~/ui/styles"
+
+type DiceRollLog = {
+  id: string
+  rolledBy: { id: string; name: string; avatarUrl?: string }
+  dice: RolledDie[]
+}
+
+type RolledDie = {
+  sides: number
+  result: number
+}
+
+const logs: DiceRollLog[] = [
+  {
+    id: Math.random().toString(),
+    rolledBy: { id: "1", name: "maple" },
+    dice: [
+      { sides: 6, result: 5 },
+      { sides: 6, result: 2 },
+      { sides: 6, result: 4 },
+    ],
+  },
+  {
+    id: Math.random().toString(),
+    rolledBy: { id: "1", name: "emik" },
+    dice: [
+      { sides: 6, result: 1 },
+      { sides: 6, result: 1 },
+    ],
+  },
+  {
+    id: Math.random().toString(),
+    rolledBy: { id: "1", name: "craw" },
+    dice: [{ sides: 6, result: 6 }],
+  },
+]
+
+function normalizedRollText(dice: RolledDie[]) {
+  const counts = new Map<number, number>()
+  for (const die of dice) {
+    counts.set(die.sides, (counts.get(die.sides) ?? 0) + 1)
+  }
+  return [...counts].map(([result, count]) => `${count}d${result}`).join(" + ")
+}
 
 export function LogsButton() {
   const [visible, setVisible] = useLocalStorage({
@@ -17,113 +57,111 @@ export function LogsButton() {
     schema: z.boolean(),
   })
 
-  const disclosure = useDisclosureState({
-    open: visible,
-    setOpen: setVisible,
-    animated: true,
-  })
-
   const floating = useFloating({
-    placement: "top-start",
+    placement: "top-end",
     strategy: "fixed", // fixed positioning causes less shifting while scrolling
     middleware: [
-      offset(16),
-      size({
-        padding: 16,
-        apply: ({ elements, availableWidth, availableHeight }) => {
-          elements.floating.style.width = `${availableWidth}px`
-          elements.floating.style.height = `${availableHeight}px`
-        },
-      }),
+      offset(8),
+      // size({
+      //   padding: 16,
+      //   apply: ({ elements, availableWidth, availableHeight }) => {
+      //     elements.floating.style.width = `${availableWidth}px`
+      //     elements.floating.style.height = `${availableHeight}px`
+      //   },
+      // }),
     ],
     whileElementsMounted: autoUpdate,
   })
 
   return (
-    <>
-      <Disclosure
-        state={disclosure}
+    <div>
+      <Button
         type="button"
         title="View logs"
+        onClick={() => setVisible(!visible)}
+        ref={floating.reference}
         className={clsx(
           "rounded-full bg-black/25 p-3 transition hover:bg-black/50",
           activePress,
         )}
-        ref={floating.reference}
       >
         <List />
-      </Disclosure>
-
-      <Transition.Root show={visible ?? false} className="contents">
-        <Portal>
-          <div
-            className="max-w-sm gap-2"
-            ref={floating.floating}
-            style={{
-              position: floating.strategy,
-              left: floating.x ?? undefined,
-              top: floating.y ?? undefined,
-            }}
+      </Button>
+      <ul
+        ref={floating.floating}
+        className="flex flex-col items-end gap-2"
+        style={{
+          position: floating.strategy,
+          left: floating.x ?? 0,
+          top: floating.y ?? 0,
+        }}
+      >
+        {logs.map((log) => (
+          <li
+            key={log.id}
+            className="flex items-center gap-6 rounded-md bg-black/50 px-6 py-4 shadow-md"
           >
-            <Transition.Child
-              as={Fragment}
-              {...simpleTransition({
-                base: clsx("origin-bottom-left transition"),
-                in: clsx("scale-100 opacity-100"),
-                out: clsx("scale-90 opacity-0"),
-              })}
-            >
-              <div className="flex h-full items-start gap-2">
-                <DisclosureContent
-                  state={disclosure}
-                  as="ul"
-                  className={clsx(
-                    raisedPanelClass,
-                    "flex h-full w-full flex-col justify-end gap-2 overflow-y-auto p-2",
-                  )}
-                >
-                  <li className="rounded-md bg-black/25 px-3 py-2">
-                    Duis ea amet quis est elit consectetur deserunt officia
-                    reprehenderit laboris voluptate cupidatat veniam nisi.
-                    Cupidatat cillum fugiat tempor est anim est eu nulla
-                    reprehenderit est. Magna incididunt sit sunt in ut qui
-                    fugiat cupidatat eu. Consectetur ex sint consequat voluptate
-                    consequat adipisicing reprehenderit est reprehenderit irure
-                    duis aliqua nostrud eu.
+            <div className="flex flex-col gap-1">
+              <p className="text-sm leading-none">
+                <span className="opacity-70">Rolled by</span>{" "}
+                {log.rolledBy.name}
+              </p>
+              <ul className="flex gap-1">
+                {log.dice.map((die, index) => (
+                  <li
+                    key={index}
+                    className="relative flex items-center justify-center"
+                  >
+                    <HexagonFilled className="h-8 w-8" />
+                    <span className="absolute translate-y-[1px] font-medium text-gray-800">
+                      {die.result}
+                    </span>
                   </li>
-                  <li className="rounded-md bg-black/25 px-3 py-2">
-                    Lorem ut amet veniam magna ullamco aliqua ex sit aute non
-                    sunt sit ea sunt. Occaecat non sint aute mollit occaecat
-                    quis eu enim fugiat pariatur pariatur cillum. Amet sint est
-                    ut consectetur occaecat consectetur ea sint aliqua proident
-                    veniam non. Laborum adipisicing laborum amet tempor enim
-                    culpa minim dolor cupidatat proident amet deserunt. Irure
-                    dolor ad irure nisi officia dolore incididunt minim ex do
-                    commodo incididunt ad sunt. Tempor dolor consectetur Lorem
-                    fugiat est laborum et enim laboris ex occaecat. Magna qui
-                    exercitation consectetur qui ullamco esse.
-                  </li>
-                  <li className="rounded-md bg-black/25 px-3 py-2">
-                    Mollit ad in nisi non consectetur fugiat anim ipsum ex.
-                    Aliquip tempor cillum velit sunt tempor anim fugiat. Amet id
-                    irure adipisicing ut esse sit incididunt reprehenderit
-                    aliquip sit exercitation. Enim nostrud in esse eu labore
-                    elit amet voluptate proident in ut id amet. Id aute deserunt
-                    excepteur minim id consequat. Officia consequat voluptate
-                    consequat voluptate aliquip ex ipsum est.
-                  </li>
-                </DisclosureContent>
-                <Disclosure
-                  state={disclosure}
-                  className="opacity-75 transition hover:opacity-100"
-                >
-                  <X />
-                </Disclosure>
-              </div>
-            </Transition.Child>
-          </div>
-        </Portal>
-      </Transition.Root>
-    </>
+                ))}
+              </ul>
+              <p className="text-sm">
+                <span className="opacity-75">
+                  {normalizedRollText(log.dice)}
+                </span>{" "}
+                = {log.dice.reduce((sum, die) => sum + die.result, 0)}
+              </p>
+            </div>
+            <div className="-my-2 w-1 self-stretch rounded bg-white/25" />
+            <div className="flex flex-col items-center gap-1 text-center leading-none">
+              <p>
+                <span className="mb-0.5 inline-block text-xs">Max</span>
+                <br />
+                <span className="font-medium">
+                  {Math.max(...log.dice.map((die) => die.result))}
+                </span>
+              </p>
+              <p>
+                <span className="mb-0.5 inline-block text-xs">Min</span>
+                <br />
+                <span className="font-medium">
+                  {Math.min(...log.dice.map((die) => die.result))}
+                </span>
+              </p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+function HexagonFilled(props: React.SVGAttributes<SVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 28 32"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path
+        d="M12 1.1547C13.2376 0.440169 14.7624 0.440169 16 1.1547L25.8564 6.8453C27.094 7.55983 27.8564 8.88034 27.8564 10.3094V21.6906C27.8564 23.1197 27.094 24.4402 25.8564 25.1547L16 30.8453C14.7624 31.5598 13.2376 31.5598 12 30.8453L2.14359 25.1547C0.905989 24.4402 0.143594 23.1197 0.143594 21.6906V10.3094C0.143594 8.88034 0.905989 7.55983 2.14359 6.8453L12 1.1547Z"
+        fill="currentColor"
+      />
+    </svg>
   )
 }
