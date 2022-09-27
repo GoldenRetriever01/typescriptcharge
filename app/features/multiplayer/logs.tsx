@@ -1,12 +1,15 @@
 import { autoUpdate, offset, size, useFloating } from "@floating-ui/react-dom"
 import type { SupabaseClient } from "@supabase/supabase-js"
+import clsx from "clsx"
 import { useEffect, useState } from "react"
 import { List } from "react-feather"
 import { Virtuoso } from "react-virtuoso"
 import { z } from "zod"
+import { useEvent } from "~/helpers/react"
 import { useLocalStorage } from "~/helpers/use-local-storage"
 import type { SupabaseSchema } from "~/supabase.server"
 import { Button } from "~/ui/button"
+import { Portal } from "~/ui/portal"
 import { blackCircleIconButtonClass } from "~/ui/styles"
 import type { DatabaseDiceLog } from "../dice/dice-data"
 import { DiceLogEntry } from "../dice/dice-log-entry"
@@ -19,6 +22,18 @@ export function LogsButton({
   initialLogs: DatabaseDiceLog[]
 }) {
   const [logs, setLogs] = useState(initialLogs)
+  const [unread, setUnread] = useState(false)
+
+  const [visible, setVisible] = useLocalStorage({
+    key: "multiplayer-logs-visible",
+    fallback: false,
+    schema: z.boolean(),
+  })
+
+  const handleLogAdded = useEvent((log: DatabaseDiceLog) => {
+    setLogs((logs) => [...logs, log])
+    if (!visible) setUnread(true)
+  })
 
   useEffect(() => {
     const sub = supabaseClient
@@ -31,7 +46,7 @@ export function LogsButton({
           table: "dice-logs",
         },
         (payload: { new: DatabaseDiceLog }) => {
-          setLogs((logs) => [...logs, payload.new])
+          handleLogAdded(payload.new)
         },
       )
       .subscribe()
@@ -39,13 +54,7 @@ export function LogsButton({
     return () => {
       void sub.unsubscribe()
     }
-  }, [supabaseClient])
-
-  const [visible, setVisible] = useLocalStorage({
-    key: "multiplayer-logs-visible",
-    fallback: false,
-    schema: z.boolean(),
-  })
+  }, [handleLogAdded, supabaseClient])
 
   const floating = useFloating({
     placement: "top-end",
@@ -73,25 +82,34 @@ export function LogsButton({
       >
         <List />
       </Button>
-      <div
-        ref={floating.floating}
-        style={{
-          position: floating.strategy,
-          left: floating.x ?? 0,
-          top: floating.y ?? 0,
-        }}
-      >
-        <Virtuoso
-          data={logs}
-          itemContent={(index, log) => (
-            <div className="flex justify-end pt-2">
-              <DiceLogEntry log={log} />
-            </div>
+      <Portal>
+        <div
+          ref={floating.floating}
+          className={clsx(
+            "transition-all",
+            visible
+              ? "visible opacity-100"
+              : "invisible translate-x-4 opacity-0",
           )}
-          className="overlay-scrollbar h-full w-96"
-          followOutput="smooth"
-        />
-      </div>
+          style={{
+            position: floating.strategy,
+            left: floating.x ?? 0,
+            top: floating.y ?? 0,
+          }}
+        >
+          <Virtuoso
+            data={logs}
+            itemContent={(index, log) => (
+              <div className="flex justify-end pt-2">
+                <DiceLogEntry log={log} />
+              </div>
+            )}
+            className="overlay-scrollbar h-full w-96"
+            followOutput="smooth"
+            initialTopMostItemIndex={logs.length - 1}
+          />
+        </div>
+      </Portal>
     </div>
   )
 }

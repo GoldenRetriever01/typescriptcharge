@@ -41,8 +41,8 @@
     - [x] scrollable
     - [x] stay scrolled at bottom
     - [x] subscribe to realtime dice logs
-    - [ ] toggle panel visibility
-    - [ ] animation
+    - [x] toggle panel visibility
+    - [x] animation
 - [ ] cheatsheet for roll mechanics and momentum usages
 - [ ] error pages
 
