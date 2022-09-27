@@ -2,6 +2,7 @@ import { autoUpdate, offset, size, useFloating } from "@floating-ui/react-dom"
 import type { SupabaseClient } from "@supabase/supabase-js"
 import { useEffect, useState } from "react"
 import { List } from "react-feather"
+import { Virtuoso } from "react-virtuoso"
 import { z } from "zod"
 import { useLocalStorage } from "~/helpers/use-local-storage"
 import type { SupabaseSchema } from "~/supabase.server"
@@ -72,21 +73,25 @@ export function LogsButton({
       >
         <List />
       </Button>
-      <ul
+      <div
         ref={floating.floating}
-        className="overlay-scrollbar flex flex-col items-end gap-2"
         style={{
           position: floating.strategy,
           left: floating.x ?? 0,
           top: floating.y ?? 0,
         }}
       >
-        {logs.map((log) => (
-          <li key={log.id}>
-            <DiceLogEntry log={log} />
-          </li>
-        ))}
-      </ul>
+        <Virtuoso
+          data={logs}
+          itemContent={(index, log) => (
+            <div className="flex justify-end pt-2">
+              <DiceLogEntry log={log} />
+            </div>
+          )}
+          className="overlay-scrollbar h-full w-96"
+          followOutput="smooth"
+        />
+      </div>
     </div>
   )
 }

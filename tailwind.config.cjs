@@ -15,7 +15,8 @@ module.exports = {
     plugin(function overlayScrollbarComponent({ addComponents, theme }) {
       addComponents({
         ".overlay-scrollbar": {
-          "overflow": "overlay",
+          "overflow-x": "overlay !important",
+          "overflow-y": "overlay !important",
           "&::-webkit-scrollbar": {
             width: theme("width.1"),
             height: theme("width.1"),
