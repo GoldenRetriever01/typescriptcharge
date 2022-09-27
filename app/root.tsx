@@ -21,7 +21,7 @@ import { clearButtonClass, raisedPanelClass } from "~/ui/styles"
 import favicon from "./assets/favicon.svg"
 import { env } from "./env.server"
 import { loadAuth } from "./features/auth/load-auth"
-import { DiceButton } from "./features/multiplayer/dice"
+import { DiceButton } from "~/features/dice/dice-roller"
 import { LiveCursors } from "./features/multiplayer/live-cursors"
 import {
   defaultRoomId,

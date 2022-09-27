@@ -3,7 +3,7 @@ import { Hexagon } from "react-feather"
 import { Button } from "~/ui/button"
 import { blackCircleIconButtonClass } from "~/ui/styles"
 
-export function DiceButton() {
+export function DiceRoller() {
   const fetcher = useFetcher()
   return (
     <fetcher.Form action="/api/roll" method="post">
