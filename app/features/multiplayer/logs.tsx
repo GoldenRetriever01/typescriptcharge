@@ -1,6 +1,6 @@
 import { autoUpdate, offset, useFloating } from "@floating-ui/react-dom"
 import type { SupabaseClient } from "@supabase/supabase-js"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { List } from "react-feather"
 import { z } from "zod"
 import { useLocalStorage } from "~/helpers/use-local-storage"
@@ -24,22 +24,47 @@ function normalizedRollText(dice: Die[]) {
   return [...counts].map(([result, count]) => `${count}d${result}`).join(" + ")
 }
 
-function parseDiceJson(json: string) {
+function parseDiceJson(input: string | object) {
   try {
-    return diceSchema.parse(JSON.parse(json))
+    return diceSchema.parse(
+      typeof input === "string" ? JSON.parse(input) : input,
+    )
   } catch (error) {
-    console.warn("Failed to parse dice:", json, error)
+    console.warn("Failed to parse dice:", input, error)
   }
 }
+
+type DiceLog = SupabaseSchema["public"]["Tables"]["dice-logs"]["Row"]
 
 export function LogsButton({
   supabaseClient,
   initialLogs,
 }: {
   supabaseClient: SupabaseClient<SupabaseSchema>
-  initialLogs: Array<SupabaseSchema["public"]["Tables"]["dice-logs"]["Row"]>
+  initialLogs: DiceLog[]
 }) {
   const [logs, setLogs] = useState(initialLogs)
+
+  useEffect(() => {
+    const sub = supabaseClient
+      .channel("public:dice-logs")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "dice-logs",
+        },
+        (payload: { new: DiceLog }) => {
+          setLogs((logs) => [...logs, payload.new])
+        },
+      )
+      .subscribe()
+
+    return () => {
+      void sub.unsubscribe()
+    }
+  }, [supabaseClient])
 
   const [visible, setVisible] = useLocalStorage({
     key: "multiplayer-logs-visible",
