@@ -1,6 +1,6 @@
 import type { ActionArgs } from "@remix-run/node"
 import { redirect } from "@remix-run/node"
-import { loadAuth } from "~/features/auth/load-auth"
+import { getSessionUser } from "~/features/auth/session"
 import { defaultRoomId } from "~/features/multiplayer/liveblocks-client"
 import { supabase } from "~/supabase.server"
 
@@ -9,18 +9,14 @@ export function loader() {
 }
 
 export async function action({ request }: ActionArgs) {
-  const { discordUser, isAllowed } = await loadAuth(request)
-  if (!discordUser) {
+  const user = await getSessionUser(request)
+  if (!user) {
     return new Response("Unauthorized", { status: 401 })
-  }
-
-  if (!isAllowed) {
-    return new Response("Forbidden", { status: 403 })
   }
 
   await supabase.from("dice-logs").insert({
     roomId: defaultRoomId,
-    discordUserId: discordUser.id,
+    userId: user.id,
     dice: JSON.stringify([
       {
         sides: 6,

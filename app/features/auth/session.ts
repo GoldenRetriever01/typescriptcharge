@@ -1,9 +1,13 @@
 import { createCookie } from "@remix-run/node"
 import { z } from "zod"
 import { env } from "~/env.server"
+import { discordLogin } from "~/features/auth/discord"
+import { discordUserAllowList } from "~/features/auth/discord-allow-list"
+import { supabase } from "~/supabase.server"
+import { getDiscordAuthUser } from "./discord"
 
 const sessionSchema = z.object({
-  discordAccessToken: z.string(),
+  userId: z.string(),
 })
 export type Session = z.infer<typeof sessionSchema>
 
@@ -15,26 +19,72 @@ const sessionCookie = createCookie("session", {
   secrets: [env.COOKIE_SECRET],
 })
 
-export function createSessionCookie(discordAuthResponse: {
-  access_token: string
-  expires_in: number
-}) {
-  const session: Session = {
-    discordAccessToken: discordAuthResponse.access_token,
+export async function createSessionCookie(authCode: string) {
+  const loginResponse = await discordLogin(authCode)
+  const discordUser = await getDiscordAuthUser(loginResponse.access_token)
+
+  const result = await supabase
+    .from("discord-users")
+    .upsert(
+      {
+        discordId: discordUser.id,
+        username: discordUser.username,
+        discriminator: discordUser.discriminator,
+        avatar: `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}`,
+      },
+      { onConflict: "discordId" },
+    )
+    .select("*")
+    .single()
+
+  if (result.error) {
+    console.error("Failed to upsert Discord user", result.error)
+    return
   }
+
+  const session: Session = {
+    userId: result.data.discordId,
+  }
+
   return sessionCookie.serialize(session, {
-    maxAge: discordAuthResponse.expires_in,
+    maxAge: loginResponse.expires_in,
   })
 }
 
-export async function getSession(
+export type SessionUser = {
+  id: string
+  discordId: string
+  username: string
+  avatar: string | null
+  isAllowed: boolean
+}
+
+export async function getSessionUser(
   request: Request,
-): Promise<Session | undefined> {
+): Promise<SessionUser | undefined> {
   const session: unknown = await sessionCookie.parse(
     request.headers.get("cookie"),
   )
+
   const result = sessionSchema.safeParse(session)
-  return result.success ? result.data : undefined
+  if (!result.success) {
+    console.error("Failed to parse session", result.error)
+    return
+  }
+
+  const user = await supabase
+    .from("discord-users")
+    .select("*")
+    .eq("discordId", result.data.userId)
+    .single()
+
+  if (user.error) {
+    console.error("Failed to get user", user.error)
+    return
+  }
+
+  const isAllowed = discordUserAllowList.includes(user.data.discordId)
+  return { ...user.data, isAllowed }
 }
 
 export function createLogoutCookie() {

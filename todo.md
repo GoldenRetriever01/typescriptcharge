@@ -37,12 +37,13 @@
     - [x] dice total
     - [x] dice min
     - [x] dice max
-    - [x] rolled by
+    - [ ] rolled by
     - [x] scrollable
     - [x] stay scrolled at bottom
     - [x] subscribe to realtime dice logs
     - [x] toggle panel visibility
     - [x] animation
+    - [ ] bug: there's a slight period at the start where the supabase client subscription doesn't pick up dice rolls
 - [ ] cheatsheet for roll mechanics and momentum usages
 - [ ] error pages
 

@@ -9,7 +9,14 @@ export function getAuthorizeUrl() {
   return url.toString()
 }
 
-export async function discordLogin(authCode: string) {
+export type DiscordAuthResponse = {
+  access_token: string
+  expires_in: number
+}
+
+export async function discordLogin(
+  authCode: string,
+): Promise<DiscordAuthResponse> {
   const response = await fetch("https://discord.com/api/oauth2/token", {
     method: "POST",
     headers: {
@@ -42,6 +49,11 @@ export async function getDiscordAuthUser(
       Authorization: `Bearer ${accessToken}`,
     },
   })
-  const data = await response.json()
-  return data.user
+  try {
+    const data = await response.clone().json()
+    return data.user
+  } catch (error) {
+    console.warn(await response.text())
+    throw error
+  }
 }

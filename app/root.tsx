@@ -14,14 +14,14 @@ import clsx from "clsx"
 import type { ReactNode } from "react"
 import { useState } from "react"
 import { Book, Clock, Users } from "react-feather"
-import type { DiscordUser } from "~/features/auth/discord"
 import { DiceRoller } from "~/features/dice/dice-roller"
 import { truthyJoin } from "~/helpers/truthy-join"
 import { LoadingSuspense } from "~/ui/loading"
 import { clearButtonClass, raisedPanelClass } from "~/ui/styles"
 import favicon from "./assets/favicon.svg"
 import { env } from "./env.server"
-import { loadAuth } from "./features/auth/load-auth"
+import type { SessionUser } from "./features/auth/session"
+import { getSessionUser } from "./features/auth/session"
 import { LiveCursors } from "./features/multiplayer/live-cursors"
 import {
   defaultRoomId,
@@ -54,14 +54,13 @@ async function getWorldLogs() {
 }
 
 export async function loader({ request }: LoaderArgs) {
-  const [{ discordUser, isAllowed }, world, logs] = await Promise.all([
-    loadAuth(request),
+  const [user, world, logs] = await Promise.all([
+    getSessionUser(request),
     getWorldData(),
     getWorldLogs(),
   ])
   return {
-    discordUser,
-    isAllowed,
+    user,
     world,
     logs,
     supabaseUrl: env.SUPABASE_URL,
@@ -126,7 +125,7 @@ export default function App() {
       <body>
         <div className="mx-auto flex min-h-screen flex-col gap-4 p-4">
           <AuthGuard>
-            {({ discordUser }) => (
+            {({ user }) => (
               <>
                 <div className="mx-auto grid w-full max-w-screen-md gap-4">
                   <div className="my-2">
@@ -153,7 +152,7 @@ export default function App() {
                 <EmptySuspense>
                   {liveblocksEnabled && (
                     <RoomProvider id={defaultRoomId} {...defaultRoomInit}>
-                      <LiveCursors name={discordUser.username} />
+                      <LiveCursors name={user.username} />
                     </RoomProvider>
                   )}
                   <WorldTitle />
@@ -209,11 +208,11 @@ function HeaderLink({
 function AuthGuard({
   children,
 }: {
-  children: (props: { discordUser: DiscordUser }) => ReactNode
+  children: (props: { user: SessionUser }) => ReactNode
 }) {
   const data = useLoaderData<typeof loader>()
 
-  if (!data.discordUser) {
+  if (!data.user) {
     return (
       <main className="grid gap-4 p-8">
         <p>
@@ -227,7 +226,7 @@ function AuthGuard({
     )
   }
 
-  if (!data.isAllowed) {
+  if (!data.user.isAllowed) {
     return (
       <main className="grid gap-4 p-8">
         <p>
@@ -241,5 +240,5 @@ function AuthGuard({
     )
   }
 
-  return <>{children({ discordUser: data.discordUser })}</>
+  return <>{children({ user: data.user })}</>
 }

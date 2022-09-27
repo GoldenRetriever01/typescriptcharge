@@ -12,8 +12,7 @@ export function DiceLogEntry({ log }: { log: DatabaseDiceLog }): JSX.Element {
       <div className="flex flex-col gap-1">
         <Suspense>
           <p className="text-sm leading-none">
-            <span className="opacity-70">Rolled by</span>{" "}
-            <DiscordUsername id={log.discordUserId} />
+            <span className="opacity-70">Rolled by</span> {log.userId}
           </p>
         </Suspense>
 

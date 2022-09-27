@@ -1,23 +1,13 @@
 import { authorize } from "@liveblocks/node"
 import type { ActionArgs } from "@remix-run/node"
 import { env } from "~/env.server"
-import { discordUserAllowList } from "../../features/auth/discord-allow-list"
-import { getSession } from "../../features/auth/session"
-import { getDiscordAuthUser } from "~/features/auth/discord"
 import { defaultRoomId } from "~/features/multiplayer/liveblocks-client"
+import { getSessionUser } from "../../features/auth/session"
 
 export async function action({ request }: ActionArgs) {
-  const session = await getSession(request)
+  const user = await getSessionUser(request)
 
-  const discordUser =
-    session &&
-    (await getDiscordAuthUser(session.discordAccessToken).catch((error) => {
-      console.error("Failed to fetch Discord user:", error)
-    }))
-
-  const isAllowed = discordUser && discordUserAllowList.includes(discordUser.id)
-
-  const authResponse = isAllowed
+  const authResponse = user?.isAllowed
     ? await authorize({
         room: defaultRoomId,
         secret: env.LIVEBLOCKS_SECRET_KEY,

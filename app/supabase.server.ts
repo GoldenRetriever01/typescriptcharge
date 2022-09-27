@@ -31,17 +31,17 @@ export type SupabaseSchema = {
           id: string
           createdAt: string
           roomId: string
-          discordUserId: string
+          userId: string
           dice: string
         }
         Insert: {
           roomId: string
-          discordUserId: string
+          userId: string
           dice: string
         }
         Update: {
           roomId?: string
-          discordUserId?: string
+          userId?: string
           dice?: string
         }
       }
