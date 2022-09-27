@@ -1,3 +1,4 @@
+import { autoUpdate, offset, size, useFloating } from "@floating-ui/react-dom"
 import type { LinksFunction, LoaderArgs, MetaFunction } from "@remix-run/node"
 import {
   Links,
@@ -9,12 +10,13 @@ import {
   ScrollRestoration,
   useLoaderData,
 } from "@remix-run/react"
+import type { SupabaseClient } from "@supabase/supabase-js"
 import { createClient } from "@supabase/supabase-js"
 import clsx from "clsx"
 import type { ReactNode } from "react"
 import { useState } from "react"
 import { Book, Clock, Users } from "react-feather"
-import { DiceRoller } from "~/features/dice/dice-roller"
+import { DicePanel, DicePanelButton } from "~/features/dice/dice-panel"
 import { truthyJoin } from "~/helpers/truthy-join"
 import { LoadingSuspense } from "~/ui/loading"
 import { clearButtonClass, raisedPanelClass } from "~/ui/styles"
@@ -32,12 +34,14 @@ import {
   useLiveblocksEnabled,
 } from "./features/multiplayer/liveblocks-connection-toggle"
 import { RoomProvider } from "./features/multiplayer/liveblocks-react"
-import { LogsButton } from "./features/multiplayer/logs"
+import { LogsPanel, LogsPanelButton } from "./features/multiplayer/logs"
 import { getWorldData } from "./features/world/actions.server"
 import { WorldTitle } from "./features/world/world-title"
 import tailwind from "./generated/tailwind.css"
+import type { SupabaseSchema } from "./supabase.server"
 import { supabase } from "./supabase.server"
 import { EmptySuspense } from "./ui/loading"
+import { Portal } from "./ui/portal"
 
 async function getWorldLogs() {
   const result = await supabase
@@ -138,16 +142,7 @@ export default function App() {
                   </div>
                 </div>
 
-                <div className="sticky bottom-4 mt-auto flex flex-wrap items-center justify-end gap-2">
-                  {process.env.NODE_ENV !== "production" && (
-                    <LiveblocksConnectionToggle />
-                  )}
-                  <DiceRoller />
-                  <LogsButton
-                    supabaseClient={supabaseClient}
-                    initialLogs={data.logs}
-                  />
-                </div>
+                <FooterActions supabaseClient={supabaseClient} />
 
                 <EmptySuspense>
                   {liveblocksEnabled && (
@@ -241,4 +236,64 @@ function AuthGuard({
   }
 
   return <>{children({ user: data.user })}</>
+}
+
+function FooterActions({
+  supabaseClient,
+}: {
+  supabaseClient: SupabaseClient<SupabaseSchema>
+}) {
+  const data = useLoaderData<typeof loader>()
+
+  const floating = useFloating({
+    placement: "top-end",
+    strategy: "fixed", // fixed positioning causes less shifting while scrolling
+    middleware: [
+      offset(8),
+      size({
+        padding: 16,
+        apply: ({ elements, availableHeight }) => {
+          elements.floating.style.height = `${availableHeight}px`
+        },
+      }),
+    ],
+    whileElementsMounted: autoUpdate,
+  })
+
+  return (
+    <>
+      <Portal>
+        <div
+          ref={floating.floating}
+          className="pointer-events-none flex h-fit flex-col items-end justify-end gap-4"
+          style={{
+            position: floating.strategy,
+            left: floating.x ?? 0,
+            top: floating.y ?? 0,
+          }}
+        >
+          <div className="flex-1 [&>*]:pointer-events-auto">
+            <LogsPanel
+              initialLogs={data.logs}
+              supabaseClient={supabaseClient}
+            />
+          </div>
+          <div className="contents [&>*]:pointer-events-auto">
+            <DicePanel />
+          </div>
+        </div>
+      </Portal>
+
+      <div
+        className="sticky bottom-4 mt-auto flex flex-wrap items-center justify-end gap-2"
+        ref={floating.reference}
+      >
+        {process.env.NODE_ENV !== "production" && (
+          <LiveblocksConnectionToggle />
+        )}
+        <DicePanelButton />
+        <LogsPanelButton />
+      </div>
+    </>
+  )
 }

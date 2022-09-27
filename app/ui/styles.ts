@@ -37,3 +37,9 @@ export const labelTextClass = clsx("mb-1.5 text-sm font-medium leading-none")
 export const raisedPanelClass = clsx(
   "grid gap-4 border-2 border-gray-600 bg-gray-700 shadow-md shadow-[rgba(0,0,0,0.25)]",
 )
+
+export const slideRightTransition = (visible: boolean) =>
+  clsx(
+    "transition-all",
+    visible ? "visible opacity-100" : "invisible translate-x-4 opacity-0",
+  )
