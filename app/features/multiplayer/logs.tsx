@@ -1,18 +1,25 @@
 import { autoUpdate, offset, size, useFloating } from "@floating-ui/react-dom"
+import { useStore } from "@nanostores/react"
 import type { SupabaseClient } from "@supabase/supabase-js"
 import clsx from "clsx"
 import { useEffect, useState } from "react"
 import { List } from "react-feather"
 import { Virtuoso } from "react-virtuoso"
 import { z } from "zod"
+import { createLocalStorageStore } from "~/helpers/local-storage"
 import { useEvent } from "~/helpers/react"
-import { useLocalStorage } from "~/helpers/use-local-storage"
 import type { SupabaseSchema } from "~/supabase.server"
 import { Button } from "~/ui/button"
 import { Portal } from "~/ui/portal"
 import { blackCircleIconButtonClass } from "~/ui/styles"
 import type { DatabaseDiceLog } from "../dice/dice-data"
 import { DiceLogEntry } from "../dice/dice-log-entry"
+
+const logsVisibleStore = createLocalStorageStore({
+  key: "logsVisible",
+  fallback: false,
+  schema: z.boolean(),
+})
 
 export function LogsButton({
   supabaseClient,
@@ -23,12 +30,7 @@ export function LogsButton({
 }) {
   const [logs, setLogs] = useState(initialLogs)
   const [unread, setUnread] = useState(false)
-
-  const [visible, setVisible] = useLocalStorage({
-    key: "multiplayer-logs-visible",
-    fallback: false,
-    schema: z.boolean(),
-  })
+  const visible = useStore(logsVisibleStore)
 
   const handleLogAdded = useEvent((log: DatabaseDiceLog) => {
     setLogs((logs) => [...logs, log])
@@ -77,7 +79,7 @@ export function LogsButton({
         type="button"
         title="View logs"
         onClick={() => {
-          setVisible(!visible)
+          logsVisibleStore.set(!logsVisibleStore.get())
           setUnread(false)
         }}
         ref={floating.reference}
