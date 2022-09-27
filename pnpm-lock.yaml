@@ -9,6 +9,7 @@ specifiers:
   '@liveblocks/client': ^0.18.2
   '@liveblocks/node': ^0.18.2
   '@liveblocks/react': ^0.18.2
+  '@nanostores/react': ^0.4.0
   '@netlify/functions': ^1.2.0
   '@remix-run/dev': ^1.7.2
   '@remix-run/netlify': ^1.7.2
@@ -25,11 +26,14 @@ specifiers:
   '@types/react': ^18.0.21
   '@types/react-dom': ^18.0.6
   ariakit: 2.0.0-next.41
+  chalk: ^5.0.1
   clsx: ^1.2.1
   cross-fetch: ^3.1.5
+  dotenv: ^16.0.2
   esbuild: ^0.15.9
   eslint: ^8.24.0
   eslint-plugin-tailwindcss: ^3.6.2
+  nanostores: ^0.7.0
   netlify-cli: ^11.8.3
   node-cron: ^3.0.2
   npm-run-all: ^4.1.5
@@ -51,14 +55,18 @@ dependencies:
   '@liveblocks/client': 0.18.2
   '@liveblocks/node': 0.18.2
   '@liveblocks/react': 0.18.2_ku3zmj76seudio3fm5hgypxz3q
+  '@nanostores/react': 0.4.0_kumziggp74xxkphhh7wyh33hzm
   '@netlify/functions': 1.2.0
   '@remix-run/netlify': 1.7.2_hpdjxbbufc6x2yaacuadn5mdum
   '@remix-run/node': 1.7.2_biqbaboplfbrettd7655fr4n2y
   '@remix-run/react': 1.7.2_biqbaboplfbrettd7655fr4n2y
   '@supabase/supabase-js': 1.35.7
   ariakit: 2.0.0-next.41_biqbaboplfbrettd7655fr4n2y
+  chalk: 5.0.1
   clsx: 1.2.1
   cross-fetch: 3.1.5
+  dotenv: 16.0.2
+  nanostores: 0.7.0
   node-cron: 3.0.2
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
@@ -1685,6 +1693,20 @@ packages:
       call-me-maybe: 1.0.1
       glob-to-regexp: 0.3.0
     dev: true
+
+  /@nanostores/react/0.4.0_kumziggp74xxkphhh7wyh33hzm:
+    resolution: {integrity: sha512-u7Y3s1B4hwsBxpIxClx0F/Q7TF1AsCU/F7Tt3n+tWeCebQ0cs2spthmskJY689XIMTRJXfBZF83kJDaDZeavVA==}
+    engines: {node: ^14.0.0 || ^16.0.0 || >=18.0.0}
+    peerDependencies:
+      nanostores: ^0.7.0
+      react: '>=18.0.0'
+      react-dom: '>=18.0.0'
+    dependencies:
+      nanostores: 0.7.0
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      use-sync-external-store: 1.2.0_react@18.2.0
+    dev: false
 
   /@netlify/binary-info/1.0.0:
     resolution: {integrity: sha512-4wMPu9iN3/HL97QblBsBay3E1etIciR84izI3U+4iALY+JHCrI+a2jO0qbAZ/nxKoegypYEaiiqWXylm+/zfrw==}
@@ -4289,7 +4311,6 @@ packages:
   /chalk/5.0.1:
     resolution: {integrity: sha512-Fo07WOYGqMfCWHOzSXOt2CxDbC6skS/jO9ynEcmpANMoPrD+W1r1K6Vx7iNm+AQmETU1Xr2t+n8nzkV9t6xh3w==}
     engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
-    dev: true
 
   /character-entities-html4/2.1.0:
     resolution: {integrity: sha512-1v7fgQRj6hnSwFpq1Eu0ynr/CDEw0rXo2B61qXrLNdHZmPKgb7fqS1a2JwF0rISo9q77jDI8VMEHoApn8qDoZA==}
@@ -5343,7 +5364,6 @@ packages:
   /dotenv/16.0.2:
     resolution: {integrity: sha512-JvpYKUmzQhYoIFgK2MOnF3bciIZoItIIoryihy0rIA+H4Jy0FmgyKYAHCTN98P5ybGSJcIFbh6QKeJdtZd1qhA==}
     engines: {node: '>=12'}
-    dev: true
 
   /download/8.0.0:
     resolution: {integrity: sha512-ASRY5QhDk7FK+XrQtQyvhpDKanLluEEQtWl/J7Lxuf/b+i8RYh997QeXvL85xitrmRKVlx9c7eTrcRdq2GS4eA==}
@@ -9619,6 +9639,11 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /nanostores/0.7.0:
+    resolution: {integrity: sha512-y+ma9MVXuPzXKEXaRYW/iL/xG/HtMwB8fmFcMfUqt5fCNR/na2kDubbZGV4furUMTgmxfySJs0cQjORWhaPDyA==}
+    engines: {node: ^14.0.0 || ^16.0.0 || >=18.0.0}
+    dev: false
 
   /natural-compare/1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}

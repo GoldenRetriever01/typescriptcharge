@@ -13,7 +13,7 @@ import { simpleTransition } from "~/ui/transition"
 export function LogsButton() {
   const [visible, setVisible] = useLocalStorage({
     key: "multiplayer-logs-visible",
-    defaultValue: false,
+    fallback: false,
     schema: z.boolean(),
   })
 

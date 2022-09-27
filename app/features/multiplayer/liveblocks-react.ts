@@ -3,7 +3,7 @@ import type {
   Presence,
   Storage,
 } from "~/features/multiplayer/liveblocks-client"
-import { createLiveblocksClient } from "~/features/multiplayer/liveblocks-client"
+import { getLiveblocksClient } from "~/features/multiplayer/liveblocks-client"
 
 export const {
   suspense: {
@@ -13,4 +13,4 @@ export const {
     useStorage,
     useMutation,
   },
-} = createRoomContext<Presence, Storage>(createLiveblocksClient())
+} = createRoomContext<Presence, Storage>(getLiveblocksClient())

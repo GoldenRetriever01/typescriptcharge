@@ -1,38 +1,34 @@
-import { useCallback, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import type { z } from "zod"
 import { useEvent } from "./react"
 
-export function useLocalStorage<T>(options: {
+export type UseLocalStorageOptions<T> = {
   key: string
-  defaultValue: T
+  fallback: T
   schema: z.ZodType<T>
-}) {
-  const [value, setValue] = useState<T>()
+}
 
-  const initValue = useEvent((key: string, schema: z.ZodType<T>) => {
-    const storedValue = localStorage.getItem(key)
+export function useLocalStorage<T>(options: UseLocalStorageOptions<T>) {
+  const [internalValue, setInternalValue] = useState<T>()
+
+  const init = useEvent((key: string) => {
     try {
-      setValue(
+      const storedValue = localStorage.getItem(key)
+      setInternalValue(
         storedValue
-          ? schema.parse(JSON.parse(storedValue))
-          : options.defaultValue,
+          ? options.schema.parse(JSON.parse(storedValue))
+          : options.fallback,
       )
     } catch {
-      setValue(options.defaultValue)
+      setInternalValue(options.fallback)
     }
   })
+  useEffect(() => init(options.key), [init, options.key])
 
-  useEffect(() => {
-    initValue(options.key, options.schema)
-  }, [initValue, options.key, options.schema])
+  const setValue = useEvent((value: T) => {
+    setInternalValue(value)
+    localStorage.setItem(options.key, JSON.stringify(value))
+  })
 
-  const setItem = useCallback(
-    (newValue: T) => {
-      setValue(newValue)
-      localStorage.setItem(options.key, JSON.stringify(newValue))
-    },
-    [options.key],
-  )
-
-  return [value, setItem] as const
+  return [internalValue, setValue] as const
 }

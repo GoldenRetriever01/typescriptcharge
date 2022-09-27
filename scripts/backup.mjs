@@ -1,17 +1,24 @@
 import { createClient } from "@supabase/supabase-js"
+import chalk from "chalk"
 import fetch from "cross-fetch"
+import "dotenv/config"
 import cron from "node-cron"
 
 const supabase = createClient(
   // @ts-expect-error
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_KEY,
+  process.env.SUPABASE_SERVICE_KEY,
 )
 
-console.info("Starting backup cron job")
+if (process.argv.includes("--now")) {
+  await backup()
+} else {
+  console.info(chalk.dim("⚙ Starting backup cron job"))
+  cron.schedule(`0 1 * * *`, backup)
+}
 
-cron.schedule(`0 1 * * *`, async () => {
-  console.info("Running backup...")
+async function backup() {
+  console.info(chalk.dim("📥 Fetching storage..."))
 
   const data = await fetch(
     `https://api.liveblocks.io/v2/rooms/default/storage`,
@@ -22,12 +29,14 @@ cron.schedule(`0 1 * * *`, async () => {
     },
   ).then((res) => res.json())
 
+  console.info(chalk.dim("🚀 Uploading..."))
+
   const { error } = await supabase.storage
     .from("liveblocks-backup")
     .upload(`backup-${Date.now()}.json`, JSON.stringify(data))
 
   if (error) {
-    console.error("Supabase upload failed:", error)
+    console.error(chalk.red("❌ Supabase upload failed:"), error)
   }
-  console.info("Done")
-})
+  console.info(chalk.green("✅ Done"))
+}
