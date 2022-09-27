@@ -116,8 +116,8 @@ export default function App() {
   return (
     <html
       lang="en"
-      className="font-body overflow-x-hidden overflow-y-scroll break-words bg-gray-800 text-gray-100"
-      style={{ wordBreak: "break-word" }}
+      className="font-body overflow-y-auto break-words bg-gray-800 text-gray-100"
+      style={{ wordBreak: "break-word", scrollbarGutter: "stable" }}
     >
       <head>
         <Meta />
