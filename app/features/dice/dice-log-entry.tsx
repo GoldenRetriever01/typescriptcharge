@@ -4,7 +4,7 @@ import type { DatabaseDiceLog } from "./dice-data"
 export function DiceLogEntry({ log }: { log: DatabaseDiceLog }): JSX.Element {
   const dice = parseDiceJson(log.dice)
   return (
-    <div className="flex items-center gap-6 rounded-md bg-black/75 px-6 py-4 shadow-md">
+    <div className="flex items-center gap-6 rounded-md bg-black/75 px-6 py-4">
       <div className="flex flex-col gap-1">
         <p className="text-sm leading-none">
           <span className="opacity-70">Rolled by</span> {log.discordUserId}

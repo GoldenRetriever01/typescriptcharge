@@ -1,4 +1,4 @@
-import { autoUpdate, offset, useFloating } from "@floating-ui/react-dom"
+import { autoUpdate, offset, size, useFloating } from "@floating-ui/react-dom"
 import type { SupabaseClient } from "@supabase/supabase-js"
 import { useEffect, useState } from "react"
 import { List } from "react-feather"
@@ -51,13 +51,12 @@ export function LogsButton({
     strategy: "fixed", // fixed positioning causes less shifting while scrolling
     middleware: [
       offset(8),
-      // size({
-      //   padding: 16,
-      //   apply: ({ elements, availableWidth, availableHeight }) => {
-      //     elements.floating.style.width = `${availableWidth}px`
-      //     elements.floating.style.height = `${availableHeight}px`
-      //   },
-      // }),
+      size({
+        padding: 16,
+        apply: ({ elements, availableWidth, availableHeight }) => {
+          elements.floating.style.height = `${availableHeight}px`
+        },
+      }),
     ],
     whileElementsMounted: autoUpdate,
   })
@@ -75,7 +74,7 @@ export function LogsButton({
       </Button>
       <ul
         ref={floating.floating}
-        className="flex flex-col items-end gap-2"
+        className="overlay-scrollbar flex flex-col items-end gap-2"
         style={{
           position: floating.strategy,
           left: floating.x ?? 0,

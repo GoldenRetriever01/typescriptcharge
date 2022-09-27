@@ -15,13 +15,13 @@ import type { ReactNode } from "react"
 import { useState } from "react"
 import { Book, Clock, Users } from "react-feather"
 import type { DiscordUser } from "~/features/auth/discord"
+import { DiceRoller } from "~/features/dice/dice-roller"
 import { truthyJoin } from "~/helpers/truthy-join"
 import { LoadingSuspense } from "~/ui/loading"
 import { clearButtonClass, raisedPanelClass } from "~/ui/styles"
 import favicon from "./assets/favicon.svg"
 import { env } from "./env.server"
 import { loadAuth } from "./features/auth/load-auth"
-import { DiceButton } from "~/features/dice/dice-roller"
 import { LiveCursors } from "./features/multiplayer/live-cursors"
 import {
   defaultRoomId,
@@ -143,7 +143,7 @@ export default function App() {
                   {process.env.NODE_ENV !== "production" && (
                     <LiveblocksConnectionToggle />
                   )}
-                  <DiceButton />
+                  <DiceRoller />
                   <LogsButton
                     supabaseClient={supabaseClient}
                     initialLogs={data.logs}
