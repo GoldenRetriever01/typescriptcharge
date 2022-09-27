@@ -54,7 +54,7 @@ export function LogsButton() {
         <List />
       </Disclosure>
 
-      <Transition.Root show={visible ?? false}>
+      <Transition.Root show={visible ?? false} className="contents">
         <Portal>
           <div
             className="max-w-sm gap-2"
