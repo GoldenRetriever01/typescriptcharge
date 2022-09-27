@@ -7,6 +7,7 @@ module.exports = {
       : undefined,
   ignoredRouteFiles: ["**/.*"],
   devServerPort: 8002,
+  serverDependenciesToBundle: ["nanostores", "@nanostores/react"],
   // appDirectory: "app",
   // assetsBuildDirectory: "public/build",
   // serverBuildPath: ".netlify/functions-internal/server.js",

@@ -1,29 +1,11 @@
+import { useStore } from "@nanostores/react"
 import TextArea from "react-expanding-textarea"
-import {
-  useMutation,
-  useStorage,
-} from "~/features/multiplayer/liveblocks-react"
-import type { World } from "~/features/world/world"
+import { updateWorld, worldStore } from "~/features/world/world-store"
 import { Field } from "~/ui/field"
 import { inputClass, textAreaClass } from "~/ui/styles"
 
 export default function WorldPage() {
-  return <WorldEditor />
-}
-
-function WorldEditor() {
-  const world = useStorage((root) => root.world) ?? {
-    name: "New World",
-    description: "A brand new world",
-  }
-
-  const updateWorld = useMutation(
-    (context, updates: Partial<World>) => {
-      context.storage.set("world", { ...world, ...updates })
-    },
-    [world],
-  )
-
+  const world = useStore(worldStore)
   return (
     <>
       <Field label="Name">
