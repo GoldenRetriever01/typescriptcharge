@@ -1,47 +1,22 @@
 import { autoUpdate, offset, useFloating } from "@floating-ui/react-dom"
+import type { SupabaseClient } from "@supabase/supabase-js"
+import { useState } from "react"
 import { List } from "react-feather"
 import { z } from "zod"
 import { useLocalStorage } from "~/helpers/use-local-storage"
+import type { SupabaseSchema } from "~/supabase.server"
 import { Button } from "~/ui/button"
 import { blackCircleIconButtonClass } from "~/ui/styles"
 
-type DiceRollLog = {
-  id: string
-  rolledBy: { id: string; name: string; avatarUrl?: string }
-  dice: RolledDie[]
-}
+const dieSchema = z.object({
+  sides: z.number().int().positive(),
+  result: z.number().int().positive(),
+})
+type Die = z.infer<typeof dieSchema>
 
-type RolledDie = {
-  sides: number
-  result: number
-}
+const diceSchema = z.array(dieSchema)
 
-const logs: DiceRollLog[] = [
-  {
-    id: Math.random().toString(),
-    rolledBy: { id: "1", name: "maple" },
-    dice: [
-      { sides: 6, result: 5 },
-      { sides: 6, result: 2 },
-      { sides: 6, result: 4 },
-    ],
-  },
-  {
-    id: Math.random().toString(),
-    rolledBy: { id: "1", name: "emik" },
-    dice: [
-      { sides: 6, result: 1 },
-      { sides: 6, result: 1 },
-    ],
-  },
-  {
-    id: Math.random().toString(),
-    rolledBy: { id: "1", name: "craw" },
-    dice: [{ sides: 6, result: 6 }],
-  },
-]
-
-function normalizedRollText(dice: RolledDie[]) {
+function normalizedRollText(dice: Die[]) {
   const counts = new Map<number, number>()
   for (const die of dice) {
     counts.set(die.sides, (counts.get(die.sides) ?? 0) + 1)
@@ -49,7 +24,23 @@ function normalizedRollText(dice: RolledDie[]) {
   return [...counts].map(([result, count]) => `${count}d${result}`).join(" + ")
 }
 
-export function LogsButton() {
+function parseDiceJson(json: string) {
+  try {
+    return diceSchema.parse(JSON.parse(json))
+  } catch (error) {
+    console.warn("Failed to parse dice:", json, error)
+  }
+}
+
+export function LogsButton({
+  supabaseClient,
+  initialLogs,
+}: {
+  supabaseClient: SupabaseClient<SupabaseSchema>
+  initialLogs: Array<SupabaseSchema["public"]["Tables"]["dice-logs"]["Row"]>
+}) {
+  const [logs, setLogs] = useState(initialLogs)
+
   const [visible, setVisible] = useLocalStorage({
     key: "multiplayer-logs-visible",
     fallback: false,
@@ -92,55 +83,75 @@ export function LogsButton() {
           top: floating.y ?? 0,
         }}
       >
-        {logs.map((log) => (
-          <li
-            key={log.id}
-            className="flex items-center gap-6 rounded-md bg-black/75 px-6 py-4 shadow-md"
-          >
-            <div className="flex flex-col gap-1">
-              <p className="text-sm leading-none">
-                <span className="opacity-70">Rolled by</span>{" "}
-                {log.rolledBy.name}
-              </p>
-              <ul className="flex gap-1">
-                {log.dice.map((die, index) => (
-                  <li
-                    key={index}
-                    className="relative flex items-center justify-center"
-                  >
-                    <HexagonFilled className="h-8 w-8" />
-                    <span className="absolute translate-y-[1px] font-medium text-gray-800">
-                      {die.result}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-              <p className="text-sm">
-                <span className="opacity-75">
-                  {normalizedRollText(log.dice)}
-                </span>{" "}
-                = {log.dice.reduce((sum, die) => sum + die.result, 0)}
-              </p>
-            </div>
-            <div className="-my-1 w-1 self-stretch rounded bg-white/25" />
-            <div className="flex flex-col items-center gap-0.5 text-center leading-none">
-              <p>
-                <span className="inline-block text-xs opacity-75">Max</span>
-                <br />
-                <span className="text-lg font-medium leading-tight">
-                  {Math.max(...log.dice.map((die) => die.result))}
-                </span>
-              </p>
-              <p>
-                <span className="inline-block text-xs opacity-75">Min</span>
-                <br />
-                <span className="text-lg font-medium leading-tight">
-                  {Math.min(...log.dice.map((die) => die.result))}
-                </span>
-              </p>
-            </div>
-          </li>
-        ))}
+        {logs.map((log) => {
+          const dice = parseDiceJson(log.dice)
+          return (
+            <li
+              key={log.id}
+              className="flex items-center gap-6 rounded-md bg-black/75 px-6 py-4 shadow-md"
+            >
+              <div className="flex flex-col gap-1">
+                <p className="text-sm leading-none">
+                  <span className="opacity-70">Rolled by</span>{" "}
+                  {log.discordUserId}
+                </p>
+
+                {dice ? (
+                  <>
+                    <ul className="flex gap-1">
+                      {dice.map((die, index) => (
+                        <li
+                          key={index}
+                          className="relative flex items-center justify-center"
+                        >
+                          <HexagonFilled className="h-8 w-8" />
+                          <span className="absolute translate-y-[1px] font-medium text-gray-800">
+                            {die.result}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                    <p className="text-sm">
+                      <span className="opacity-75">
+                        {normalizedRollText(dice)}
+                      </span>{" "}
+                      = {dice.reduce((sum, die) => sum + die.result, 0)}
+                    </p>
+                  </>
+                ) : (
+                  <p className="text-sm leading-none text-red-400">
+                    Failed to parse dice
+                  </p>
+                )}
+              </div>
+              {dice && (
+                <>
+                  <div className="-my-1 w-1 self-stretch rounded bg-white/25" />
+                  <div className="flex flex-col items-center gap-0.5 text-center leading-none">
+                    <p>
+                      <span className="inline-block text-xs opacity-75">
+                        Max
+                      </span>
+                      <br />
+                      <span className="text-lg font-medium leading-tight">
+                        {Math.max(...dice.map((die) => die.result))}
+                      </span>
+                    </p>
+                    <p>
+                      <span className="inline-block text-xs opacity-75">
+                        Min
+                      </span>
+                      <br />
+                      <span className="text-lg font-medium leading-tight">
+                        {Math.min(...dice.map((die) => die.result))}
+                      </span>
+                    </p>
+                  </div>
+                </>
+              )}
+            </li>
+          )
+        })}
       </ul>
     </div>
   )

@@ -9,17 +9,18 @@ import {
   ScrollRestoration,
   useLoaderData,
 } from "@remix-run/react"
+import { createClient } from "@supabase/supabase-js"
 import clsx from "clsx"
 import type { ReactNode } from "react"
+import { useState } from "react"
 import { Book, Clock, Users } from "react-feather"
 import type { DiscordUser } from "~/features/auth/discord"
-import { getDiscordAuthUser } from "~/features/auth/discord"
 import { truthyJoin } from "~/helpers/truthy-join"
 import { LoadingSuspense } from "~/ui/loading"
 import { clearButtonClass, raisedPanelClass } from "~/ui/styles"
 import favicon from "./assets/favicon.svg"
-import { discordUserAllowList } from "./features/auth/discord-allow-list"
-import { getSession } from "./features/auth/session"
+import { env } from "./env.server"
+import { loadAuth } from "./features/auth/load-auth"
 import { DiceButton } from "./features/multiplayer/dice"
 import { LiveCursors } from "./features/multiplayer/live-cursors"
 import {
@@ -35,22 +36,37 @@ import { LogsButton } from "./features/multiplayer/logs"
 import { getWorldData } from "./features/world/actions.server"
 import { WorldTitle } from "./features/world/world-title"
 import tailwind from "./generated/tailwind.css"
+import { supabase } from "./supabase.server"
 import { EmptySuspense } from "./ui/loading"
 
+async function getWorldLogs() {
+  const result = await supabase
+    .from("dice-logs")
+    .select("*")
+    .order("createdAt", { ascending: false })
+    .limit(100)
+
+  if (result.error) {
+    console.error("Failed to fetch world logs", result.error)
+  }
+
+  return result.data ?? []
+}
+
 export async function loader({ request }: LoaderArgs) {
-  const session = await getSession(request)
-
-  const discordUser =
-    session &&
-    (await getDiscordAuthUser(session.discordAccessToken).catch((error) => {
-      console.warn("Failed to fetch Discord user", error)
-    }))
-
-  const isAllowed = discordUser && discordUserAllowList.includes(discordUser.id)
-
-  const world = await getWorldData()
-
-  return { discordUser, isAllowed, world }
+  const [{ discordUser, isAllowed }, world, logs] = await Promise.all([
+    loadAuth(request),
+    getWorldData(),
+    getWorldLogs(),
+  ])
+  return {
+    discordUser,
+    isAllowed,
+    world,
+    logs,
+    supabaseUrl: env.SUPABASE_URL,
+    supabaseAnonKey: env.SUPABASE_ANON_KEY,
+  }
 }
 
 export const unstable_shouldReload = () => false
@@ -89,7 +105,14 @@ export const links: LinksFunction = () => [
 ]
 
 export default function App() {
+  const data = useLoaderData<typeof loader>()
+
   const liveblocksEnabled = useLiveblocksEnabled()
+
+  const [supabaseClient] = useState(() =>
+    createClient(data.supabaseUrl, data.supabaseAnonKey),
+  )
+
   return (
     <html
       lang="en"
@@ -121,7 +144,10 @@ export default function App() {
                     <LiveblocksConnectionToggle />
                   )}
                   <DiceButton />
-                  <LogsButton />
+                  <LogsButton
+                    supabaseClient={supabaseClient}
+                    initialLogs={data.logs}
+                  />
                 </div>
 
                 <EmptySuspense>
