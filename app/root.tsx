@@ -93,7 +93,8 @@ export default function App() {
   return (
     <html
       lang="en"
-      className="font-body overflow-x-hidden overflow-y-scroll bg-gray-800 text-gray-100"
+      className="font-body overflow-x-hidden overflow-y-scroll break-words bg-gray-800 text-gray-100"
+      style={{ wordBreak: "break-word" }}
     >
       <head>
         <Meta />
@@ -114,6 +115,7 @@ export default function App() {
                     </LoadingSuspense>
                   </div>
                 </div>
+
                 <div className="sticky bottom-4 mt-auto flex flex-wrap items-center justify-end gap-2">
                   {process.env.NODE_ENV !== "production" && (
                     <LiveblocksConnectionToggle />
@@ -121,6 +123,7 @@ export default function App() {
                   <DiceButton />
                   <LogsButton />
                 </div>
+
                 <EmptySuspense>
                   {liveblocksEnabled && (
                     <RoomProvider id={defaultRoomId} {...defaultRoomInit}>
@@ -143,7 +146,7 @@ export default function App() {
 
 function MainNav() {
   return (
-    <nav className="flex flex-wrap items-center gap-6">
+    <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 sm:justify-start">
       <HeaderLink to="/">
         <Book size={20} /> World
       </HeaderLink>
