@@ -65,6 +65,7 @@ export async function getSessionUser(
   const session: unknown = await sessionCookie.parse(
     request.headers.get("cookie"),
   )
+  if (!session) return
 
   const result = sessionSchema.safeParse(session)
   if (!result.success) {
