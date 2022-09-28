@@ -1,15 +1,16 @@
 import { Dialog, Transition } from "@headlessui/react"
 import { LiveList } from "@liveblocks/client"
 import { useStore } from "@nanostores/react"
-import { Link, useNavigate, useParams } from "@remix-run/react"
+import { Link, useFetcher, useNavigate, useParams } from "@remix-run/react"
 import clsx from "clsx"
 import { atom } from "nanostores"
 import { Fragment, useState } from "react"
 import TextArea from "react-expanding-textarea"
-import { Plus, Trash, X } from "react-feather"
+import { Hexagon, Plus, Trash, X } from "react-feather"
 import { characterActionLibrary } from "~/features/characters/character-actions"
 import type { Character } from "~/features/characters/character-sheet-data"
 import { Clock } from "~/features/clocks/clock"
+import { setDiceRoll } from "~/features/dice/dice-button-d6"
 import { syncStoreWithLiveblocks } from "~/features/multiplayer/liveblocks-client"
 import { entriesTyped } from "~/helpers/entries-typed"
 import { Button } from "~/ui/button"
@@ -116,6 +117,7 @@ export default function CharactersPage() {
 }
 
 function CharacterSheetEditor({ character }: { character: Character }) {
+  const fetcher = useFetcher()
   return (
     <div className="grid gap-4">
       <div className="grid gap-4 sm:grid-cols-2">
@@ -185,15 +187,25 @@ function CharacterSheetEditor({ character }: { character: Character }) {
           {entriesTyped(characterActionLibrary).map(([category, actions]) => (
             <section
               key={category}
-              className="flex flex-col items-center rounded-md bg-black/25 p-4 text-center"
+              className="flex flex-col rounded-md bg-black/25 p-4"
             >
               <h4 className="font-header mb-4 text-center text-xl leading-tight tracking-wide">
                 {category}
               </h4>
               <div className="grid gap-4">
                 {actions.map((action) => (
-                  <section key={action}>
+                  <section
+                    key={action}
+                    className="grid grid-flow-row grid-cols-[1fr,auto] grid-rows-[auto,auto]"
+                  >
                     <h5 className={labelTextClass}>{action}</h5>
+                    <div className="row-span-2 flex items-end">
+                      <ActionRollButton
+                        name={character.name}
+                        action={action}
+                        level={character.actions[action]?.level ?? 0}
+                      />
+                    </div>
                     <DotCounter
                       value={character.actions[action]?.level ?? 0}
                       max={4}
@@ -268,6 +280,29 @@ function CharacterSheetEditor({ character }: { character: Character }) {
         />
       </section>
     </div>
+  )
+}
+
+function ActionRollButton({
+  name,
+  action,
+  level,
+}: {
+  name: string
+  action: string
+  level: number
+}) {
+  return (
+    <Button
+      type="submit"
+      title={`Roll ${action}`}
+      className={clearButtonClass(false)}
+      onClick={() => {
+        setDiceRoll(level + 1, `${name}: ${action}`)
+      }}
+    >
+      <Hexagon />
+    </Button>
   )
 }
 

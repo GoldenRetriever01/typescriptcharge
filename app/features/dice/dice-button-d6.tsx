@@ -1,16 +1,29 @@
 import { useStore } from "@nanostores/react"
-import { Form } from "@remix-run/react"
+import { useFetcher, useFetchers } from "@remix-run/react"
 import clsx from "clsx"
 import { AnimatePresence, motion } from "framer-motion"
 import { atom } from "nanostores"
-import { Check, Hexagon, X } from "react-feather"
+import { Check, Hexagon, Minus, X } from "react-feather"
 import { Button } from "~/ui/button"
 import { blackCircleIconButtonClass, inputClass } from "~/ui/styles"
 
 const countStore = atom(0)
+const intentStore = atom("")
+
+export function setDiceRoll(count: number, intent: string) {
+  countStore.set(count)
+  intentStore.set(intent)
+}
 
 export function DiceButton() {
   const count = useStore(countStore)
+
+  const fetchers = useFetchers()
+  const pending = fetchers.some(
+    (f) =>
+      f.submission?.action === "/api/roll" && f.submission.method === "POST",
+  )
+
   return (
     <div
       className={clsx("relative", count === 0 ? "opacity-75" : "opacity-100")}
@@ -19,11 +32,12 @@ export function DiceButton() {
         type="submit"
         title="Roll some d6"
         className={blackCircleIconButtonClass}
+        disabled={pending}
         onClick={() => {
           countStore.set(countStore.get() + 1)
         }}
       >
-        <Hexagon />
+        <Hexagon className={clsx(pending && "animate-spin")} />
       </Button>
       {count > 0 && (
         <span className="absolute top-0 right-0 block font-bold leading-none">
@@ -36,6 +50,8 @@ export function DiceButton() {
 
 export function DiceConfirmPanel() {
   const count = useStore(countStore)
+  const intent = useStore(intentStore)
+  const fetcher = useFetcher()
   return (
     <AnimatePresence>
       {count > 0 && (
@@ -46,7 +62,7 @@ export function DiceConfirmPanel() {
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.95, opacity: 0 }}
         >
-          <Form
+          <fetcher.Form
             action="/api/roll"
             method="post"
             replace
@@ -57,14 +73,25 @@ export function DiceConfirmPanel() {
               title="Intent"
               name="intent"
               placeholder="Intent (notice, finesse, etc.)"
+              value={intent}
+              onChange={(event) => {
+                intentStore.set(event.target.value)
+              }}
             />
             <input type="hidden" name="count" value={count} />
             <Button
-              title="Clear"
+              title="Cancel"
               className={blackCircleIconButtonClass}
               onClick={() => countStore.set(0)}
             >
               <X size={16} />
+            </Button>
+            <Button
+              title="Minus 1"
+              className={blackCircleIconButtonClass}
+              onClick={() => countStore.set(countStore.get() - 1)}
+            >
+              <Minus size={16} />
             </Button>
             <Button
               type="submit"
@@ -74,7 +101,7 @@ export function DiceConfirmPanel() {
             >
               <Check size={16} />
             </Button>
-          </Form>
+          </fetcher.Form>
         </motion.div>
       )}
     </AnimatePresence>

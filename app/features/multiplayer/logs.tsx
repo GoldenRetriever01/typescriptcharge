@@ -83,7 +83,7 @@ export function LogsPanel({ logs: logsProp }: { logs: DatabaseDiceLog[] }) {
               </div>
             )}
             className="overlay-scrollbar h-full w-96"
-            followOutput="smooth"
+            followOutput={() => "smooth"}
             initialTopMostItemIndex={logs.length - 1}
             alignToBottom
           />
