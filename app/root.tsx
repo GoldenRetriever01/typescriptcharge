@@ -27,12 +27,12 @@ import {
   defaultRoomId,
   defaultRoomInit,
 } from "./features/multiplayer/liveblocks-client"
-import {
-  LiveblocksConnectionToggle,
-  useLiveblocksEnabled,
-} from "./features/multiplayer/liveblocks-connection-toggle"
 import { RoomProvider } from "./features/multiplayer/liveblocks-react"
-import { LogsPanel, LogsPanelButton } from "./features/multiplayer/logs"
+import {
+  LogsPanel,
+  LogsPanelButton,
+  LogsPanelProvider,
+} from "./features/multiplayer/logs"
 import { getWorldData } from "./features/world/actions.server"
 import { WorldTitle } from "./features/world/world-title"
 import tailwind from "./generated/tailwind.css"
@@ -107,9 +107,6 @@ export const links: LinksFunction = () => [
 
 export default function App() {
   const data = useLoaderData<typeof loader>()
-
-  const liveblocksEnabled = useLiveblocksEnabled()
-
   return (
     <html
       lang="en"
@@ -145,11 +142,9 @@ export default function App() {
                 </div>
 
                 <EmptySuspense>
-                  {liveblocksEnabled && (
-                    <RoomProvider id={defaultRoomId} {...defaultRoomInit}>
-                      <LiveCursors name={user.username} />
-                    </RoomProvider>
-                  )}
+                  <RoomProvider id={defaultRoomId} {...defaultRoomInit}>
+                    <LiveCursors name={user.username} />
+                  </RoomProvider>
                   <WorldTitle />
                 </EmptySuspense>
               </>
@@ -258,7 +253,7 @@ function FooterActions() {
   })
 
   return (
-    <>
+    <LogsPanelProvider>
       <Portal>
         <div
           ref={floating.floating}
@@ -285,12 +280,9 @@ function FooterActions() {
         className="flex flex-wrap items-center justify-end gap-2"
         ref={floating.reference}
       >
-        {process.env.NODE_ENV !== "production" && (
-          <LiveblocksConnectionToggle />
-        )}
         <LogsPanelButton />
         <DiceButton />
       </div>
-    </>
+    </LogsPanelProvider>
   )
 }

@@ -1,60 +1,78 @@
-import { useStore } from "@nanostores/react"
 import clsx from "clsx"
 import { AnimatePresence, motion } from "framer-motion"
-import { atom } from "nanostores"
+import { useEffect, useState } from "react"
 import { List } from "react-feather"
 import { Virtuoso } from "react-virtuoso"
-import { createLocalStorageToggleStore } from "~/helpers/local-storage"
-import { createSupabaseBrowserClient } from "~/supabase-browser"
+import { z } from "zod"
+import { createContextWrapper } from "~/helpers/context"
+import { useLocalStorage } from "~/helpers/local-storage"
+import { useLatestRef } from "~/helpers/react"
+import { getSupabaseBrowserClient } from "~/supabase-browser"
 import { Button } from "~/ui/button"
 import { blackCircleIconButtonClass } from "~/ui/styles"
 import type { DatabaseDiceLog } from "../dice/dice-data"
 import { DiceLogEntry } from "../dice/dice-log-entry"
 import { defaultRoomId } from "./liveblocks-client"
 
-const logsPanelVisibleStore = createLocalStorageToggleStore("logsPanelVisible")
-const realtimeLogsStore = atom<DatabaseDiceLog[]>([])
-const unreadStore = atom(false)
+const [useLogsPanelContext, LogsPanelProvider] = createContextWrapper(
+  function useLogsPanelProvider() {
+    const [visible, setVisible] = useLocalStorage({
+      key: "logsPanelVisible",
+      fallback: false,
+      schema: z.boolean(),
+    })
 
-if (typeof window !== "undefined") {
-  const client = createSupabaseBrowserClient()
+    const [realtimeLogs, setRealtimeLogs] = useState<DatabaseDiceLog[]>([])
+    const [unread, setUnread] = useState(false)
 
-  client
-    .channel("public:dice-logs")
-    .on(
-      "postgres_changes",
-      {
-        event: "INSERT",
-        schema: "public",
-        table: "dice-logs",
-        filter: `roomId=eq.${defaultRoomId}`,
-      },
-      (payload: { new: DatabaseDiceLog }) => {
-        realtimeLogsStore.set([...realtimeLogsStore.get(), payload.new])
-        if (!logsPanelVisibleStore.get()) unreadStore.set(true)
-      },
-    )
-    .subscribe()
-}
+    const visibleRef = useLatestRef(visible)
 
-export function useLogsPanelVisible() {
-  return useStore(logsPanelVisibleStore)
-}
+    useEffect(() => {
+      const sub = getSupabaseBrowserClient()
+        .channel("public:dice-logs")
+        .on(
+          "postgres_changes",
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "dice-logs",
+            filter: `roomId=eq.${defaultRoomId}`,
+          },
+          (payload: { new: DatabaseDiceLog }) => {
+            setRealtimeLogs((logs) => [...logs, payload.new])
+            if (!visibleRef.current) setUnread(true)
+          },
+        )
+        .subscribe()
+
+      return () => void sub.unsubscribe()
+    }, [visibleRef])
+
+    return {
+      realtimeLogs,
+      visible,
+      setVisible,
+      unread,
+      setUnread,
+    }
+  },
+)
+export { LogsPanelProvider }
 
 export function LogsPanelButton() {
-  const logsUnread = useStore(unreadStore)
+  const context = useLogsPanelContext()
 
   return (
     <Button
       type="button"
       title="View logs"
       onClick={() => {
-        logsPanelVisibleStore.set(!logsPanelVisibleStore.get())
-        unreadStore.set(false)
+        context.setVisible(!context.visible)
+        context.setUnread(false)
       }}
       className={clsx(
         blackCircleIconButtonClass,
-        logsUnread && "animate-pulse text-blue-400",
+        context.unread && "animate-pulse text-blue-400",
       )}
     >
       <List />
@@ -63,13 +81,12 @@ export function LogsPanelButton() {
 }
 
 export function LogsPanel({ logs: logsProp }: { logs: DatabaseDiceLog[] }) {
-  const realtimeLogs = useStore(realtimeLogsStore)
-  const logs = [...logsProp, ...realtimeLogs]
-  const visible = useStore(logsPanelVisibleStore)
+  const context = useLogsPanelContext()
+  const logs = [...logsProp, ...context.realtimeLogs]
 
   return (
     <AnimatePresence>
-      {visible && (
+      {context.visible && (
         <motion.div
           className="h-full"
           transition={{ type: "tween", duration: 0.15 }}

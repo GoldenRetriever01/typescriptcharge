@@ -13,6 +13,14 @@ export function useEvent<A extends unknown[], R>(fn: (...args: A) => R) {
   return useCallback((...args: A) => ref.current(...args), [])
 }
 
+export function useLatestRef<T>(value: T): { readonly current: T } {
+  const ref = useRef(value)
+  useInsertionEffect(() => {
+    ref.current = value
+  })
+  return ref
+}
+
 export function isRendered(
   value: unknown,
 ): value is Exclude<ReactNode, undefined | null | boolean> {

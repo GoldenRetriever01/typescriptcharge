@@ -1,3 +1,4 @@
+import type { SupabaseClient } from "@supabase/supabase-js"
 import { createClient } from "@supabase/supabase-js"
 import type { SupabaseSchema } from "./supabase.server"
 
@@ -24,12 +25,15 @@ export function SupabaseBrowserEnv({
   )
 }
 
-export function createSupabaseBrowserClient() {
+let client: SupabaseClient<SupabaseSchema> | undefined
+export function getSupabaseBrowserClient() {
   if (!globalThis.__SUPABASE_CLIENT__) {
-    throw new Error("Supabase client is not initialized")
+    throw new Error(
+      "Couldn't find supabase globals. Did you forget to add the SupabaseBrowserEnv component?",
+    )
   }
-  return createClient<SupabaseSchema>(
+  return (client ??= createClient(
     globalThis.__SUPABASE_CLIENT__.url,
     globalThis.__SUPABASE_CLIENT__.anonKey,
-  )
+  ))
 }

@@ -16,14 +16,14 @@ const intentInputId = "dice-intent"
 
 let prev = countStore.get()
 countStore.listen((next) => {
-  if (prev === 0 && next === 1) {
+  if (prev === 0 && next > 0) {
     setTimeout(() => {
       // eslint-disable-next-line unicorn/prefer-query-selector
       document.getElementById(intentInputId)?.focus()
     })
   }
 
-  if (prev === 1 && next === 0) {
+  if (prev > 0 && next === 0) {
     setTimeout(() => {
       // eslint-disable-next-line unicorn/prefer-query-selector
       document.getElementById(diceButtonId)?.focus()

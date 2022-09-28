@@ -4,10 +4,6 @@ import type { RoomInitializers } from "@liveblocks/client/internal"
 import type { WritableAtom } from "nanostores"
 import type { Character } from "~/features/characters/character-sheet-data"
 import type { ClockState } from "~/features/clocks/clock-state"
-import {
-  isLiveblocksEnabled,
-  liveblocksEnabledStore,
-} from "~/features/multiplayer/liveblocks-connection-toggle"
 import type { World } from "~/features/world/world"
 
 export type Presence = {
@@ -51,27 +47,20 @@ export function syncStoreWithLiveblocks<T extends Json>(
   init: (storage: { root: LiveObject<Storage> }) => T,
   save: (storage: { root: LiveObject<Storage> }, value: T) => void,
 ) {
-  let initialized = false
+  if (typeof window === "undefined") return
 
-  liveblocksEnabledStore.subscribe(async (enabled) => {
-    try {
-      if (enabled) {
-        const room = enterDefaultRoom()
-        const storage = await room.getStorage()
-        store.set(init(storage))
-      }
-    } catch (error) {
+  const room = enterDefaultRoom()
+
+  room
+    .getStorage()
+    .then((storage) => {
+      store.set(init(storage))
+    })
+    .catch((error) => {
       console.warn("Failed to get characters from Liveblocks:", error)
-    } finally {
-      initialized = true
-    }
-  })
+    })
 
   store.subscribe(async (data) => {
-    if (!initialized) return
-    if (!isLiveblocksEnabled()) return
-
-    const room = enterDefaultRoom()
     const storage = await room.getStorage()
     save(storage, data)
   })

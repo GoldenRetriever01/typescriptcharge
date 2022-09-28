@@ -1,46 +1,40 @@
-import type { WritableStore } from "nanostores"
-import { atom } from "nanostores"
-import { z } from "zod"
+import { useEffect, useState } from "react"
+import type { z } from "zod"
 import type { JsonSerializable } from "./json"
+import { useLatestRef } from "./react"
 
-export type LocalStorageStoreOptions<T extends JsonSerializable> = {
+export type UseLocalStorageOptions<T extends JsonSerializable> = {
   key: string
   fallback: T
   schema: z.ZodType<T>
 }
 
-export function createLocalStorageStore<T extends JsonSerializable>(
-  options: LocalStorageStoreOptions<T>,
-): WritableStore<T> {
-  let initialValue = options.fallback
+export function useLocalStorage<T>(options: {
+  key: string
+  fallback: T
+  schema: z.ZodType<T>
+}) {
+  const [internalValue, setInternalValue] = useState(options.fallback)
+  const optionsRef = useLatestRef(options)
 
-  if (typeof localStorage !== "undefined") {
+  useEffect(() => {
+    const raw = localStorage.getItem(options.key)
     try {
-      const raw = localStorage.getItem(options.key)
-      if (raw !== null) {
-        initialValue = options.schema.parse(JSON.parse(raw))
-      }
-      // eslint-disable-next-line no-empty
-    } catch {}
-  }
-
-  const store = atom(initialValue)
-  if (typeof localStorage !== "undefined") {
-    store.subscribe((value) => {
-      localStorage.setItem(
-        options.key,
-        JSON.stringify(options.schema.parse(value)),
+      setInternalValue(
+        raw === null
+          ? optionsRef.current.fallback
+          : optionsRef.current.schema.parse(JSON.parse(raw)),
       )
-    })
+    } catch (error) {
+      console.warn("Failed to parse local storage value", error, raw)
+      setInternalValue(optionsRef.current.fallback)
+    }
+  }, [options.key, optionsRef])
+
+  const setValue = (value: T) => {
+    setInternalValue(value)
+    localStorage.setItem(options.key, JSON.stringify(value))
   }
 
-  return store
-}
-
-export function createLocalStorageToggleStore(key: string, fallback = false) {
-  return createLocalStorageStore({
-    key,
-    fallback,
-    schema: z.boolean(),
-  })
+  return [internalValue, setValue] as const
 }
