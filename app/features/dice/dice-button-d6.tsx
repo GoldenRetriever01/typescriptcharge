@@ -10,9 +10,12 @@ import { blackCircleIconButtonClass, inputClass } from "~/ui/styles"
 const countStore = atom(0)
 const intentStore = atom("")
 
+const diceConfirmButtonId = "confirm-dice"
+
 export function setDiceRoll(count: number, intent: string) {
   countStore.set(count)
   intentStore.set(intent)
+  document.querySelector<HTMLInputElement>(`#${diceConfirmButtonId}`)?.focus()
 }
 
 export function DiceButton() {
@@ -95,6 +98,7 @@ export function DiceConfirmPanel() {
               <Minus size={16} />
             </Button>
             <Button
+              id={diceConfirmButtonId}
               type="submit"
               title="Roll"
               className={blackCircleIconButtonClass}
