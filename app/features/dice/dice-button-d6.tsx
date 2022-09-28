@@ -15,7 +15,9 @@ const diceConfirmButtonId = "confirm-dice"
 export function setDiceRoll(count: number, intent: string) {
   countStore.set(count)
   intentStore.set(intent)
-  document.querySelector<HTMLInputElement>(`#${diceConfirmButtonId}`)?.focus()
+  setTimeout(() => {
+    document.querySelector<HTMLInputElement>(`#${diceConfirmButtonId}`)?.focus()
+  })
 }
 
 export function DiceButton() {
