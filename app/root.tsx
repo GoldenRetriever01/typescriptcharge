@@ -140,7 +140,9 @@ export default function App() {
                   </div>
                 </div>
 
-                <FooterActions />
+                <div className="sticky bottom-4 mx-auto mt-auto w-full max-w-screen-2xl">
+                  <FooterActions />
+                </div>
 
                 <EmptySuspense>
                   {liveblocksEnabled && (
@@ -279,7 +281,7 @@ function FooterActions() {
       </Portal>
 
       <div
-        className="sticky bottom-4 mt-auto flex flex-wrap items-center justify-end gap-2"
+        className="flex flex-wrap items-center justify-end gap-2"
         ref={floating.reference}
       >
         {process.env.NODE_ENV !== "production" && (
