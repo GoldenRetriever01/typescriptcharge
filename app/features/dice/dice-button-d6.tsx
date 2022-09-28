@@ -80,6 +80,7 @@ export function DiceConfirmPanel() {
               placeholder="Intent (notice, finesse, etc.)"
               maxLength={100}
               value={intent}
+              onFocus={(event) => event.target.select()}
               onChange={(event) => {
                 intentStore.set(event.target.value)
               }}
