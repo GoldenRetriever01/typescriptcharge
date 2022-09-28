@@ -18,6 +18,11 @@ export const clearButtonClass = (active: boolean) =>
       : "border-transparent opacity-50 hover:opacity-75",
   )
 
+export const blackCircleIconButtonClass = clsx(
+  "rounded-full bg-black/25 p-3 transition hover:bg-black/50",
+  activePress,
+)
+
 export const inputBaseClass = clsx(
   "block w-full resize-none rounded-md bg-black/25 transition focus:bg-black/50 focus:outline-none focus:ring-2 focus:ring-blue-500",
 )
@@ -30,5 +35,11 @@ export const labelTextClass = clsx("mb-1.5 text-sm font-medium leading-none")
 
 // eslint-disable-next-line tailwindcss/no-contradicting-classname
 export const raisedPanelClass = clsx(
-  "grid gap-4 border-2 border-gray-600 bg-gray-700 p-4 shadow-md shadow-[rgba(0,0,0,0.25)]",
+  "grid gap-4 border-2 border-gray-600 bg-gray-700 shadow-md shadow-[rgba(0,0,0,0.25)]",
 )
+
+export const slideRightTransition = (visible: boolean) =>
+  clsx(
+    "transition-all",
+    visible ? "visible opacity-100" : "invisible translate-x-4 opacity-0",
+  )

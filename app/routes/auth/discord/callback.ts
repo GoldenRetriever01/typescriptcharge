@@ -1,14 +1,17 @@
 import type { LoaderArgs } from "@remix-run/node"
 import { redirect } from "@remix-run/node"
 import { createSessionCookie } from "../../../features/auth/session"
-import { discordLogin } from "~/features/auth/discord"
 
 export async function loader({ request }: LoaderArgs) {
   const url = new URL(request.url)
-  const loginResponse = await discordLogin(url.searchParams.get("code")!)
+  const cookie = await createSessionCookie(url.searchParams.get("code")!)
+
+  if (!cookie) {
+    // TODO: render some error page
+    return redirect("/")
+  }
+
   return redirect("/", {
-    headers: {
-      "Set-Cookie": await createSessionCookie(loginResponse),
-    },
+    headers: { "Set-Cookie": cookie },
   })
 }

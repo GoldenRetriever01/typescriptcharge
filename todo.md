@@ -25,8 +25,26 @@
 
 ## medium priority
 
-- [ ] dice rolls
-- [ ] audit log: say who did what + dice rolls
+- dice rolls
+  - button which opens a popover for rolling dice
+    - [x] buttons per kind of dice, click to add one to the pool
+      - not gonna do this, but keeping the code anyway
+    - [x] x button to clear dice
+    - [x] optional description for what's being rolled
+    - [x] roll button posts to server, pending indicator while in flight
+  - dice logs
+    - [x] all dice results
+    - [x] normalized dice string (e.g. 2d6+1d8+3)
+    - [x] dice total
+    - [x] dice min
+    - [x] dice max
+    - [x] rolled by
+    - [x] scrollable
+    - [x] stay scrolled at bottom
+    - [x] subscribe to realtime dice logs
+    - [x] toggle panel visibility
+    - [x] animation
+    - [ ] bug: there's a slight period at the start where the supabase client subscription doesn't pick up dice rolls
 - [ ] cheatsheet for roll mechanics and momentum usages
 - [ ] error pages
 
@@ -39,6 +57,10 @@
 - [ ] public/private visibility on characters
 - [ ] public/private visibility on clocks
 
+## UI polish
+
+- [ ] proper tooltips on icon buttons
+
 ## nice to have
 
 - [ ] export data
@@ -46,5 +68,5 @@
 - [ ] import character from fari
 - [ ] chat (like in Fari app with the message next to your cursor)
 - [ ] rich text editor with markdown and shit
-- [ ] fade other cursors if they are on a different page
+- [x] fade other cursors if they are on a different page
 - [ ] DnD to reorder clocks

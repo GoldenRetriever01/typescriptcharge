@@ -1,3 +1,5 @@
+const plugin = require("tailwindcss/plugin")
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ["app/**/*.{ts,tsx}"],
@@ -9,5 +11,26 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    plugin(function overlayScrollbarComponent({ addComponents, theme }) {
+      addComponents({
+        ".overlay-scrollbar": {
+          "overflow-x": "overlay !important",
+          "overflow-y": "overlay !important",
+          "&::-webkit-scrollbar": {
+            width: theme("width.1"),
+            height: theme("width.1"),
+          },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: "rgba(255, 255, 255, 0.25)",
+            borderRadius: theme("borderRadius.full"),
+          },
+          "&::-webkit-scrollbar-track-piece:start, &::-webkit-scrollbar-track-piece:start":
+            {
+              backgroundColor: theme("colors.transparent"),
+            },
+        },
+      })
+    }),
+  ],
 }
