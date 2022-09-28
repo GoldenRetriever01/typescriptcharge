@@ -27,17 +27,18 @@
 
 - dice rolls
   - button which opens a popover for rolling dice
-    - [ ] buttons per kind of dice, click to add one to the pool
-    - [ ] x button to clear dice
-    - [ ] optional description for what's being rolled
-    - [ ] roll button posts to server, pending indicator while in flight
+    - [x] buttons per kind of dice, click to add one to the pool
+      - not gonna do this, but keeping the code anyway
+    - [x] x button to clear dice
+    - [x] optional description for what's being rolled
+    - [x] roll button posts to server, pending indicator while in flight
   - dice logs
     - [x] all dice results
     - [x] normalized dice string (e.g. 2d6+1d8+3)
     - [x] dice total
     - [x] dice min
     - [x] dice max
-    - [ ] rolled by
+    - [x] rolled by
     - [x] scrollable
     - [x] stay scrolled at bottom
     - [x] subscribe to realtime dice logs
