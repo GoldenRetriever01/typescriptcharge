@@ -29,7 +29,7 @@ if (typeof window !== "undefined") {
       },
       (payload: { new: DatabaseDiceLog }) => {
         realtimeLogsStore.set([...realtimeLogsStore.get(), payload.new])
-        unreadStore.set(true)
+        if (!logsPanelVisibleStore.get()) unreadStore.set(true)
       },
     )
     .subscribe()

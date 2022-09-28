@@ -13,7 +13,6 @@ import {
 import clsx from "clsx"
 import type { ReactNode } from "react"
 import { Book, Clock, Users } from "react-feather"
-import { DicePanel, DicePanelButton } from "~/features/dice/dice-panel"
 import { truthyJoin } from "~/helpers/truthy-join"
 import { SupabaseBrowserEnv } from "~/supabase-browser"
 import { LoadingSuspense } from "~/ui/loading"
@@ -22,6 +21,7 @@ import favicon from "./assets/favicon.svg"
 import { env } from "./env.server"
 import type { SessionUser } from "./features/auth/session"
 import { getSessionUser } from "./features/auth/session"
+import { DiceButton, DiceConfirmPanel } from "./features/dice/dice-button-d6"
 import { LiveCursors } from "./features/multiplayer/live-cursors"
 import {
   defaultRoomId,
@@ -44,14 +44,15 @@ async function getWorldLogs() {
   const result = await supabase
     .from("dice-logs")
     .select("*")
+    .eq("roomId", defaultRoomId)
     .order("createdAt", { ascending: false })
-    .limit(100)
+    .limit(20)
 
   if (result.error) {
     console.error("Failed to fetch world logs", result.error)
   }
 
-  return result.data ?? []
+  return result.data?.reverse() ?? []
 }
 
 export async function loader({ request }: LoaderArgs) {
@@ -272,7 +273,7 @@ function FooterActions() {
             <LogsPanel logs={data.logs} />
           </div>
           <div className="contents [&>*]:pointer-events-auto">
-            <DicePanel />
+            <DiceConfirmPanel />
           </div>
         </div>
       </Portal>
@@ -284,8 +285,8 @@ function FooterActions() {
         {process.env.NODE_ENV !== "production" && (
           <LiveblocksConnectionToggle />
         )}
-        <DicePanelButton />
         <LogsPanelButton />
+        <DiceButton />
       </div>
     </>
   )

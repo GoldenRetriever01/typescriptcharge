@@ -9,6 +9,8 @@ specifiers:
   '@liveblocks/client': ^0.18.2
   '@liveblocks/node': ^0.18.2
   '@liveblocks/react': ^0.18.2
+  '@mdi/js': ^7.0.96
+  '@mdi/react': ^1.6.1
   '@nanostores/react': ^0.4.0
   '@netlify/functions': ^1.2.0
   '@remix-run/dev': ^1.7.2
@@ -59,6 +61,8 @@ dependencies:
   '@liveblocks/client': 0.18.2
   '@liveblocks/node': 0.18.2
   '@liveblocks/react': 0.18.2_ku3zmj76seudio3fm5hgypxz3q
+  '@mdi/js': 7.0.96
+  '@mdi/react': 1.6.1
   '@nanostores/react': 0.4.0_kumziggp74xxkphhh7wyh33hzm
   '@netlify/functions': 1.2.0
   '@remix-run/netlify': 1.7.2_hpdjxbbufc6x2yaacuadn5mdum
@@ -1706,6 +1710,16 @@ packages:
       - encoding
       - supports-color
     dev: true
+
+  /@mdi/js/7.0.96:
+    resolution: {integrity: sha512-lNqhkV3cpPfYb/Avh+vXLFukUTbHbyHoFo4Jdc7Oc9UvURGVhamFIpgOVvEf2bNA78zvjXTZeVWExUTR+DLBfQ==}
+    dev: false
+
+  /@mdi/react/1.6.1:
+    resolution: {integrity: sha512-4qZeDcluDFGFTWkHs86VOlHkm6gnKaMql13/gpIcUQ8kzxHgpj31NuCkD8abECVfbULJ3shc7Yt4HJ6Wu6SN4w==}
+    dependencies:
+      prop-types: 15.8.1
+    dev: false
 
   /@motionone/animation/10.14.0:
     resolution: {integrity: sha512-h+1sdyBP8vbxEBW5gPFDnj+m2DCqdlAuf2g6Iafb1lcMnqjsRXWlPw1AXgvUMXmreyhqmPbJqoNfIKdytampRQ==}

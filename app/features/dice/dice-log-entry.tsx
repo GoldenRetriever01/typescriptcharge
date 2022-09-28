@@ -9,18 +9,13 @@ import type { apiUserLoader } from "~/routes/api/user.$id"
 export function DiceLogEntry({ log }: { log: DatabaseDiceLog }): JSX.Element {
   const dice = parseDiceJson(log.dice)
   return (
-    <div className="flex items-center gap-6 rounded-md bg-black/75 px-6 py-4">
-      <div className="flex flex-col gap-1">
-        <Suspense>
-          <p className="text-sm leading-none">
-            <span className="opacity-70">Rolled by</span>{" "}
-            <Username userId={log.userId} />
-          </p>
-        </Suspense>
-
+    <div className="flex items-end gap-6 rounded-md bg-black/75 px-6 py-4">
+      <div className="flex flex-1 flex-col gap-1">
         {dice ? (
           <>
-            <ul className="flex gap-1">
+            {!!log.intent && <p className="leading-tight">{log.intent}</p>}
+
+            <ul className="flex flex-wrap gap-1">
               {dice.map((die, index) => (
                 <li
                   key={index}
@@ -33,21 +28,25 @@ export function DiceLogEntry({ log }: { log: DatabaseDiceLog }): JSX.Element {
                 </li>
               ))}
             </ul>
-            <p className="text-sm">
-              <span className="opacity-75">{normalizedRollText(dice)}</span> ={" "}
-              {dice.reduce((sum, die) => sum + die.result, 0)}
-            </p>
           </>
         ) : (
           <p className="text-sm leading-none text-red-400">
             Failed to parse dice
           </p>
         )}
+
+        <Suspense>
+          <p className="mt-auto text-[13px]">
+            <span className="opacity-70">Rolled by</span>{" "}
+            <Username userId={log.userId} />
+          </p>
+        </Suspense>
       </div>
       {dice && (
         <>
           <div className="-my-1 w-1 self-stretch rounded bg-white/25" />
-          <div className="flex flex-col items-center gap-0.5 text-center leading-none">
+
+          <div className="flex flex-col items-center gap-0.5 self-center text-center leading-none">
             <p>
               <span className="inline-block text-xs opacity-75">Max</span>
               <br />

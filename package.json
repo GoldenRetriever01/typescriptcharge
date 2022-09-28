@@ -25,6 +25,8 @@
     "@liveblocks/client": "^0.18.2",
     "@liveblocks/node": "^0.18.2",
     "@liveblocks/react": "^0.18.2",
+    "@mdi/js": "^7.0.96",
+    "@mdi/react": "^1.6.1",
     "@nanostores/react": "^0.4.0",
     "@netlify/functions": "^1.2.0",
     "@remix-run/netlify": "^1.7.2",

@@ -33,16 +33,19 @@ export type SupabaseSchema = {
           roomId: string
           userId: string
           dice: string
+          intent: string
         }
         Insert: {
           roomId: string
           userId: string
           dice: string
+          intent: string
         }
         Update: {
           roomId?: string
           userId?: string
           dice?: string
+          intent?: string
         }
       }
     }
