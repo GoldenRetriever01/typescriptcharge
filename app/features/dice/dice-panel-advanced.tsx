@@ -1,3 +1,5 @@
+// this has issues, fix it when we decide to use it
+// @ts-nocheck
 import {
   mdiDiceD10,
   mdiDiceD12,
