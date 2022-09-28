@@ -1,10 +1,11 @@
 import { useStore } from "@nanostores/react"
-import { atom, computed } from "nanostores"
+import { computed } from "nanostores"
 import { Cloud, CloudOff } from "react-feather"
+import { createLocalStorageToggleStore } from "~/helpers/local-storage"
 import { Button } from "~/ui/button"
 import { blackCircleIconButtonClass } from "~/ui/styles"
 
-const toggleStore = atom(false)
+const toggleStore = createLocalStorageToggleStore("liveblocksConnectionEnabled")
 
 export const liveblocksEnabledStore = computed(toggleStore, (enabled) => {
   if (typeof window === "undefined") return false
