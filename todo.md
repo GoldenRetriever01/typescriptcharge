@@ -25,13 +25,17 @@
 
 ## medium priority
 
+- [ ] error pages
 - dice rolls
+
   - button which opens a popover for rolling dice
+
     - [x] buttons per kind of dice, click to add one to the pool
       - not gonna do this, but keeping the code anyway
     - [x] x button to clear dice
     - [x] optional description for what's being rolled
     - [x] roll button posts to server, pending indicator while in flight
+
   - dice logs
     - [x] all dice results
     - [x] normalized dice string (e.g. 2d6+1d8+3)
@@ -45,8 +49,6 @@
     - [x] toggle panel visibility
     - [x] animation
     - [ ] bug: there's a slight period at the start where the supabase client subscription doesn't pick up dice rolls
-- [ ] cheatsheet for roll mechanics and momentum usages
-- [ ] error pages
 
 ### improve administration
 
@@ -63,6 +65,7 @@
 
 ## nice to have
 
+- [ ] cheatsheet for roll mechanics and momentum usages
 - [ ] export data
 - [ ] flavor: show logged in user at the top right, with a menu to log out
 - [ ] import character from fari
