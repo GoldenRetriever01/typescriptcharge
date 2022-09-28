@@ -69,11 +69,11 @@ export function LogsPanel({ logs: logsProp }: { logs: DatabaseDiceLog[] }) {
     <AnimatePresence>
       {visible && (
         <motion.div
-          className="h-full origin-bottom-right"
+          className="h-full"
           transition={{ type: "tween", duration: 0.15 }}
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.95, opacity: 0 }}
+          initial={{ x: 16, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          exit={{ x: 16, opacity: 0 }}
         >
           <Virtuoso
             data={logs}
@@ -82,10 +82,11 @@ export function LogsPanel({ logs: logsProp }: { logs: DatabaseDiceLog[] }) {
                 <DiceLogEntry log={log} />
               </div>
             )}
-            className="overlay-scrollbar h-full w-96"
-            followOutput={() => "smooth"}
+            className="thin-scrollbar -mr-1 h-full w-96"
+            followOutput={() => "auto"}
             initialTopMostItemIndex={logs.length - 1}
             alignToBottom
+            defaultItemHeight={120}
           />
         </motion.div>
       )}

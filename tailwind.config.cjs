@@ -12,11 +12,9 @@ module.exports = {
     },
   },
   plugins: [
-    plugin(function overlayScrollbarComponent({ addComponents, theme }) {
+    plugin(function thinScrollbarComponent({ addComponents, theme }) {
       addComponents({
-        ".overlay-scrollbar": {
-          "overflow-x": "overlay !important",
-          "overflow-y": "overlay !important",
+        ".thin-scrollbar": {
           "&::-webkit-scrollbar": {
             width: theme("width.1"),
             height: theme("width.1"),
