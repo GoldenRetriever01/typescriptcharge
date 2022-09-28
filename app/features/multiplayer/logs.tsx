@@ -80,11 +80,11 @@ export function LogsPanel({ logs: logsProp }: { logs: DatabaseDiceLog[] }) {
           <Virtuoso
             data={logs}
             itemContent={(index, log) => (
-              <div className="flex justify-end pt-2">
+              <div className="pt-2">
                 <DiceLogEntry log={log} />
               </div>
             )}
-            className="thin-scrollbar -mr-1 h-full w-96"
+            className="thin-scrollbar -mr-1 h-full w-80"
             followOutput={() => "auto"}
             initialTopMostItemIndex={logs.length - 1}
             alignToBottom
