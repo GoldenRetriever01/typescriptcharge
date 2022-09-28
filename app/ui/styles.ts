@@ -19,7 +19,7 @@ export const clearButtonClass = (active: boolean) =>
   )
 
 export const blackCircleIconButtonClass = clsx(
-  "rounded-full bg-black/25 p-3 transition hover:bg-black/50",
+  "rounded-full bg-black/25 p-3 transition hover:bg-black/50 focus:outline-none focus:ring-2 focus:ring-blue-500",
   activePress,
 )
 
