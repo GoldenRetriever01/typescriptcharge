@@ -73,6 +73,7 @@ export function DiceConfirmPanel() {
               title="Intent"
               name="intent"
               placeholder="Intent (notice, finesse, etc.)"
+              maxLength={100}
               value={intent}
               onChange={(event) => {
                 intentStore.set(event.target.value)
