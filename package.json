@@ -14,7 +14,8 @@
     "lint-fix": "pnpm lint --fix",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
-    "tailwind": "tailwindcss -o app/generated/tailwind.css -c tailwind.config.cjs"
+    "tailwind": "tailwindcss -o app/generated/tailwind.css -c tailwind.config.cjs",
+    "supabase-types": "pnpm supabase gen types typescript --local > supabase/types.ts"
   },
   "dependencies": {
     "@floating-ui/react-dom": "^1.0.0",
@@ -66,6 +67,7 @@
     "netlify-cli": "^11.8.3",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.7.1",
+    "supabase": "^1.5.0",
     "tailwind-scrollbar": "^2.0.1",
     "tailwindcss": "^3.1.8",
     "typescript": "^4.8.3"

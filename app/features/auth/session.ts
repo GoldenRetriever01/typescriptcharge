@@ -52,7 +52,7 @@ export async function createSessionCookie(authCode: string) {
 }
 
 export type SessionUser = {
-  id: string
+  id: number
   discordId: string
   username: string
   avatar: string | null

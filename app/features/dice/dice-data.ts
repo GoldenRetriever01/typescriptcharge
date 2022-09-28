@@ -1,4 +1,3 @@
-import type { SupabaseSchema } from "~/supabase.server"
+import type { Database } from "supabase/types"
 
-export type DatabaseDiceLog =
-  SupabaseSchema["public"]["Tables"]["dice-logs"]["Row"]
+export type DatabaseDiceLog = Database["public"]["Tables"]["dice-logs"]["Row"]

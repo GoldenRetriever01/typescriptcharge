@@ -68,13 +68,13 @@ export function DiceLogEntry({ log }: { log: DatabaseDiceLog }): JSX.Element {
   )
 }
 
-const userStore = createFetchStore(async (id: string) => {
+const userStore = createFetchStore(async (id: number) => {
   const res = await fetch(`/api/user/${id}`)
   const data = (await res.json()) as SerializeFrom<typeof apiUserLoader>
   return data.user
 })
 
-function Username({ userId }: { userId: string }) {
+function Username({ userId }: { userId: number }) {
   const user = userStore.get(userId, { forcePrefetch: true })
   return <>{user?.username ?? "unknown"}</>
 }

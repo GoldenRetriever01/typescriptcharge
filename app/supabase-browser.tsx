@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js"
 import { createClient } from "@supabase/supabase-js"
-import type { SupabaseSchema } from "./supabase.server"
+import type { Database } from "supabase/types"
 
 declare global {
   var __SUPABASE_CLIENT__: { url: string; anonKey: string } | undefined
@@ -25,7 +25,7 @@ export function SupabaseBrowserEnv({
   )
 }
 
-let client: SupabaseClient<SupabaseSchema> | undefined
+let client: SupabaseClient<Database> | undefined
 export function getSupabaseBrowserClient() {
   if (!globalThis.__SUPABASE_CLIENT__) {
     throw new Error(
