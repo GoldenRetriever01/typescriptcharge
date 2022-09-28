@@ -10,6 +10,7 @@ import { Button } from "~/ui/button"
 import { blackCircleIconButtonClass } from "~/ui/styles"
 import type { DatabaseDiceLog } from "../dice/dice-data"
 import { DiceLogEntry } from "../dice/dice-log-entry"
+import { defaultRoomId } from "./liveblocks-client"
 
 const logsPanelVisibleStore = createLocalStorageToggleStore("logsPanelVisible")
 const realtimeLogsStore = atom<DatabaseDiceLog[]>([])
@@ -26,6 +27,7 @@ if (typeof window !== "undefined") {
         event: "INSERT",
         schema: "public",
         table: "dice-logs",
+        filter: `roomId=eq.${defaultRoomId}`,
       },
       (payload: { new: DatabaseDiceLog }) => {
         realtimeLogsStore.set([...realtimeLogsStore.get(), payload.new])
