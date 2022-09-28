@@ -1,9 +1,10 @@
 import { z } from "zod"
 import type { DatabaseDiceLog } from "./dice-data"
 
+import type { SerializeFrom } from "@remix-run/node"
 import { Suspense } from "react"
 import { createFetchStore } from "react-suspense-fetch"
-import type { DiscordUser } from "../auth/discord"
+import type { apiUserLoader } from "~/routes/api/user.$id"
 
 export function DiceLogEntry({ log }: { log: DatabaseDiceLog }): JSX.Element {
   const dice = parseDiceJson(log.dice)
@@ -12,7 +13,8 @@ export function DiceLogEntry({ log }: { log: DatabaseDiceLog }): JSX.Element {
       <div className="flex flex-col gap-1">
         <Suspense>
           <p className="text-sm leading-none">
-            <span className="opacity-70">Rolled by</span> {log.userId}
+            <span className="opacity-70">Rolled by</span>{" "}
+            <Username userId={log.userId} />
           </p>
         </Suspense>
 
@@ -67,14 +69,14 @@ export function DiceLogEntry({ log }: { log: DatabaseDiceLog }): JSX.Element {
   )
 }
 
-const usernameStore = createFetchStore(async (discordUserId: string) => {
-  const res = await fetch(`/api/discord-user/${discordUserId}`)
-  const data = (await res.json()) as { user?: DiscordUser }
+const userStore = createFetchStore(async (id: string) => {
+  const res = await fetch(`/api/user/${id}`)
+  const data = (await res.json()) as SerializeFrom<typeof apiUserLoader>
   return data.user
 })
 
-function DiscordUsername({ id }: { id: string }) {
-  const user = usernameStore.get(id, { forcePrefetch: true })
+function Username({ userId }: { userId: string }) {
+  const user = userStore.get(userId, { forcePrefetch: true })
   return <>{user?.username ?? "unknown"}</>
 }
 

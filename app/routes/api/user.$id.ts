@@ -6,8 +6,14 @@ export async function loader({ params }: LoaderArgs) {
   const result = await supabase
     .from("discord-users")
     .select("*")
-    .eq("discordId", params.id)
+    .eq("id", params.id)
     .single()
 
-  return json({ user: result.data })
+  return json({
+    user: result.data && {
+      username: result.data?.username,
+    },
+  })
 }
+
+export { loader as apiUserLoader }
