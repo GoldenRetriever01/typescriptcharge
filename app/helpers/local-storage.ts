@@ -1,16 +1,15 @@
 import type { WritableStore } from "nanostores"
 import { atom } from "nanostores"
-import { useEffect, useState } from "react"
-import type { z } from "zod"
-import { useEvent } from "./react"
+import { z } from "zod"
+import type { JsonSerializable } from "./json"
 
-export type LocalStorageStoreOptions<T> = {
+export type LocalStorageStoreOptions<T extends JsonSerializable> = {
   key: string
   fallback: T
   schema: z.ZodType<T>
 }
 
-export function createLocalStorageStore<T>(
+export function createLocalStorageStore<T extends JsonSerializable>(
   options: LocalStorageStoreOptions<T>,
 ): WritableStore<T> {
   let initialValue = options.fallback
@@ -38,27 +37,10 @@ export function createLocalStorageStore<T>(
   return store
 }
 
-export function useLocalStorage<T>(options: LocalStorageStoreOptions<T>) {
-  const [internalValue, setInternalValue] = useState<T>()
-
-  const init = useEvent((key: string) => {
-    try {
-      const storedValue = localStorage.getItem(key)
-      setInternalValue(
-        storedValue
-          ? options.schema.parse(JSON.parse(storedValue))
-          : options.fallback,
-      )
-    } catch {
-      setInternalValue(options.fallback)
-    }
+export function createLocalStorageToggleStore(key: string, fallback = false) {
+  return createLocalStorageStore({
+    key,
+    fallback,
+    schema: z.boolean(),
   })
-  useEffect(() => init(options.key), [init, options.key])
-
-  const setValue = useEvent((value: T) => {
-    setInternalValue(value)
-    localStorage.setItem(options.key, JSON.stringify(value))
-  })
-
-  return [internalValue, setValue] as const
 }

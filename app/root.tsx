@@ -10,14 +10,12 @@ import {
   ScrollRestoration,
   useLoaderData,
 } from "@remix-run/react"
-import type { SupabaseClient } from "@supabase/supabase-js"
-import { createClient } from "@supabase/supabase-js"
 import clsx from "clsx"
 import type { ReactNode } from "react"
-import { useState } from "react"
 import { Book, Clock, Users } from "react-feather"
 import { DicePanel, DicePanelButton } from "~/features/dice/dice-panel"
 import { truthyJoin } from "~/helpers/truthy-join"
+import { SupabaseBrowserEnv } from "~/supabase-browser"
 import { LoadingSuspense } from "~/ui/loading"
 import { clearButtonClass, raisedPanelClass } from "~/ui/styles"
 import favicon from "./assets/favicon.svg"
@@ -38,7 +36,6 @@ import { LogsPanel, LogsPanelButton } from "./features/multiplayer/logs"
 import { getWorldData } from "./features/world/actions.server"
 import { WorldTitle } from "./features/world/world-title"
 import tailwind from "./generated/tailwind.css"
-import type { SupabaseSchema } from "./supabase.server"
 import { supabase } from "./supabase.server"
 import { EmptySuspense } from "./ui/loading"
 import { Portal } from "./ui/portal"
@@ -112,10 +109,6 @@ export default function App() {
 
   const liveblocksEnabled = useLiveblocksEnabled()
 
-  const [supabaseClient] = useState(() =>
-    createClient(data.supabaseUrl, data.supabaseAnonKey),
-  )
-
   return (
     <html
       lang="en"
@@ -125,6 +118,10 @@ export default function App() {
       <head>
         <Meta />
         <Links />
+        <SupabaseBrowserEnv
+          url={data.supabaseUrl}
+          anonKey={data.supabaseAnonKey}
+        />
       </head>
       <body>
         <div className="mx-auto flex min-h-screen flex-col gap-4 p-4">
@@ -142,7 +139,7 @@ export default function App() {
                   </div>
                 </div>
 
-                <FooterActions supabaseClient={supabaseClient} />
+                <FooterActions />
 
                 <EmptySuspense>
                   {liveblocksEnabled && (
@@ -238,11 +235,7 @@ function AuthGuard({
   return <>{children({ user: data.user })}</>
 }
 
-function FooterActions({
-  supabaseClient,
-}: {
-  supabaseClient: SupabaseClient<SupabaseSchema>
-}) {
+function FooterActions() {
   const data = useLoaderData<typeof loader>()
 
   const floating = useFloating({
@@ -265,7 +258,10 @@ function FooterActions({
       <Portal>
         <div
           ref={floating.floating}
-          className="pointer-events-none flex h-fit flex-col items-end justify-end gap-4"
+          className={clsx(
+            "pointer-events-none flex h-fit flex-col items-end justify-end gap-4",
+            floating.x === null && "opacity-0",
+          )}
           style={{
             position: floating.strategy,
             left: floating.x ?? 0,
@@ -273,10 +269,7 @@ function FooterActions({
           }}
         >
           <div className="flex-1 [&>*]:pointer-events-auto">
-            <LogsPanel
-              initialLogs={data.logs}
-              supabaseClient={supabaseClient}
-            />
+            <LogsPanel logs={data.logs} />
           </div>
           <div className="contents [&>*]:pointer-events-auto">
             <DicePanel />

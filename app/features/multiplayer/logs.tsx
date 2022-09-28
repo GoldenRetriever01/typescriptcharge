@@ -1,54 +1,55 @@
-import { autoUpdate, offset, size, useFloating } from "@floating-ui/react-dom"
 import { useStore } from "@nanostores/react"
-import type { SupabaseClient } from "@supabase/supabase-js"
 import clsx from "clsx"
+import { AnimatePresence, motion } from "framer-motion"
 import { atom } from "nanostores"
-import { useEffect, useState } from "react"
 import { List } from "react-feather"
 import { Virtuoso } from "react-virtuoso"
-import { z } from "zod"
-import { createLocalStorageStore } from "~/helpers/local-storage"
-import type { SupabaseSchema } from "~/supabase.server"
+import { createLocalStorageToggleStore } from "~/helpers/local-storage"
+import { createSupabaseBrowserClient } from "~/supabase-browser"
 import { Button } from "~/ui/button"
-import { blackCircleIconButtonClass, slideRightTransition } from "~/ui/styles"
+import { blackCircleIconButtonClass } from "~/ui/styles"
 import type { DatabaseDiceLog } from "../dice/dice-data"
 import { DiceLogEntry } from "../dice/dice-log-entry"
 
-const logsVisibleStore = createLocalStorageStore({
-  key: "logsVisible",
-  fallback: false,
-  schema: z.boolean(),
-})
+const logsPanelVisibleStore = createLocalStorageToggleStore("logsPanelVisible")
+const realtimeLogsStore = atom<DatabaseDiceLog[]>([])
+const unreadStore = atom(false)
 
-const logsUnreadStore = atom(false)
+if (typeof window !== "undefined") {
+  const client = createSupabaseBrowserClient()
+
+  client
+    .channel("public:dice-logs")
+    .on(
+      "postgres_changes",
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "dice-logs",
+      },
+      (payload: { new: DatabaseDiceLog }) => {
+        realtimeLogsStore.set([...realtimeLogsStore.get(), payload.new])
+        unreadStore.set(true)
+      },
+    )
+    .subscribe()
+}
+
+export function useLogsPanelVisible() {
+  return useStore(logsPanelVisibleStore)
+}
 
 export function LogsPanelButton() {
-  const logsUnread = useStore(logsUnreadStore)
-
-  const floating = useFloating({
-    placement: "top-end",
-    strategy: "fixed", // fixed positioning causes less shifting while scrolling
-    middleware: [
-      offset(8),
-      size({
-        padding: 16,
-        apply: ({ elements, availableWidth, availableHeight }) => {
-          elements.floating.style.height = `${availableHeight}px`
-        },
-      }),
-    ],
-    whileElementsMounted: autoUpdate,
-  })
+  const logsUnread = useStore(unreadStore)
 
   return (
     <Button
       type="button"
       title="View logs"
       onClick={() => {
-        logsVisibleStore.set(!logsVisibleStore.get())
-        logsUnreadStore.set(false)
+        logsPanelVisibleStore.set(!logsPanelVisibleStore.get())
+        unreadStore.set(false)
       }}
-      ref={floating.reference}
       className={clsx(
         blackCircleIconButtonClass,
         logsUnread && "animate-pulse text-blue-400",
@@ -59,52 +60,35 @@ export function LogsPanelButton() {
   )
 }
 
-export function LogsPanel({
-  supabaseClient,
-  initialLogs,
-}: {
-  supabaseClient: SupabaseClient<SupabaseSchema>
-  initialLogs: DatabaseDiceLog[]
-}) {
-  const [logs, setLogs] = useState(initialLogs)
-  const visible = useStore(logsVisibleStore)
-
-  useEffect(() => {
-    const sub = supabaseClient
-      .channel("public:dice-logs")
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "dice-logs",
-        },
-        (payload: { new: DatabaseDiceLog }) => {
-          setLogs((logs) => [...logs, payload.new])
-          if (!logsVisibleStore.get()) logsUnreadStore.set(true)
-        },
-      )
-      .subscribe()
-
-    return () => {
-      void sub.unsubscribe()
-    }
-  }, [supabaseClient])
+export function LogsPanel({ logs: logsProp }: { logs: DatabaseDiceLog[] }) {
+  const realtimeLogs = useStore(realtimeLogsStore)
+  const logs = [...logsProp, ...realtimeLogs]
+  const visible = useStore(logsPanelVisibleStore)
 
   return (
-    <div className={clsx("h-full", slideRightTransition(visible))}>
-      <Virtuoso
-        data={logs}
-        itemContent={(index, log) => (
-          <div className="flex justify-end pt-2">
-            <DiceLogEntry log={log} />
-          </div>
-        )}
-        className="overlay-scrollbar h-full w-96"
-        followOutput="smooth"
-        initialTopMostItemIndex={logs.length - 1}
-        alignToBottom
-      />
-    </div>
+    <AnimatePresence>
+      {visible && (
+        <motion.div
+          className="h-full origin-bottom-right"
+          transition={{ type: "tween", duration: 0.15 }}
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.95, opacity: 0 }}
+        >
+          <Virtuoso
+            data={logs}
+            itemContent={(index, log) => (
+              <div className="flex justify-end pt-2">
+                <DiceLogEntry log={log} />
+              </div>
+            )}
+            className="overlay-scrollbar h-full w-96"
+            followOutput="smooth"
+            initialTopMostItemIndex={logs.length - 1}
+            alignToBottom
+          />
+        </motion.div>
+      )}
+    </AnimatePresence>
   )
 }
