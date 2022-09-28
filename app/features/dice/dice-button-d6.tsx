@@ -71,10 +71,10 @@ export function DiceConfirmPanel() {
             action="/api/roll"
             method="post"
             replace
-            className="flex items-center gap-2"
+            className="flex flex-wrap items-center justify-end gap-2"
           >
             <input
-              className={clsx(inputClass, "w-64")}
+              className={clsx(inputClass, "w-full max-w-xs")}
               title="Intent"
               name="intent"
               placeholder="Intent (notice, finesse, etc.)"
@@ -85,29 +85,31 @@ export function DiceConfirmPanel() {
               }}
             />
             <input type="hidden" name="count" value={count} />
-            <Button
-              title="Cancel"
-              className={blackCircleIconButtonClass}
-              onClick={() => countStore.set(0)}
-            >
-              <X size={16} />
-            </Button>
-            <Button
-              title="Minus 1"
-              className={blackCircleIconButtonClass}
-              onClick={() => countStore.set(countStore.get() - 1)}
-            >
-              <Minus size={16} />
-            </Button>
-            <Button
-              id={diceConfirmButtonId}
-              type="submit"
-              title="Roll"
-              className={blackCircleIconButtonClass}
-              onClick={() => countStore.set(0)}
-            >
-              <Check size={16} />
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                title="Cancel"
+                className={blackCircleIconButtonClass}
+                onClick={() => countStore.set(0)}
+              >
+                <X size={16} />
+              </Button>
+              <Button
+                title="Minus 1"
+                className={blackCircleIconButtonClass}
+                onClick={() => countStore.set(countStore.get() - 1)}
+              >
+                <Minus size={16} />
+              </Button>
+              <Button
+                id={diceConfirmButtonId}
+                type="submit"
+                title="Roll"
+                className={blackCircleIconButtonClass}
+                onClick={() => countStore.set(0)}
+              >
+                <Check size={16} />
+              </Button>
+            </div>
           </fetcher.Form>
         </motion.div>
       )}

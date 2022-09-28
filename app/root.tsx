@@ -248,7 +248,8 @@ function FooterActions() {
       offset(8),
       size({
         padding: 16,
-        apply: ({ elements, availableHeight }) => {
+        apply: ({ elements, availableWidth, availableHeight }) => {
+          elements.floating.style.width = `${availableWidth}px`
           elements.floating.style.height = `${availableHeight}px`
         },
       }),
@@ -271,7 +272,7 @@ function FooterActions() {
             top: floating.y ?? 0,
           }}
         >
-          <div className="flex-1 [&>*]:pointer-events-auto">
+          <div className="w-full max-w-xs flex-1 self-end [&>*]:pointer-events-auto">
             <LogsPanel logs={data.logs} />
           </div>
           <div className="contents [&>*]:pointer-events-auto">

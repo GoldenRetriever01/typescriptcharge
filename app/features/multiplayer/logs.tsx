@@ -84,7 +84,7 @@ export function LogsPanel({ logs: logsProp }: { logs: DatabaseDiceLog[] }) {
                 <DiceLogEntry log={log} />
               </div>
             )}
-            className="thin-scrollbar -mr-1 h-full w-80"
+            className="thin-scrollbar -mr-1 h-full"
             followOutput={() => "auto"}
             initialTopMostItemIndex={logs.length - 1}
             alignToBottom
