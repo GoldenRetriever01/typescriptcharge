@@ -10,14 +10,32 @@ import { blackCircleIconButtonClass, inputClass } from "~/ui/styles"
 const countStore = atom(0)
 const intentStore = atom("")
 
+const diceButtonId = "dice-button"
 const diceConfirmButtonId = "confirm-dice"
+const intentInputId = "dice-intent"
+
+let prev = countStore.get()
+countStore.listen((next) => {
+  if (prev === 0 && next === 1) {
+    setTimeout(() => {
+      // eslint-disable-next-line unicorn/prefer-query-selector
+      document.getElementById(intentInputId)?.focus()
+    })
+  }
+
+  if (prev === 1 && next === 0) {
+    setTimeout(() => {
+      // eslint-disable-next-line unicorn/prefer-query-selector
+      document.getElementById(diceButtonId)?.focus()
+    })
+  }
+
+  prev = next
+})
 
 export function setDiceRoll(count: number, intent: string) {
   countStore.set(count)
   intentStore.set(intent)
-  setTimeout(() => {
-    document.querySelector<HTMLInputElement>(`#${diceConfirmButtonId}`)?.focus()
-  })
 }
 
 export function DiceButton() {
@@ -34,10 +52,10 @@ export function DiceButton() {
       className={clsx("relative", count === 0 ? "opacity-75" : "opacity-100")}
     >
       <Button
+        id={diceButtonId}
         type="submit"
         title="Roll some d6"
         className={blackCircleIconButtonClass}
-        disabled={pending}
         onClick={() => {
           countStore.set(countStore.get() + 1)
         }}
@@ -72,8 +90,13 @@ export function DiceConfirmPanel() {
             method="post"
             replace
             className="flex flex-wrap items-center justify-end gap-2"
+            onSubmit={() => {
+              countStore.set(0)
+              intentStore.set("")
+            }}
           >
             <input
+              id={intentInputId}
               className={clsx(inputClass, "w-full max-w-xs")}
               title="Intent"
               name="intent"
@@ -106,7 +129,6 @@ export function DiceConfirmPanel() {
                 type="submit"
                 title="Roll"
                 className={blackCircleIconButtonClass}
-                onClick={() => countStore.set(0)}
               >
                 <Check size={16} />
               </Button>
