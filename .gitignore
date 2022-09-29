@@ -5,6 +5,7 @@ node_modules
 /public/build
 /api
 .env
+.env.*
 build
 dist
 .cache
