@@ -1,33 +1,34 @@
 import { LiveList } from "@liveblocks/client"
-import { useStore } from "@nanostores/react"
-import { atom } from "nanostores"
 import { Plus } from "react-feather"
 import { Clock } from "~/features/clocks/clock"
 import type { ClockState } from "~/features/clocks/clock-state"
-import { syncStoreWithLiveblocks } from "~/features/multiplayer/liveblocks-client"
+import {
+  useMutation,
+  useStorage,
+} from "~/features/multiplayer/liveblocks-react"
 import { clearButtonClass } from "~/ui/styles"
 
-const store = atom<ClockState[]>([])
-syncStoreWithLiveblocks(
-  store,
-  (storage) => storage.root.get("clocks")?.toArray() ?? [],
-  (storage, clocks) => {
-    storage.root.set("clocks", new LiveList(clocks))
-  },
-)
-
-const setClocks = (clocks: ClockState[]) => store.set(clocks)
-
 export default function ClocksPage() {
-  const clocks = useStore(store)
+  const clocks = useStorage((root) => root.clocks) ?? []
 
-  const updateClock = (id: string, update: Partial<ClockState>) => {
-    setClocks(
-      clocks.map((clock) =>
-        clock.id === id ? { ...clock, ...update } : clock,
-      ),
-    )
-  }
+  const setClocks = useMutation((context, clocks: ClockState[]) => {
+    context.storage.set("clocks", new LiveList(clocks))
+  }, [])
+
+  const updateClock = useMutation(
+    (context, id: string, update: Partial<ClockState>) => {
+      let clocks = context.storage.get("clocks")?.toArray() ?? []
+      context.storage.set(
+        "clocks",
+        new LiveList(
+          clocks.map((clock) =>
+            clock.id === id ? { ...clock, ...update } : clock,
+          ),
+        ),
+      )
+    },
+    [],
+  )
 
   return (
     <div className="grid gap-4">

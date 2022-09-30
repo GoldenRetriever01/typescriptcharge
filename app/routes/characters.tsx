@@ -1,1 +1,1 @@
-export { default, loader } from "./characters.$id"
+export { default, loader, unstable_shouldReload } from "./characters.$id"

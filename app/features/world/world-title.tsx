@@ -1,15 +1,11 @@
-import { useStore } from "@nanostores/react"
-import { computed } from "nanostores"
 import { useEffect } from "react"
 import { truthyJoin } from "~/helpers/truthy-join"
-import { worldStore } from "./world-store"
-
-const worldNameStore = computed(worldStore, (w) => w.name)
+import { useWorld } from "./world-state"
 
 export function WorldTitle() {
-  const worldName = useStore(worldNameStore)
+  const world = useWorld()
   useEffect(() => {
-    document.title = truthyJoin(" | ", [worldName, "Charge Worlds"])
-  }, [worldName])
+    document.title = truthyJoin(" | ", [world?.name, "Charge Worlds"])
+  }, [world?.name])
   return <></>
 }

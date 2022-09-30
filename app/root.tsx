@@ -131,9 +131,11 @@ export default function App() {
                     <MainNav />
                   </div>
                   <div className={clsx(raisedPanelClass, "p-4")}>
-                    <LoadingSuspense>
-                      <Outlet />
-                    </LoadingSuspense>
+                    <RoomProvider id={defaultRoomId} {...defaultRoomInit}>
+                      <LoadingSuspense>
+                        <Outlet />
+                      </LoadingSuspense>
+                    </RoomProvider>
                   </div>
                 </div>
 
@@ -141,12 +143,12 @@ export default function App() {
                   <FooterActions />
                 </div>
 
-                <EmptySuspense>
-                  <RoomProvider id={defaultRoomId} {...defaultRoomInit}>
+                <RoomProvider id={defaultRoomId} {...defaultRoomInit}>
+                  <EmptySuspense>
                     <LiveCursors name={user.username} />
-                  </RoomProvider>
-                  <WorldTitle />
-                </EmptySuspense>
+                    <WorldTitle />
+                  </EmptySuspense>
+                </RoomProvider>
               </>
             )}
           </AuthGuard>
