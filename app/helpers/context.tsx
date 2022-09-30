@@ -3,7 +3,9 @@ import { createContext, useContext } from "react"
 
 const empty = Symbol()
 
-export function createContextWrapper<T>(useContextValue: () => T) {
+export function createContextWrapper<T, P extends { [key: string]: unknown }>(
+  useContextValue: (props: P) => T,
+) {
   const Context = createContext<T | typeof empty>(empty)
 
   function useValue() {
@@ -14,9 +16,9 @@ export function createContextWrapper<T>(useContextValue: () => T) {
     return value
   }
 
-  function Provider({ children }: { children: ReactNode }) {
-    const value = useContextValue()
-    return <Context.Provider value={value}>{children}</Context.Provider>
+  function Provider(props: { children: ReactNode } & P) {
+    const value = useContextValue(props)
+    return <Context.Provider value={value}>{props.children}</Context.Provider>
   }
 
   return [useValue, Provider] as const
