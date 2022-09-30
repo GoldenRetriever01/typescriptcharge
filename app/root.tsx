@@ -21,6 +21,7 @@ import favicon from "./assets/favicon.svg"
 import { env } from "./env.server"
 import type { SessionUser } from "./features/auth/session"
 import { getSessionUser } from "./features/auth/session"
+import { UserProvider } from "./features/auth/user-context"
 import { DiceButton, DiceConfirmPanel } from "./features/dice/dice-button-d6"
 import { LiveCursors } from "./features/multiplayer/live-cursors"
 import {
@@ -131,9 +132,11 @@ export default function App() {
                     <MainNav />
                   </div>
                   <div className={clsx(raisedPanelClass, "p-4")}>
-                    <LoadingSuspense>
-                      <Outlet />
-                    </LoadingSuspense>
+                    <UserProvider user={user}>
+                      <LoadingSuspense>
+                        <Outlet />
+                      </LoadingSuspense>
+                    </UserProvider>
                   </div>
                 </div>
 

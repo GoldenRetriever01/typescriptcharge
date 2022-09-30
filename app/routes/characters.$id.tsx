@@ -1,13 +1,11 @@
 import { Dialog, Transition } from "@headlessui/react"
 import { LiveList } from "@liveblocks/client"
-import type { LoaderArgs } from "@remix-run/node"
-import { json } from "@remix-run/node"
-import { Link, useLoaderData, useNavigate, useParams } from "@remix-run/react"
+import { Link, useNavigate, useParams } from "@remix-run/react"
 import clsx from "clsx"
 import { Fragment, useState } from "react"
 import TextArea from "react-expanding-textarea"
 import { Eye, EyeOff, Hexagon, Plus, Trash, X } from "react-feather"
-import { getSessionUser } from "~/features/auth/session"
+import { useUserContext } from "~/features/auth/user-context"
 import { characterActionLibrary } from "~/features/characters/character-actions"
 import type { Character } from "~/features/characters/character-sheet-data"
 import { Clock } from "~/features/clocks/clock"
@@ -87,20 +85,13 @@ function useAddCharacter() {
   }, [])
 }
 
-export const unstable_shouldReload = () => false
-
-export async function loader({ request }: LoaderArgs) {
-  const user = await getSessionUser(request)
-  return json({ user })
-}
-
 export default function CharactersPage() {
-  const { user } = useLoaderData<typeof loader>()
+  const user = useUserContext()
   const params = useParams<{ id?: string }>()
   const navigate = useNavigate()
 
   let characters = useCharacters()
-  if (!user?.isAdmin) {
+  if (!user.isAdmin) {
     characters = characters.filter((character) => !character.hidden)
   }
 
@@ -401,10 +392,10 @@ function DeleteButton({
 }
 
 function HideButton({ character }: { character: Character }) {
-  const { user } = useLoaderData<typeof loader>()
+  const user = useUserContext()
   const updateCharacter = useUpdateCharacter(character.id)
 
-  if (!user?.isAdmin) {
+  if (!user.isAdmin) {
     return <></>
   }
 
