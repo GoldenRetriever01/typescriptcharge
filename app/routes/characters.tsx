@@ -1,1 +1,1 @@
-export { default } from "./characters.$id"
+export { default, loader } from "./characters.$id"

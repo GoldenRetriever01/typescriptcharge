@@ -57,6 +57,7 @@ export type SessionUser = {
   username: string
   avatar: string | null
   isAllowed: boolean
+  isAdmin: boolean
 }
 
 export async function getSessionUser(
@@ -84,8 +85,11 @@ export async function getSessionUser(
     return
   }
 
-  const isAllowed = discordUserAllowList.includes(user.data.discordId)
-  return { ...user.data, isAllowed }
+  return {
+    ...user.data,
+    isAllowed: discordUserAllowList.includes(user.data.discordId),
+    isAdmin: env.ADMIN_DISCORD_ID === user.data.discordId,
+  }
 }
 
 export function createLogoutCookie() {

@@ -1,12 +1,15 @@
 import { Dialog, Transition } from "@headlessui/react"
 import { LiveList } from "@liveblocks/client"
 import { useStore } from "@nanostores/react"
-import { Link, useFetcher, useNavigate, useParams } from "@remix-run/react"
+import type { LoaderArgs } from "@remix-run/node"
+import { json } from "@remix-run/node"
+import { Link, useLoaderData, useNavigate, useParams } from "@remix-run/react"
 import clsx from "clsx"
 import { atom } from "nanostores"
 import { Fragment, useState } from "react"
 import TextArea from "react-expanding-textarea"
-import { Hexagon, Plus, Trash, X } from "react-feather"
+import { Eye, EyeOff, Hexagon, Plus, Trash, X } from "react-feather"
+import { getSessionUser } from "~/features/auth/session"
 import { characterActionLibrary } from "~/features/characters/character-actions"
 import type { Character } from "~/features/characters/character-sheet-data"
 import { Clock } from "~/features/clocks/clock"
@@ -67,11 +70,20 @@ function deleteCharacter(id: string) {
   store.set(store.get().filter((character) => character.id !== id))
 }
 
+export async function loader({ request }: LoaderArgs) {
+  const user = await getSessionUser(request)
+  return json({ user })
+}
+
 export default function CharactersPage() {
+  const { user } = useLoaderData<typeof loader>()
   const params = useParams<{ id?: string }>()
   const navigate = useNavigate()
 
-  const characters = useStore(store)
+  let characters = useStore(store)
+  if (!user?.isAdmin) {
+    characters = characters.filter((character) => !character.hidden)
+  }
 
   const characterId = params.id
   const currentCharacter =
@@ -92,7 +104,8 @@ export default function CharactersPage() {
               to={`/characters/${character.id}`}
               className={clearButtonClass(character === currentCharacter)}
             >
-              {character.name || "Unnamed"}
+              {character.name || "Unnamed"}{" "}
+              {character.hidden && <EyeOff size={16} />}
             </Link>
           ))}
           {characters.length === 0 && (
@@ -272,11 +285,12 @@ function CharacterSheetEditor({ character }: { character: Character }) {
 
       <hr className={dividerClass} />
 
-      <section>
+      <section className="flex flex-wrap gap-4">
         <DeleteButton
           characterId={character.id}
           characterName={character.name}
         />
+        <HideButton character={character} />
       </section>
     </div>
   )
@@ -374,5 +388,25 @@ function DeleteButton({
         </Dialog>
       </Transition.Root>
     </>
+  )
+}
+
+function HideButton({ character }: { character: Character }) {
+  const { user } = useLoaderData<typeof loader>()
+
+  if (!user?.isAdmin) {
+    return <></>
+  }
+
+  return (
+    <Button
+      className={solidButton}
+      onClick={() => {
+        updateCharacter(character.id, { hidden: !character.hidden })
+      }}
+    >
+      {character.hidden ? <Eye /> : <EyeOff />}
+      {character.hidden ? "Unhide" : "Hide"}
+    </Button>
   )
 }

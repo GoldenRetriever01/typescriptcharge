@@ -12,4 +12,5 @@ export type Character = {
   condition: string
   actions: Partial<Record<CharacterActionName, { level: number }>>
   talents: string
+  hidden?: boolean
 }
