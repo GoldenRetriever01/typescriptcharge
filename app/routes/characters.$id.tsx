@@ -117,7 +117,6 @@ export default function CharactersPage() {
 }
 
 function CharacterSheetEditor({ character }: { character: Character }) {
-  const fetcher = useFetcher()
   return (
     <div className="grid gap-4">
       <div className="grid gap-4 sm:grid-cols-2">
