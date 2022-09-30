@@ -125,17 +125,15 @@ export default function App() {
         <div className="mx-auto flex min-h-screen flex-col gap-4 p-4">
           <AuthGuard>
             {({ user }) => (
-              <>
+              <RoomProvider id={defaultRoomId} {...defaultRoomInit}>
                 <div className="mx-auto grid w-full max-w-screen-md gap-4">
                   <div className="my-2">
                     <MainNav />
                   </div>
                   <div className={clsx(raisedPanelClass, "p-4")}>
-                    <RoomProvider id={defaultRoomId} {...defaultRoomInit}>
-                      <LoadingSuspense>
-                        <Outlet />
-                      </LoadingSuspense>
-                    </RoomProvider>
+                    <LoadingSuspense>
+                      <Outlet />
+                    </LoadingSuspense>
                   </div>
                 </div>
 
@@ -143,13 +141,11 @@ export default function App() {
                   <FooterActions />
                 </div>
 
-                <RoomProvider id={defaultRoomId} {...defaultRoomInit}>
-                  <EmptySuspense>
-                    <LiveCursors name={user.username} />
-                    <WorldTitle />
-                  </EmptySuspense>
-                </RoomProvider>
-              </>
+                <EmptySuspense>
+                  <LiveCursors name={user.username} />
+                  <WorldTitle />
+                </EmptySuspense>
+              </RoomProvider>
             )}
           </AuthGuard>
         </div>
