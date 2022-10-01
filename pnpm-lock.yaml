@@ -27,6 +27,7 @@ specifiers:
   '@types/prettier': ^2.7.1
   '@types/react': ^18.0.21
   '@types/react-dom': ^18.0.6
+  '@types/ws': ^8.5.3
   ariakit: 2.0.0-next.41
   chalk: ^5.0.1
   clsx: ^1.2.1
@@ -51,6 +52,7 @@ specifiers:
   tailwind-scrollbar: ^2.0.1
   tailwindcss: ^3.1.8
   typescript: ^4.8.3
+  ws: ^8.9.0
   zod: ^3.19.1
 
 dependencies:
@@ -83,6 +85,7 @@ dependencies:
   react-feather: 2.0.10_react@18.2.0
   react-suspense-fetch: 0.6.0
   react-virtuoso: 2.19.0_biqbaboplfbrettd7655fr4n2y
+  ws: 8.9.0
   zod: 3.19.1
 
 devDependencies:
@@ -97,6 +100,7 @@ devDependencies:
   '@types/prettier': 2.7.1
   '@types/react': 18.0.21
   '@types/react-dom': 18.0.6
+  '@types/ws': 8.5.3
   esbuild: 0.15.9
   eslint: 8.24.0
   eslint-plugin-tailwindcss: 3.6.2
@@ -3160,6 +3164,12 @@ packages:
 
   /@types/unist/2.0.6:
     resolution: {integrity: sha512-PBjIUxZHOuj0R15/xuwJYjFi+KZdNFrehocChv4g5hu6aFroHue8m0lBP0POdK2nKzbw0cgV1mws8+V/JAcEkQ==}
+    dev: true
+
+  /@types/ws/8.5.3:
+    resolution: {integrity: sha512-6YOoWjruKj1uLf3INHH7D3qTXwFfEsg1kf3c0uDdSBJwfa/llkwIjrAGV7j7mVgGNbzTQ3HiHKKDXl6bJPD97w==}
+    dependencies:
+      '@types/node': 18.7.21
     dev: true
 
   /@types/yargs-parser/21.0.0:
@@ -13303,6 +13313,19 @@ packages:
       utf-8-validate:
         optional: true
     dev: true
+
+  /ws/8.9.0:
+    resolution: {integrity: sha512-Ja7nszREasGaYUYCI2k4lCKIRTt+y7XuqVoHR44YpI49TtryyqbqvDMn5eqfW7e6HzTukDRIsXqzVHScqRcafg==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: ^5.0.2
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+    dev: false
 
   /xdg-basedir/4.0.0:
     resolution: {integrity: sha512-PSNhEJDejZYV7h50BohL09Er9VaIefr2LMAf3OEmpCkjOi34eYyQYAXUTjEQtZJTKcF0E2UKTh+osDLsgNim9Q==}
