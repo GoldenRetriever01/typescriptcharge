@@ -62,6 +62,9 @@
 ## UI polish
 
 - [ ] proper tooltips on icon buttons
+- [ ] color-coded characters. put a dropdown somewhere to let the user select from a preset of colors (because I don't trust people to select their own colors) then color the entire card that color
+- [ ] add a + button for dice next to the - button
+- [ ] use proper dice icons from https://lucide.dev/
 
 ## nice to have
 
