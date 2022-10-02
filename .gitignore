@@ -3,7 +3,8 @@ node_modules
 /.cache
 /build
 /public/build
-/api
+/api/index.js
+/api/index.js.map
 .env
 .env.*
 build
