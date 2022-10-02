@@ -28,7 +28,7 @@ specifiers:
   '@types/react': ^18.0.21
   '@types/react-dom': ^18.0.6
   '@types/ws': ^8.5.3
-  '@vercel/node': ^2.5.21
+  '@vercel/node': ^2.4.4
   ariakit: 2.0.0-next.41
   chalk: ^5.0.1
   clsx: ^1.2.1

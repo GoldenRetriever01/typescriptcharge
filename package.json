@@ -32,7 +32,7 @@
     "@remix-run/react": "^1.7.2",
     "@remix-run/vercel": "^1.7.2",
     "@supabase/supabase-js": "2.0.0-rc.10",
-    "@vercel/node": "^2.5.21",
+    "@vercel/node": "^2.4.4",
     "ariakit": "2.0.0-next.41",
     "chalk": "^5.0.1",
     "clsx": "^1.2.1",
