@@ -1,3 +1,4 @@
+import type { DiceLog } from "@prisma/client"
 import clsx from "clsx"
 import { AnimatePresence, motion } from "framer-motion"
 import { useEffect, useState } from "react"
@@ -10,7 +11,6 @@ import { useLatestRef } from "~/helpers/react"
 import { getSupabaseBrowserClient } from "~/supabase-browser"
 import { Button } from "~/ui/button"
 import { blackCircleIconButtonClass } from "~/ui/styles"
-import type { DatabaseDiceLog } from "../dice/dice-data"
 import { DiceLogEntry } from "../dice/dice-log-entry"
 import { defaultRoomId } from "./liveblocks-client"
 
@@ -22,23 +22,23 @@ const [useLogsPanelContext, LogsPanelProvider] = createContextWrapper(
       schema: z.boolean(),
     })
 
-    const [realtimeLogs, setRealtimeLogs] = useState<DatabaseDiceLog[]>([])
+    const [realtimeLogs, setRealtimeLogs] = useState<DiceLog[]>([])
     const [unread, setUnread] = useState(false)
 
     const visibleRef = useLatestRef(visible)
 
     useEffect(() => {
       const sub = getSupabaseBrowserClient()
-        .channel("public:dice-logs")
+        .channel("public:DiceLog")
         .on(
           "postgres_changes",
           {
             event: "INSERT",
             schema: "public",
-            table: "dice-logs",
+            table: "DiceLog",
             filter: `roomId=eq.${defaultRoomId}`,
           },
-          (payload: { new: DatabaseDiceLog }) => {
+          (payload: { new: DiceLog }) => {
             setRealtimeLogs((logs) => [...logs, payload.new])
             if (!visibleRef.current) setUnread(true)
           },
@@ -80,7 +80,7 @@ export function LogsPanelButton() {
   )
 }
 
-export function LogsPanel({ logs: logsProp }: { logs: DatabaseDiceLog[] }) {
+export function LogsPanel({ logs: logsProp }: { logs: DiceLog[] }) {
   const context = useLogsPanelContext()
   const logs = [...logsProp, ...context.realtimeLogs]
 

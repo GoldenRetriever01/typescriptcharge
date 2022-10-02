@@ -13,7 +13,6 @@ const envSchema = z.object({
   DISCORD_ALLOWLIST: z.string(),
   SUPABASE_URL: z.string(),
   SUPABASE_ANON_KEY: z.string(),
-  SUPABASE_SERVICE_KEY: z.string(),
   ADMIN_DISCORD_ID: z.string(),
 })
 

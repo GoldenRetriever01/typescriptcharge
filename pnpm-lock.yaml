@@ -13,6 +13,7 @@ specifiers:
   '@mdi/react': ^1.6.1
   '@nanostores/react': ^0.4.0
   '@netlify/functions': ^1.2.0
+  '@prisma/client': ^4.4.0
   '@remix-run/dev': ^1.7.2
   '@remix-run/netlify': ^1.7.2
   '@remix-run/node': ^1.7.2
@@ -32,6 +33,7 @@ specifiers:
   chalk: ^5.0.1
   clsx: ^1.2.1
   cross-fetch: ^3.1.5
+  cuid: ^2.1.8
   dotenv: ^16.0.2
   esbuild: ^0.15.9
   eslint: ^8.24.0
@@ -42,13 +44,14 @@ specifiers:
   node-cron: ^3.0.2
   npm-run-all: ^4.1.5
   prettier: ^2.7.1
+  prisma: ^4.4.0
   react: ^18.2.0
   react-dom: ^18.2.0
   react-expanding-textarea: ^2.3.6
   react-feather: ^2.0.10
   react-suspense-fetch: ^0.6.0
   react-virtuoso: ^2.19.0
-  supabase: ^1.5.0
+  remix-typedjson: ^0.1.2
   tailwind-scrollbar: ^2.0.1
   tailwindcss: ^3.1.8
   typescript: ^4.8.3
@@ -67,6 +70,7 @@ dependencies:
   '@mdi/react': 1.6.1
   '@nanostores/react': 0.4.0_kumziggp74xxkphhh7wyh33hzm
   '@netlify/functions': 1.2.0
+  '@prisma/client': 4.4.0_prisma@4.4.0
   '@remix-run/netlify': 1.7.2_hpdjxbbufc6x2yaacuadn5mdum
   '@remix-run/node': 1.7.2_biqbaboplfbrettd7655fr4n2y
   '@remix-run/react': 1.7.2_biqbaboplfbrettd7655fr4n2y
@@ -75,6 +79,7 @@ dependencies:
   chalk: 5.0.1
   clsx: 1.2.1
   cross-fetch: 3.1.5
+  cuid: 2.1.8
   dotenv: 16.0.2
   framer-motion: 7.4.0_biqbaboplfbrettd7655fr4n2y
   nanostores: 0.7.0
@@ -85,6 +90,7 @@ dependencies:
   react-feather: 2.0.10_react@18.2.0
   react-suspense-fetch: 0.6.0
   react-virtuoso: 2.19.0_biqbaboplfbrettd7655fr4n2y
+  remix-typedjson: 0.1.2_e7o7l4ro6gzw4v4mdg2hwnla7q
   ws: 8.9.0
   zod: 3.19.1
 
@@ -107,7 +113,7 @@ devDependencies:
   netlify-cli: 11.8.3
   npm-run-all: 4.1.5
   prettier: 2.7.1
-  supabase: 1.5.0
+  prisma: 4.4.0
   tailwind-scrollbar: 2.0.1_tailwindcss@3.1.8
   tailwindcss: 3.1.8
   typescript: 4.8.3
@@ -2566,6 +2572,28 @@ packages:
       '@octokit/openapi-types': 12.11.0
     dev: true
 
+  /@prisma/client/4.4.0_prisma@4.4.0:
+    resolution: {integrity: sha512-ciKOP246x1xwr04G9ajHlJ4pkmtu9Q6esVyqVBO0QJihaKQIUvbPjClp17IsRJyxqNpFm4ScbOc/s9DUzKHINQ==}
+    engines: {node: '>=14.17'}
+    requiresBuild: true
+    peerDependencies:
+      prisma: '*'
+    peerDependenciesMeta:
+      prisma:
+        optional: true
+    dependencies:
+      '@prisma/engines-version': 4.4.0-66.f352a33b70356f46311da8b00d83386dd9f145d6
+      prisma: 4.4.0
+    dev: false
+
+  /@prisma/engines-version/4.4.0-66.f352a33b70356f46311da8b00d83386dd9f145d6:
+    resolution: {integrity: sha512-P5v/PuEIJLYXZUZBvOLPqoyCW+m6StNqHdiR6te++gYVODpPdLakks5HVx3JaZIY+LwR02juJWFlwpc9Eog/ug==}
+    dev: false
+
+  /@prisma/engines/4.4.0:
+    resolution: {integrity: sha512-Fpykccxlt9MHrAs/QpPGpI2nOiRxuLA+LiApgA59ibbf24YICZIMWd3SI2YD+q0IAIso0jCGiHhirAIbxK3RyQ==}
+    requiresBuild: true
+
   /@remix-run/dev/1.7.2_63cxfdg5f5bb4xpkk3vcjfcl3q:
     resolution: {integrity: sha512-oJcaju9zID+xOUnkMQJBEbjiiYBvILVsX64Fzi1itlm5vjNuo99nmKM7gleaDawNLo3lyd6Xd+JyMa3aIwDKOQ==}
     engines: {node: '>=14'}
@@ -4937,6 +4965,10 @@ packages:
   /csstype/3.1.1:
     resolution: {integrity: sha512-DJR/VvkAvSZW9bTouZue2sSxDwdTN92uHjqeKVm+0dAqdfNykRzQ95tay8aXMBAAPpUiq4Qcug2L7neoRh2Egw==}
     dev: true
+
+  /cuid/2.1.8:
+    resolution: {integrity: sha512-xiEMER6E7TlTPnDxrM4eRiC6TRgjNX9xzEZ5U/Se2YJKr7Mq4pJn/2XEHjl3STcSh96GmkHPcBXLES8M29wyyg==}
+    dev: false
 
   /cyclist/1.0.1:
     resolution: {integrity: sha512-NJGVKPS81XejHcLhaLJS7plab0fK3slPh11mESeeDq2W4ZI5kUKK/LRRdVDvjJseojbPB7ZwjnyOybg3Igea/A==}
@@ -10988,6 +11020,14 @@ packages:
       minimist: 1.2.6
     dev: true
 
+  /prisma/4.4.0:
+    resolution: {integrity: sha512-l/QKLmLcKJQFuc+X02LyICo0NWTUVaNNZ00jKJBqwDyhwMAhboD1FWwYV50rkH4Wls0RviAJSFzkC2ZrfawpfA==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+    requiresBuild: true
+    dependencies:
+      '@prisma/engines': 4.4.0
+
   /process-nextick-args/2.0.1:
     resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==}
     dev: true
@@ -11460,6 +11500,17 @@ packages:
       mdast-util-to-hast: 11.3.0
       unified: 10.1.2
     dev: true
+
+  /remix-typedjson/0.1.2_e7o7l4ro6gzw4v4mdg2hwnla7q:
+    resolution: {integrity: sha512-N5eEUK21IDkTPMPNJGYrDzwfwtfXRUTYxo/U5YBYhgfWr4kkl+jhzjo7BInfzSCfgxBhLni2DWi/XqLYu1UDWA==}
+    peerDependencies:
+      '@remix-run/react': ^1.6.5
+      '@remix-run/server-runtime': ^1.6.5
+      react: ^17.0.2 || ^18.0.0
+    dependencies:
+      '@remix-run/react': 1.7.2_biqbaboplfbrettd7655fr4n2y
+      react: 18.2.0
+    dev: false
 
   /remove-trailing-separator/1.1.0:
     resolution: {integrity: sha512-/hS+Y0u3aOfIETiaiirUFwDBDzmXPvO+jAfKTitUngIPzdKc6Z0LoFjM/CK5PL4C+eKwHohlHAb6H0VFfmmUsw==}
@@ -12299,15 +12350,6 @@ packages:
       hey-listen: 1.0.8
       tslib: 2.4.0
     dev: false
-
-  /supabase/1.5.0:
-    resolution: {integrity: sha512-M6XPohjeUcKmznDKANQJ92VJ7LQCQOYlksXJPYOgUcrs0PVRnBo+7U1vD84sMab9xPmInpmDnDrMkgykt6V55Q==}
-    hasBin: true
-    requiresBuild: true
-    dependencies:
-      node-fetch: 3.2.10
-      tar: 6.1.11
-    dev: true
 
   /supports-color/0.2.0:
     resolution: {integrity: sha512-tdCZ28MnM7k7cJDJc7Eq80A9CsRFAAOZUy41npOZCs++qSjfIy7o5Rh46CBk+Dk5FbKJ33X3Tqg4YrV07N5RaA==}

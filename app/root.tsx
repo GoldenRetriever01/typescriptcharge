@@ -13,6 +13,7 @@ import {
 import clsx from "clsx"
 import type { ReactNode } from "react"
 import { Book, Clock, Users } from "react-feather"
+import { typedjson, useTypedLoaderData } from "remix-typedjson"
 import { truthyJoin } from "~/helpers/truthy-join"
 import { SupabaseBrowserEnv } from "~/supabase-browser"
 import { LoadingSuspense } from "~/ui/loading"
@@ -37,38 +38,36 @@ import {
 import { getWorldData } from "./features/world/actions.server"
 import { WorldTitle } from "./features/world/world-title"
 import tailwind from "./generated/tailwind.css"
-import { supabase } from "./supabase.server"
+import { prisma } from "./prisma.server"
 import { EmptySuspense } from "./ui/loading"
 import { Portal } from "./ui/portal"
 
-async function getWorldLogs() {
-  const result = await supabase
-    .from("dice-logs")
-    .select("*")
-    .eq("roomId", defaultRoomId)
-    .order("createdAt", { ascending: false })
-    .limit(20)
-
-  if (result.error) {
-    console.error("Failed to fetch world logs", result.error)
+export async function loader({ request }: LoaderArgs) {
+  async function getWorldLogs() {
+    return prisma.diceLog.findMany({
+      where: {
+        roomId: defaultRoomId,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 20,
+    })
   }
 
-  return result.data?.reverse() ?? []
-}
-
-export async function loader({ request }: LoaderArgs) {
   const [user, world, logs] = await Promise.all([
     getSessionUser(request),
     getWorldData(),
     getWorldLogs(),
   ])
-  return {
+
+  return typedjson({
     user,
     world,
     logs,
     supabaseUrl: env.SUPABASE_URL,
     supabaseAnonKey: env.SUPABASE_ANON_KEY,
-  }
+  })
 }
 
 export const unstable_shouldReload = () => false
@@ -107,7 +106,7 @@ export const links: LinksFunction = () => [
 ]
 
 export default function App() {
-  const data = useLoaderData<typeof loader>()
+  const data = useTypedLoaderData<typeof loader>()
   return (
     <html
       lang="en"
@@ -145,7 +144,7 @@ export default function App() {
                 </div>
 
                 <EmptySuspense>
-                  <LiveCursors name={user.username} />
+                  <LiveCursors name={user.name} />
                   <WorldTitle />
                 </EmptySuspense>
               </RoomProvider>

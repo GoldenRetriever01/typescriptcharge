@@ -4,7 +4,7 @@ import { z } from "zod"
 import { getSessionUser } from "~/features/auth/session"
 import { defaultRoomId } from "~/features/multiplayer/liveblocks-client"
 import { range } from "~/helpers/range"
-import { supabase } from "~/supabase.server"
+import { prisma } from "~/prisma.server"
 
 export function loader() {
   return redirect("/")
@@ -29,11 +29,13 @@ export async function action({ request }: ActionArgs) {
     result: Math.floor(Math.random() * 6) + 1,
   }))
 
-  await supabase.from("dice-logs").insert({
-    roomId: defaultRoomId,
-    userId: user.id,
-    dice: JSON.stringify(results),
-    intent: body.intent,
+  await prisma.diceLog.create({
+    data: {
+      roomId: defaultRoomId,
+      userId: user.id,
+      dice: results,
+      intent: body.intent,
+    },
   })
 
   return redirect(request.headers.get("Referer") ?? "/")

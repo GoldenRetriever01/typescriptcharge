@@ -1,12 +1,12 @@
 import { z } from "zod"
-import type { DatabaseDiceLog } from "./dice-data"
 
+import type { DiceLog } from "@prisma/client"
 import type { SerializeFrom } from "@remix-run/node"
 import { Suspense } from "react"
 import { createFetchStore } from "react-suspense-fetch"
 import type { apiUserLoader } from "~/routes/api/user.$id"
 
-export function DiceLogEntry({ log }: { log: DatabaseDiceLog }): JSX.Element {
+export function DiceLogEntry({ log }: { log: DiceLog }): JSX.Element {
   const dice = parseDiceJson(log.dice)
   return (
     <div className="flex items-end gap-6 rounded-md bg-black/75 px-6 py-4">
@@ -68,15 +68,15 @@ export function DiceLogEntry({ log }: { log: DatabaseDiceLog }): JSX.Element {
   )
 }
 
-const userStore = createFetchStore(async (id: number) => {
+const userStore = createFetchStore(async (id: string) => {
   const res = await fetch(`/api/user/${id}`)
   const data = (await res.json()) as SerializeFrom<typeof apiUserLoader>
   return data.user
 })
 
-function Username({ userId }: { userId: number }) {
+function Username({ userId }: { userId: string }) {
   const user = userStore.get(userId, { forcePrefetch: true })
-  return <>{user?.username ?? "unknown"}</>
+  return <>{user?.name ?? "unknown"}</>
 }
 
 function HexagonFilled(props: React.SVGAttributes<SVGElement>) {
