@@ -17,6 +17,7 @@ specifiers:
   '@remix-run/node': ^1.7.2
   '@remix-run/react': ^1.7.2
   '@remix-run/serve': ^1.7.2
+  '@remix-run/server-runtime': ^1.7.2
   '@remix-run/vercel': ^1.7.2
   '@rushstack/eslint-patch': ^1.2.0
   '@supabase/supabase-js': 2.0.0-rc.10
@@ -73,6 +74,7 @@ dependencies:
   '@prisma/client': 4.4.0_prisma@4.4.0
   '@remix-run/node': 1.7.2_biqbaboplfbrettd7655fr4n2y
   '@remix-run/react': 1.7.2_biqbaboplfbrettd7655fr4n2y
+  '@remix-run/server-runtime': 1.7.2_biqbaboplfbrettd7655fr4n2y
   '@remix-run/vercel': 1.7.2_vdcavuuprsfwosnu3x64sz2mz4
   '@supabase/supabase-js': 2.0.0-rc.10
   '@vercel/node': 2.5.21
@@ -91,7 +93,7 @@ dependencies:
   react-feather: 2.0.10_react@18.2.0
   react-suspense-fetch: 0.6.0
   react-virtuoso: 2.19.0_biqbaboplfbrettd7655fr4n2y
-  remix-typedjson: 0.1.2_e7o7l4ro6gzw4v4mdg2hwnla7q
+  remix-typedjson: 0.1.2_hxglujwarjbg2fjadnme7atvpy
   tslib: 2.4.0
   use-sync-external-store: 1.2.0_react@18.2.0
   ws: 8.9.0
@@ -7589,7 +7591,7 @@ packages:
       unified: 10.1.2
     dev: true
 
-  /remix-typedjson/0.1.2_e7o7l4ro6gzw4v4mdg2hwnla7q:
+  /remix-typedjson/0.1.2_hxglujwarjbg2fjadnme7atvpy:
     resolution: {integrity: sha512-N5eEUK21IDkTPMPNJGYrDzwfwtfXRUTYxo/U5YBYhgfWr4kkl+jhzjo7BInfzSCfgxBhLni2DWi/XqLYu1UDWA==}
     peerDependencies:
       '@remix-run/react': ^1.6.5
@@ -7597,6 +7599,7 @@ packages:
       react: ^17.0.2 || ^18.0.0
     dependencies:
       '@remix-run/react': 1.7.2_biqbaboplfbrettd7655fr4n2y
+      '@remix-run/server-runtime': 1.7.2_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
     dev: false
 

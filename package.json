@@ -30,6 +30,7 @@
     "@prisma/client": "^4.4.0",
     "@remix-run/node": "^1.7.2",
     "@remix-run/react": "^1.7.2",
+    "@remix-run/server-runtime": "^1.7.2",
     "@remix-run/vercel": "^1.7.2",
     "@supabase/supabase-js": "2.0.0-rc.10",
     "@vercel/node": "^2.4.4",
