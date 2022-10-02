@@ -29,6 +29,12 @@ async function backup() {
     },
   ).then((res) => res.json())
 
+  if (data.error) {
+    console.error(chalk.red("❌ Error fetching storage"))
+    console.error(data.error)
+    return
+  }
+
   console.info(chalk.dim("🚀 Uploading..."))
 
   const { error } = await supabase.storage
