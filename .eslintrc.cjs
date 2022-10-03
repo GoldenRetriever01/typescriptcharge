@@ -23,4 +23,7 @@ module.exports = {
       whitelist: ["font-body", "font-header"],
     },
   },
+  rules: {
+    "tailwindcss/migration-from-tailwind-2": "off",
+  },
 }
