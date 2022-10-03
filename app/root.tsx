@@ -11,8 +11,8 @@ import {
   useLoaderData,
 } from "@remix-run/react"
 import clsx from "clsx"
+import { Book, Clock, Users } from "lucide-react"
 import type { ReactNode } from "react"
-import { Book, Clock, Users } from "react-feather"
 import { typedjson, useTypedLoaderData } from "remix-typedjson"
 import { truthyJoin } from "~/helpers/truthy-join"
 import { SupabaseBrowserEnv } from "~/supabase-browser"

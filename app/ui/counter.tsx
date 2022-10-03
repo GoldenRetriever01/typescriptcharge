@@ -1,5 +1,5 @@
 import clsx from "clsx"
-import { MinusCircle, PlusCircle } from "react-feather"
+import { MinusCircle, PlusCircle } from "lucide-react"
 import { range } from "../helpers/range"
 import { activePress, clearButtonClass } from "./styles"
 

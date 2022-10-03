@@ -49,7 +49,6 @@ specifiers:
   react: ^18.2.0
   react-dom: ^18.2.0
   react-expanding-textarea: ^2.3.6
-  react-feather: ^2.0.10
   react-suspense-fetch: ^0.6.0
   react-virtuoso: ^2.19.0
   remix-typedjson: ^0.1.2
@@ -92,7 +91,6 @@ dependencies:
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
   react-expanding-textarea: 2.3.6_react@18.2.0
-  react-feather: 2.0.10_react@18.2.0
   react-suspense-fetch: 0.6.0
   react-virtuoso: 2.19.0_biqbaboplfbrettd7655fr4n2y
   remix-typedjson: 0.1.2_hxglujwarjbg2fjadnme7atvpy
@@ -7358,15 +7356,6 @@ packages:
       react: 18.2.0
       react-with-forwarded-ref: 0.3.5_react@18.2.0
       tslib: 2.4.0
-    dev: false
-
-  /react-feather/2.0.10_react@18.2.0:
-    resolution: {integrity: sha512-BLhukwJ+Z92Nmdcs+EMw6dy1Z/VLiJTzEQACDUEnWMClhYnFykJCGWQx+NmwP/qQHGX/5CzQ+TGi8ofg2+HzVQ==}
-    peerDependencies:
-      react: '>=16.8.6'
-    dependencies:
-      prop-types: 15.8.1
-      react: 18.2.0
     dev: false
 
   /react-is/16.13.1:

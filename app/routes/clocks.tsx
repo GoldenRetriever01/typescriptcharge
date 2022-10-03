@@ -1,5 +1,5 @@
 import { LiveList } from "@liveblocks/client"
-import { Plus } from "react-feather"
+import { Plus } from "lucide-react"
 import { Clock } from "~/features/clocks/clock"
 import type { ClockState } from "~/features/clocks/clock-state"
 import {

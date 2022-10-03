@@ -1,6 +1,6 @@
 import clsx from "clsx"
+import { X } from "lucide-react"
 import { useEffect, useRef } from "react"
-import { X } from "react-feather"
 import { Counter } from "../../ui/counter"
 import { activePress } from "../../ui/styles"
 
