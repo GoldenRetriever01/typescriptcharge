@@ -65,7 +65,7 @@ export default function CharactersPage() {
       )}
     >
       <nav className="flex items-start justify-between">
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-1 flex-wrap gap-4">
           {characters.map((character) => (
             <Link
               key={character.id}
@@ -80,7 +80,7 @@ export default function CharactersPage() {
             <p className="opacity-70">No characters found</p>
           )}
         </div>
-        <div className="flex-1" />
+
         <Button
           className={clearButtonClass(false)}
           onClick={handleCreateClicked}
