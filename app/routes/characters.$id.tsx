@@ -241,11 +241,12 @@ function CharacterSheetEditor({ character }: { character: Character }) {
 
       <section className="flex flex-wrap gap-4">
         <CharacterColorButton character={character} />
+        <HideButton character={character} />
+        <div className="flex-1" />
         <DeleteButton
           characterId={character.id}
           characterName={character.name}
         />
-        <HideButton character={character} />
       </section>
     </div>
   )
