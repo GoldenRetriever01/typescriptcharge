@@ -1,5 +1,6 @@
 import type { Client } from "@liveblocks/client"
 import { createClient } from "@liveblocks/client"
+import fetch from "cross-fetch"
 import WebSocket from "isomorphic-ws"
 import { env } from "~/env.server"
 import {
