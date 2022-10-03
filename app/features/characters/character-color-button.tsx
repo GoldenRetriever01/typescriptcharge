@@ -15,7 +15,7 @@ import { useUpdateCharacter } from "./hooks"
 export function CharacterColorButton({ character }: { character: Character }) {
   const popover = usePopoverState({
     placement: "top-start",
-    defaultOpen: true,
+    animated: true,
   })
 
   const updateCharacter = useUpdateCharacter(character.id)
@@ -25,7 +25,12 @@ export function CharacterColorButton({ character }: { character: Character }) {
       <PopoverDisclosure state={popover} className={solidButton}>
         <Palette /> Color
       </PopoverDisclosure>
-      <Popover state={popover} className="w-80 rounded-md bg-black/50 p-4">
+      <Popover
+        state={popover}
+        className={clsx(
+          "w-80 origin-bottom-left scale-90 rounded-md bg-black/50 p-4 opacity-0 transition [&[data-enter]]:scale-100 [&[data-enter]]:opacity-100",
+        )}
+      >
         <PopoverArrow className="[&_path]:fill-black/50 [&_path]:stroke-black/50" />
         <div className="grid auto-rows-[2rem] grid-cols-5 gap-2">
           {Object.entries(characterColors).map(([name, classes]) => (

@@ -59,7 +59,7 @@ export default function CharactersPage() {
     <div
       // eslint-disable-next-line tailwindcss/no-contradicting-classname
       className={clsx(
-        "grid gap-4 border-2 p-4 shadow-md shadow-[rgba(0,0,0,0.25)]",
+        "grid gap-4 border-2 p-4 shadow-md shadow-[rgba(0,0,0,0.25)] transition-colors",
         colorClasses.background,
         colorClasses.border,
       )}
