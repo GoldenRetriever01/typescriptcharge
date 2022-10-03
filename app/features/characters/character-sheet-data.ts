@@ -14,5 +14,6 @@ export const characterSchema = z.object({
   talents: z.string(),
   hidden: z.boolean().optional(),
   color: z.string().optional(),
+  imageUrl: z.string().optional(),
 })
 export type Character = z.output<typeof characterSchema>

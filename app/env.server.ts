@@ -7,12 +7,14 @@ const envSchema = z.object({
     .default("development"),
   COOKIE_SECRET: z.string(),
   LIVEBLOCKS_SECRET_KEY: z.string(),
+  LIVEBLOCKS_PUBLIC_KEY: z.string(),
   DISCORD_CLIENT_ID: z.string(),
   DISCORD_CLIENT_SECRET: z.string(),
   DISCORD_REDIRECT_URI: z.string(),
   DISCORD_ALLOWLIST: z.string(),
   SUPABASE_URL: z.string(),
   SUPABASE_ANON_KEY: z.string(),
+  SUPABASE_SERVICE_KEY: z.string(),
   ADMIN_DISCORD_ID: z.string(),
 })
 

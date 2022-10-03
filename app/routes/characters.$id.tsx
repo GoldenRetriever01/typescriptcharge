@@ -8,6 +8,7 @@ import { useUserContext } from "~/features/auth/user-context"
 import { characterActionLibrary } from "~/features/characters/character-actions"
 import { CharacterColorButton } from "~/features/characters/character-color-button"
 import { characterColors } from "~/features/characters/character-colors"
+import { CharacterImageUploader } from "~/features/characters/character-image-uploader"
 import type { Character } from "~/features/characters/character-sheet-data"
 import {
   useAddCharacter,
@@ -104,7 +105,9 @@ function CharacterSheetEditor({ character }: { character: Character }) {
 
   return (
     <div className="grid gap-4">
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-3">
+        <CharacterImageUploader character={character} />
+
         <div className="grid content-between gap-4">
           <Field label="Name">
             <input
