@@ -7,7 +7,6 @@ import {
   NavLink,
   Outlet,
   Scripts,
-  ScrollRestoration,
   useLoaderData,
 } from "@remix-run/react"
 import clsx from "clsx"
@@ -149,7 +148,6 @@ export default function App() {
             )}
           </AuthGuard>
         </div>
-        <ScrollRestoration />
         <Scripts />
         <LiveReload />
       </body>
