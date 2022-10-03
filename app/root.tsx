@@ -43,7 +43,7 @@ import { Portal } from "./ui/portal"
 
 export async function loader({ request }: LoaderArgs) {
   async function getWorldLogs() {
-    return prisma.diceLog.findMany({
+    const logs = await prisma.diceLog.findMany({
       where: {
         roomId: defaultRoomId,
       },
@@ -52,6 +52,7 @@ export async function loader({ request }: LoaderArgs) {
       },
       take: 20,
     })
+    return logs.reverse()
   }
 
   const [user, world, logs] = await Promise.all([
