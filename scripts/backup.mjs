@@ -1,8 +1,14 @@
 import { createClient } from "@supabase/supabase-js"
 import chalk from "chalk"
 import fetch from "cross-fetch"
-import "dotenv/config"
+import { config } from "dotenv"
 import cron from "node-cron"
+import { existsSync } from "node:fs"
+
+config({ path: ".env", override: true })
+if (existsSync(".env.production")) {
+  config({ path: ".env.production", override: true })
+}
 
 const supabase = createClient(
   // @ts-expect-error
@@ -20,7 +26,7 @@ if (process.argv.includes("--now")) {
 async function backup() {
   console.info(chalk.dim("📥 Fetching storage..."))
 
-  const data = await fetch(
+  const storage = await fetch(
     `https://api.liveblocks.io/v2/rooms/default/storage`,
     {
       headers: {
@@ -29,20 +35,23 @@ async function backup() {
     },
   ).then((res) => res.json())
 
-  if (data.error) {
+  if (storage.error) {
     console.error(chalk.red("❌ Error fetching storage"))
-    console.error(data.error)
+    console.error(storage.error)
     return
   }
 
   console.info(chalk.dim("🚀 Uploading..."))
 
-  const { error } = await supabase.storage
+  const timestamp = new Date().toISOString().replace(/:/g, "-")
+  const { error, data } = await supabase.storage
     .from("liveblocks-backup")
-    .upload(`backup-${Date.now()}.json`, JSON.stringify(data))
+    .upload(`backup-${timestamp}.json`, JSON.stringify(storage))
 
   if (error) {
     console.error(chalk.red("❌ Supabase upload failed:"), error)
+    return
   }
-  console.info(chalk.green("✅ Done"))
+
+  console.info(chalk.green(`✅ Uploaded to ${data.path}`))
 }
