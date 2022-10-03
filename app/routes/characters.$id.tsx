@@ -1,5 +1,4 @@
 import { Dialog, Transition } from "@headlessui/react"
-import { LiveList } from "@liveblocks/client"
 import { Link, useNavigate, useParams } from "@remix-run/react"
 import clsx from "clsx"
 import { Fragment, useState } from "react"
@@ -7,13 +6,17 @@ import TextArea from "react-expanding-textarea"
 import { Eye, EyeOff, Hexagon, Plus, Trash, X } from "react-feather"
 import { useUserContext } from "~/features/auth/user-context"
 import { characterActionLibrary } from "~/features/characters/character-actions"
+import { CharacterColorButton } from "~/features/characters/character-color-button"
+import { characterColors } from "~/features/characters/character-colors"
 import type { Character } from "~/features/characters/character-sheet-data"
+import {
+  useAddCharacter,
+  useCharacters,
+  useDeleteCharacter,
+  useUpdateCharacter,
+} from "~/features/characters/hooks"
 import { Clock } from "~/features/clocks/clock"
 import { setDiceRoll } from "~/features/dice/dice-button-d6"
-import {
-  useMutation,
-  useStorage,
-} from "~/features/multiplayer/liveblocks-react"
 import { entriesTyped } from "~/helpers/entries-typed"
 import { Button } from "~/ui/button"
 import { Counter, DotCounter } from "~/ui/counter"
@@ -26,64 +29,7 @@ import {
   textAreaClass,
 } from "~/ui/styles"
 
-const dividerClass = "border-gray-600"
-
-function useCharacters() {
-  return useStorage((root) => root.characters) ?? []
-}
-
-function useUpdateCharacter(id: string) {
-  return useMutation(
-    (context, updates: Partial<Omit<Character, "id">>) => {
-      const characters = context.storage.get("characters") ?? []
-      context.storage.set(
-        "characters",
-        new LiveList(
-          characters.map((character) =>
-            character.id === id ? { ...character, ...updates } : character,
-          ),
-        ),
-      )
-    },
-    [id],
-  )
-}
-
-function useDeleteCharacter(id: string) {
-  return useMutation(
-    (context) => {
-      const characters = context.storage.get("characters") ?? []
-      context.storage.set(
-        "characters",
-        new LiveList(characters.filter((character) => character.id !== id)),
-      )
-    },
-    [id],
-  )
-}
-
-function useAddCharacter() {
-  return useMutation((context) => {
-    const character: Character = {
-      id: crypto.randomUUID(),
-      name: "New Character",
-      group: "",
-      concept: "",
-      appearance: "",
-      ties: "",
-      momentum: 2,
-      stress: 0,
-      condition: "",
-      actions: {},
-      talents: "",
-    }
-
-    const characters = context.storage.get("characters") ?? []
-    context.storage.set("characters", new LiveList([...characters, character]))
-
-    return character
-  }, [])
-}
+const dividerClass = "border-black/25"
 
 export default function CharactersPage() {
   const user = useUserContext()
@@ -106,8 +52,18 @@ export default function CharactersPage() {
     navigate(`/characters/${character.id}`)
   }
 
+  const colorClasses =
+    characterColors[currentCharacter?.color ?? "gray"] ?? characterColors.gray!
+
   return (
-    <>
+    <div
+      // eslint-disable-next-line tailwindcss/no-contradicting-classname
+      className={clsx(
+        "grid gap-4 border-2 p-4 shadow-md shadow-[rgba(0,0,0,0.25)]",
+        colorClasses.background,
+        colorClasses.border,
+      )}
+    >
       <nav className="flex items-start justify-between">
         <div className="flex flex-wrap gap-4">
           {characters.map((character) => (
@@ -133,19 +89,19 @@ export default function CharactersPage() {
           Create
         </Button>
       </nav>
-
       {currentCharacter && (
         <>
           <hr className={dividerClass} />
           <CharacterSheetEditor character={currentCharacter} />
         </>
       )}
-    </>
+    </div>
   )
 }
 
 function CharacterSheetEditor({ character }: { character: Character }) {
   const updateCharacter = useUpdateCharacter(character.id)
+
   return (
     <div className="grid gap-4">
       <div className="grid gap-4 sm:grid-cols-2">
@@ -284,6 +240,7 @@ function CharacterSheetEditor({ character }: { character: Character }) {
       <hr className={dividerClass} />
 
       <section className="flex flex-wrap gap-4">
+        <CharacterColorButton character={character} />
         <DeleteButton
           characterId={character.id}
           characterName={character.name}

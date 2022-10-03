@@ -17,7 +17,7 @@ import { typedjson, useTypedLoaderData } from "remix-typedjson"
 import { truthyJoin } from "~/helpers/truthy-join"
 import { SupabaseBrowserEnv } from "~/supabase-browser"
 import { LoadingSuspense } from "~/ui/loading"
-import { clearButtonClass, raisedPanelClass } from "~/ui/styles"
+import { clearButtonClass } from "~/ui/styles"
 import favicon from "./assets/favicon.svg"
 import { env } from "./env.server"
 import type { SessionUser } from "./features/auth/session"
@@ -130,13 +130,11 @@ export default function App() {
                   <div className="my-2">
                     <MainNav />
                   </div>
-                  <div className={clsx(raisedPanelClass, "p-4")}>
-                    <UserProvider user={user}>
-                      <LoadingSuspense>
-                        <Outlet />
-                      </LoadingSuspense>
-                    </UserProvider>
-                  </div>
+                  <UserProvider user={user}>
+                    <LoadingSuspense>
+                      <Outlet />
+                    </LoadingSuspense>
+                  </UserProvider>
                 </div>
 
                 <div className="sticky bottom-4 mx-auto mt-auto w-full max-w-screen-2xl">
