@@ -8,10 +8,10 @@
     "prepare": "prisma generate",
     "dev": "node scripts/fonts.mjs && run-p --print-label --race dev:*",
     "dev:remix": "remix dev",
-    "dev:tailwind": "npm run tailwind --watch",
-    "build": "tsc --noEmit && npm run tailwind --minify && remix build && node scripts/fonts.mjs",
+    "dev:tailwind": "pnpm run tailwind --watch",
+    "build": "tsc --noEmit && pnpm run tailwind --minify && remix build && node scripts/fonts.mjs",
     "lint": "eslint --ext js,ts,tsx,astro .",
-    "lint-fix": "npm lint --fix",
+    "lint-fix": "pnpm lint --fix",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
     "tailwind": "tailwindcss -o app/generated/tailwind.css -c tailwind.config.cjs"
