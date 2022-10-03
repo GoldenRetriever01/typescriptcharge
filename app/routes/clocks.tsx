@@ -6,7 +6,7 @@ import {
   useMutation,
   useStorage,
 } from "~/features/multiplayer/liveblocks-react"
-import { clearButtonClass } from "~/ui/styles"
+import { clearButtonClass, raisedPanelClass } from "~/ui/styles"
 
 export default function ClocksPage() {
   const clocks = useStorage((root) => root.clocks) ?? []
@@ -31,47 +31,51 @@ export default function ClocksPage() {
   )
 
   return (
-    <div className="grid gap-4">
-      {clocks.length > 0 && (
-        <div className="flex flex-wrap justify-center gap-4 ">
-          {clocks.map((clock) => (
-            <Clock
-              key={clock.id}
-              {...clock}
-              onNameChange={(name) => updateClock(clock.id, { name })}
-              onProgressChange={(progress) =>
-                updateClock(clock.id, { progress })
-              }
-              onMaxProgressChange={(maxProgress) =>
-                updateClock(clock.id, { maxProgress })
-              }
-              onRemove={() =>
-                setClocks(clocks.filter((c) => c.id !== clock.id))
-              }
-            />
-          ))}
+    <div className={raisedPanelClass}>
+      <div className="grid gap-4 p-4">
+        {clocks.length > 0 && (
+          <div className="flex flex-wrap justify-center gap-4 ">
+            {clocks.map((clock) => (
+              <Clock
+                key={clock.id}
+                {...clock}
+                onNameChange={(name) => updateClock(clock.id, { name })}
+                onProgressChange={(progress) =>
+                  updateClock(clock.id, { progress })
+                }
+                onMaxProgressChange={(maxProgress) =>
+                  updateClock(clock.id, { maxProgress })
+                }
+                onRemove={() =>
+                  setClocks(clocks.filter((c) => c.id !== clock.id))
+                }
+              />
+            ))}
+          </div>
+        )}
+        <div className="flex justify-center">
+          <button
+            type="button"
+            className={clearButtonClass(false)}
+            onClick={() => {
+              setClocks([
+                ...clocks,
+                {
+                  id: crypto.randomUUID(),
+                  name: "New Clock",
+                  progress: 0,
+                  maxProgress: 4,
+                },
+              ])
+            }}
+          >
+            <Plus />
+            Add clock
+          </button>
         </div>
-      )}
-      <div className="flex justify-center">
-        <button
-          type="button"
-          className={clearButtonClass(false)}
-          onClick={() => {
-            setClocks([
-              ...clocks,
-              {
-                id: crypto.randomUUID(),
-                name: "New Clock",
-                progress: 0,
-                maxProgress: 4,
-              },
-            ])
-          }}
-        >
-          <Plus />
-          Add clock
-        </button>
       </div>
     </div>
   )
 }
+
+function Editor() {}
