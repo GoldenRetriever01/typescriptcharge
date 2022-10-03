@@ -143,11 +143,11 @@ function CharacterSheetEditor({ character }: { character: Character }) {
             onProgressChange={(stress) => updateCharacter({ stress })}
           />
           <Field label="Condition">
-            <input
+            <TextArea
               placeholder="How're you doing?"
               value={character.condition}
               onChange={(e) => updateCharacter({ condition: e.target.value })}
-              className={inputClass}
+              className={textAreaClass}
             />
           </Field>
         </div>
