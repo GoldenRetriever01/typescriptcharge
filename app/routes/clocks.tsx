@@ -6,10 +6,13 @@ import {
   useMutation,
   useStorage,
 } from "~/features/multiplayer/liveblocks-react"
+import { useLiveblocksStorageContext } from "~/features/multiplayer/liveblocks-storage"
 import { clearButtonClass, raisedPanelClass } from "~/ui/styles"
 
 export default function ClocksPage() {
-  const clocks = useStorage((root) => root.clocks) ?? []
+  const storage = useLiveblocksStorageContext()
+  const clocks =
+    useStorage((root) => root.clocks) ?? storage.data.clocks?.data ?? []
 
   const setClocks = useMutation((context, clocks: ClockState[]) => {
     context.storage.set("clocks", new LiveList(clocks))
@@ -77,5 +80,3 @@ export default function ClocksPage() {
     </div>
   )
 }
-
-function Editor() {}

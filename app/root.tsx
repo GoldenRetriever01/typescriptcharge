@@ -1,5 +1,5 @@
 import { autoUpdate, offset, size, useFloating } from "@floating-ui/react-dom"
-import type { LinksFunction, LoaderArgs, MetaFunction } from "@remix-run/node"
+import type { LinksFunction, LoaderArgs } from "@remix-run/node"
 import {
   Links,
   LiveReload,
@@ -12,10 +12,10 @@ import {
 import clsx from "clsx"
 import { Book, Clock, Users } from "lucide-react"
 import type { ReactNode } from "react"
+import type { TypedMetaFunction } from "remix-typedjson"
 import { typedjson, useTypedLoaderData } from "remix-typedjson"
 import { truthyJoin } from "~/helpers/truthy-join"
 import { SupabaseBrowserEnv } from "~/supabase-browser"
-import { LoadingSuspense } from "~/ui/loading"
 import { clearButtonClass } from "~/ui/styles"
 import favicon from "./assets/favicon.svg"
 import { env } from "./env.server"
@@ -29,17 +29,19 @@ import {
   defaultRoomInit,
 } from "./features/multiplayer/liveblocks-client"
 import { RoomProvider } from "./features/multiplayer/liveblocks-react"
+import { LiveblocksStorageProvider } from "./features/multiplayer/liveblocks-storage"
+import { getLiveblocksStorage } from "./features/multiplayer/liveblocks-storage.server"
 import {
   LogsPanel,
   LogsPanelButton,
   LogsPanelProvider,
 } from "./features/multiplayer/logs"
-import { getWorldData } from "./features/world/actions.server"
 import { WorldTitle } from "./features/world/world-title"
 import tailwind from "./generated/tailwind.css"
 import { prisma } from "./prisma.server"
-import { EmptySuspense } from "./ui/loading"
 import { Portal } from "./ui/portal"
+
+export const unstable_shouldReload = () => false
 
 export async function loader({ request }: LoaderArgs) {
   async function getWorldLogs() {
@@ -55,25 +57,27 @@ export async function loader({ request }: LoaderArgs) {
     return logs.reverse()
   }
 
-  const [user, world, logs] = await Promise.all([
+  const [user, storage, logs] = await Promise.all([
     getSessionUser(request),
-    getWorldData(),
+    getLiveblocksStorage(),
     getWorldLogs(),
   ])
 
   return typedjson({
     user,
-    world,
+    storage,
     logs,
     supabaseUrl: env.SUPABASE_URL,
     supabaseAnonKey: env.SUPABASE_ANON_KEY,
   })
 }
+export { loader as rootLoader }
 
-export const unstable_shouldReload = () => false
-
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
-  const title = truthyJoin(" | ", [data.world?.name, "Charge Worlds"])
+export const meta: TypedMetaFunction<typeof loader> = ({ data }) => {
+  const title = truthyJoin(" | ", [
+    data.storage.data.world?.name,
+    "Charge Worlds",
+  ])
   const description = "Virtual environment for the Charge RPG system"
   const siteUrl = "https://charge-worlds.netlify.app/"
 
@@ -123,31 +127,29 @@ export default function App() {
       </head>
       <body>
         <div className="mx-auto flex min-h-screen flex-col gap-4 p-4">
-          <AuthGuard>
-            {({ user }) => (
-              <RoomProvider id={defaultRoomId} {...defaultRoomInit}>
-                <div className="mx-auto grid w-full max-w-screen-md gap-4">
-                  <div className="my-2">
-                    <MainNav />
-                  </div>
-                  <UserProvider user={user}>
-                    <LoadingSuspense>
+          <LiveblocksStorageProvider storage={data.storage}>
+            <AuthGuard>
+              {({ user }) => (
+                <RoomProvider id={defaultRoomId} {...defaultRoomInit}>
+                  <div className="mx-auto grid w-full max-w-screen-md gap-4">
+                    <div className="my-2">
+                      <MainNav />
+                    </div>
+                    <UserProvider user={user}>
                       <Outlet />
-                    </LoadingSuspense>
-                  </UserProvider>
-                </div>
+                    </UserProvider>
+                  </div>
 
-                <div className="sticky bottom-4 mx-auto mt-auto w-full max-w-screen-2xl">
-                  <FooterActions />
-                </div>
+                  <div className="sticky bottom-4 mx-auto mt-auto w-full max-w-screen-2xl">
+                    <FooterActions />
+                  </div>
 
-                <EmptySuspense>
                   <LiveCursors name={user.name} />
                   <WorldTitle />
-                </EmptySuspense>
-              </RoomProvider>
-            )}
-          </AuthGuard>
+                </RoomProvider>
+              )}
+            </AuthGuard>
+          </LiveblocksStorageProvider>
         </div>
         <Scripts />
         <LiveReload />

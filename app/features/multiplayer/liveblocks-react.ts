@@ -6,11 +6,9 @@ import type {
 import { getLiveblocksClient } from "~/features/multiplayer/liveblocks-client"
 
 export const {
-  suspense: {
-    RoomProvider,
-    useOthers,
-    useUpdateMyPresence,
-    useStorage,
-    useMutation,
-  },
+  RoomProvider,
+  useOthers,
+  useUpdateMyPresence,
+  useStorage,
+  useMutation,
 } = createRoomContext<Presence, Storage>(getLiveblocksClient())

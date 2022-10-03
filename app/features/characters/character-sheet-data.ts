@@ -1,17 +1,18 @@
-import type { CharacterActionName } from "./character-actions"
+import { z } from "zod"
 
-export type Character = {
-  id: string
-  name: string
-  group: string
-  concept: string
-  appearance: string
-  ties: string
-  momentum: number
-  stress: number
-  condition: string
-  actions: Partial<Record<CharacterActionName, { level: number }>>
-  talents: string
-  hidden?: boolean
-  color?: string
-}
+export const characterSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  group: z.string(),
+  concept: z.string(),
+  appearance: z.string(),
+  ties: z.string(),
+  momentum: z.number(),
+  stress: z.number(),
+  condition: z.string(),
+  actions: z.record(z.object({ level: z.number() })),
+  talents: z.string(),
+  hidden: z.boolean().optional(),
+  color: z.string().optional(),
+})
+export type Character = z.output<typeof characterSchema>

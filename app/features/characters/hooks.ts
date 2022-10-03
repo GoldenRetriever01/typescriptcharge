@@ -4,9 +4,13 @@ import {
   useMutation,
   useStorage,
 } from "~/features/multiplayer/liveblocks-react"
+import { useLiveblocksStorageContext } from "../multiplayer/liveblocks-storage"
 
 export function useCharacters() {
-  return useStorage((root) => root.characters) ?? []
+  const storage = useLiveblocksStorageContext()
+  return (
+    useStorage((root) => root.characters) ?? storage.data.characters?.data ?? []
+  )
 }
 
 export function useUpdateCharacter(id: string) {

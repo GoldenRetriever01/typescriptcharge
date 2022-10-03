@@ -1,13 +1,15 @@
 import { useMutation, useStorage } from "../multiplayer/liveblocks-react"
+import { useLiveblocksStorageContext } from "../multiplayer/liveblocks-storage"
 import type { World } from "./world"
 
 const defaultWorld = {
-  name: "New World",
-  description: "A brand new world",
+  name: "",
+  description: "",
 }
 
 export function useWorld() {
-  return useStorage((root) => root.world)
+  const storage = useLiveblocksStorageContext()
+  return useStorage((root) => root.world) ?? storage.data.world
 }
 
 export function useUpdateWorld() {
