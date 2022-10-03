@@ -2,7 +2,7 @@ import { useStore } from "@nanostores/react"
 import { useFetcher, useFetchers } from "@remix-run/react"
 import clsx from "clsx"
 import { AnimatePresence, motion } from "framer-motion"
-import { Check, Hexagon, Minus, X } from "lucide-react"
+import { Check, Dices, Minus, Plus, X } from "lucide-react"
 import { atom } from "nanostores"
 import { Button } from "~/ui/button"
 import { blackCircleIconButtonClass, inputClass } from "~/ui/styles"
@@ -60,7 +60,7 @@ export function DiceButton() {
           countStore.set(countStore.get() + 1)
         }}
       >
-        <Hexagon className={clsx(pending && "animate-spin")} />
+        <Dices className={clsx(pending && "animate-spin")} />
       </Button>
       {count > 0 && (
         <span className="absolute top-0 right-0 block font-bold leading-none">
@@ -118,11 +118,18 @@ export function DiceConfirmPanel() {
                 <X size={16} />
               </Button>
               <Button
-                title="Minus 1"
+                title="Subtract a dice"
                 className={blackCircleIconButtonClass}
                 onClick={() => countStore.set(countStore.get() - 1)}
               >
                 <Minus size={16} />
+              </Button>
+              <Button
+                title="Add a dice"
+                className={blackCircleIconButtonClass}
+                onClick={() => countStore.set(countStore.get() + 1)}
+              >
+                <Plus size={16} />
               </Button>
               <Button
                 id={diceConfirmButtonId}

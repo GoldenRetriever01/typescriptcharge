@@ -1,7 +1,7 @@
 import { Dialog, Transition } from "@headlessui/react"
 import { Link, useNavigate, useParams } from "@remix-run/react"
 import clsx from "clsx"
-import { Eye, EyeOff, Hexagon, Plus, Trash, X } from "lucide-react"
+import { Dices, Eye, EyeOff, Plus, Trash, X } from "lucide-react"
 import { Fragment, useState } from "react"
 import TextArea from "react-expanding-textarea"
 import { useUserContext } from "~/features/auth/user-context"
@@ -269,7 +269,7 @@ function ActionRollButton({
         setDiceRoll(level + 1, `${name}: ${action}`)
       }}
     >
-      <Hexagon />
+      <Dices />
     </Button>
   )
 }
