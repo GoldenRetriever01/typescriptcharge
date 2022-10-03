@@ -18,6 +18,7 @@ const sessionCookie = createCookie("session", {
   sameSite: "lax",
   path: "/",
   secrets: [env.COOKIE_SECRET],
+  maxAge: 60 * 60 * 24 * 365, // 1 year
 })
 
 export async function createSessionCookie(authCode: string) {
@@ -41,9 +42,7 @@ export async function createSessionCookie(authCode: string) {
 
   const session: Session = { sessionId }
 
-  return sessionCookie.serialize(session, {
-    maxAge: loginResponse.expires_in,
-  })
+  return sessionCookie.serialize(session)
 }
 
 export type SessionUser = {
