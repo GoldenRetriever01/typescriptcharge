@@ -39,8 +39,8 @@ export const characterColors: Record<string, CharacterColorClasses> = {
     border: clsx("border-[#263a6e]"),
   },
   violet: {
-    background: clsx("bg-[#4a3170]"),
-    border: clsx("border-[#624194]"),
+    background: clsx("bg-[#382a49]"),
+    border: clsx("border-[#48365e]"),
   },
   pink: {
     background: clsx("bg-[#702342]"),
