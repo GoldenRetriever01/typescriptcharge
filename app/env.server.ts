@@ -13,9 +13,13 @@ const envSchema = z.object({
   DISCORD_REDIRECT_URI: z.string(),
   DISCORD_ALLOWLIST: z.string(),
   SUPABASE_URL: z.string(),
-  SUPABASE_ANON_KEY: z.string(),
   SUPABASE_SERVICE_KEY: z.string(),
   ADMIN_DISCORD_ID: z.string(),
+  DATABASE_URL: z.string(),
+  PUSHER_APP_ID: z.string(),
+  PUSHER_KEY: z.string(),
+  PUSHER_SECRET: z.string(),
+  PUSHER_CLUSTER: z.string(),
 })
 
 export const env = envSchema.parse(process.env)

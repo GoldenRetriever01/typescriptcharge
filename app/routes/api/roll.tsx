@@ -3,6 +3,7 @@ import { redirect } from "@remix-run/node"
 import { z } from "zod"
 import { getSessionUser } from "~/features/auth/session"
 import { defaultRoomId } from "~/features/multiplayer/liveblocks-client"
+import { triggerEvent } from "~/features/multiplayer/pusher.server"
 import { range } from "~/helpers/range"
 import { prisma } from "~/prisma.server"
 
@@ -29,14 +30,21 @@ export async function action({ request }: ActionArgs) {
     result: Math.floor(Math.random() * 6) + 1,
   }))
 
-  await prisma.diceLog.create({
+  const log = await prisma.diceLog.create({
     data: {
       roomId: defaultRoomId,
       userId: user.id,
       dice: results,
       intent: body.intent,
     },
+    select: {
+      user: { select: { name: true } },
+      dice: true,
+      intent: true,
+    },
   })
+
+  await triggerEvent(`new-dice-log:${defaultRoomId}`, log)
 
   return redirect(request.headers.get("Referer") ?? "/")
 }

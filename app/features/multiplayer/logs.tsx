@@ -1,18 +1,17 @@
-import type { DiceLog } from "@prisma/client"
 import clsx from "clsx"
 import { AnimatePresence, motion } from "framer-motion"
 import { List } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Virtuoso } from "react-virtuoso"
 import { z } from "zod"
 import { createContextWrapper } from "~/helpers/context"
 import { useLocalStorage } from "~/helpers/local-storage"
-import { useLatestRef } from "~/helpers/react"
-import { getSupabaseBrowserClient } from "~/supabase-browser"
 import { Button } from "~/ui/button"
 import { blackCircleIconButtonClass } from "~/ui/styles"
+import type { DiceLogEntryProps } from "../dice/dice-log-entry"
 import { DiceLogEntry } from "../dice/dice-log-entry"
 import { defaultRoomId } from "./liveblocks-client"
+import { usePusherEvent } from "./pusher-client"
 
 const [useLogsPanelContext, LogsPanelProvider] = createContextWrapper(
   function useLogsPanelProvider() {
@@ -22,31 +21,13 @@ const [useLogsPanelContext, LogsPanelProvider] = createContextWrapper(
       schema: z.boolean(),
     })
 
-    const [realtimeLogs, setRealtimeLogs] = useState<DiceLog[]>([])
+    const [realtimeLogs, setRealtimeLogs] = useState<DiceLogEntryProps[]>([])
     const [unread, setUnread] = useState(false)
 
-    const visibleRef = useLatestRef(visible)
-
-    useEffect(() => {
-      const sub = getSupabaseBrowserClient()
-        .channel("public:DiceLog")
-        .on(
-          "postgres_changes",
-          {
-            event: "INSERT",
-            schema: "public",
-            table: "DiceLog",
-            filter: `roomId=eq.${defaultRoomId}`,
-          },
-          (payload: { new: DiceLog }) => {
-            setRealtimeLogs((logs) => [...logs, payload.new])
-            if (!visibleRef.current) setUnread(true)
-          },
-        )
-        .subscribe()
-
-      return () => void sub.unsubscribe()
-    }, [visibleRef])
+    usePusherEvent(`new-dice-log:${defaultRoomId}`, (log) => {
+      setRealtimeLogs((logs) => [...logs, log])
+      if (!visible) setUnread(true)
+    })
 
     return {
       realtimeLogs,
@@ -80,7 +61,7 @@ export function LogsPanelButton() {
   )
 }
 
-export function LogsPanel({ logs: logsProp }: { logs: DiceLog[] }) {
+export function LogsPanel({ logs: logsProp }: { logs: DiceLogEntryProps[] }) {
   const context = useLogsPanelContext()
   const logs = [...logsProp, ...context.realtimeLogs]
 
@@ -98,11 +79,11 @@ export function LogsPanel({ logs: logsProp }: { logs: DiceLog[] }) {
             data={logs}
             itemContent={(index, log) => (
               <div className="pt-2">
-                <DiceLogEntry log={log} />
+                <DiceLogEntry {...log} />
               </div>
             )}
             className="thin-scrollbar -mr-1 h-full"
-            followOutput={() => "auto"}
+            followOutput={() => "smooth"}
             initialTopMostItemIndex={logs.length - 1}
             alignToBottom
             defaultItemHeight={120}

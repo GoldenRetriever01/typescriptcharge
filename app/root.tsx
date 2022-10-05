@@ -15,7 +15,6 @@ import type { ReactNode } from "react"
 import type { TypedMetaFunction } from "remix-typedjson"
 import { typedjson, useTypedLoaderData } from "remix-typedjson"
 import { truthyJoin } from "~/helpers/truthy-join"
-import { SupabaseBrowserEnv } from "~/supabase-browser"
 import { clearButtonClass } from "~/ui/styles"
 import favicon from "./assets/favicon.svg"
 import { env } from "./env.server"
@@ -36,6 +35,7 @@ import {
   LogsPanelButton,
   LogsPanelProvider,
 } from "./features/multiplayer/logs"
+import { PusherProvider } from "./features/multiplayer/pusher-client"
 import { WorldTitle } from "./features/world/world-title"
 import tailwind from "./generated/tailwind.css"
 import { prisma } from "./prisma.server"
@@ -45,16 +45,20 @@ export const unstable_shouldReload = () => false
 
 export async function loader({ request }: LoaderArgs) {
   async function getWorldLogs() {
-    const logs = await prisma.diceLog.findMany({
+    return prisma.diceLog.findMany({
       where: {
         roomId: defaultRoomId,
       },
       orderBy: {
-        createdAt: "desc",
+        createdAt: "asc",
       },
       take: 20,
+      select: {
+        dice: true,
+        intent: true,
+        user: { select: { name: true } },
+      },
     })
-    return logs.reverse()
   }
 
   const [user, storage, logs] = await Promise.all([
@@ -67,8 +71,8 @@ export async function loader({ request }: LoaderArgs) {
     user,
     storage,
     logs,
-    supabaseUrl: env.SUPABASE_URL,
-    supabaseAnonKey: env.SUPABASE_ANON_KEY,
+    pusherKey: env.PUSHER_KEY,
+    pusherCluster: env.PUSHER_CLUSTER,
   })
 }
 export { loader as rootLoader }
@@ -120,33 +124,34 @@ export default function App() {
       <head>
         <Meta />
         <Links />
-        <SupabaseBrowserEnv
-          url={data.supabaseUrl}
-          anonKey={data.supabaseAnonKey}
-        />
       </head>
       <body>
         <div className="mx-auto flex min-h-screen flex-col gap-4 p-4">
           <LiveblocksStorageProvider storage={data.storage}>
             <AuthGuard>
               {({ user }) => (
-                <RoomProvider id={defaultRoomId} {...defaultRoomInit}>
-                  <div className="mx-auto grid w-full max-w-screen-md gap-4">
-                    <div className="my-2">
-                      <MainNav />
+                <PusherProvider
+                  pusherKey={data.pusherKey}
+                  pusherCluster={data.pusherCluster}
+                >
+                  <RoomProvider id={defaultRoomId} {...defaultRoomInit}>
+                    <div className="mx-auto grid w-full max-w-screen-md gap-4">
+                      <div className="my-2">
+                        <MainNav />
+                      </div>
+                      <UserProvider user={user}>
+                        <Outlet />
+                      </UserProvider>
                     </div>
-                    <UserProvider user={user}>
-                      <Outlet />
-                    </UserProvider>
-                  </div>
 
-                  <div className="sticky bottom-4 mx-auto mt-auto w-full max-w-screen-2xl">
-                    <FooterActions />
-                  </div>
+                    <div className="sticky bottom-4 mx-auto mt-auto w-full max-w-screen-2xl">
+                      <FooterActions />
+                    </div>
 
-                  <LiveCursors name={user.name} />
-                  <WorldTitle />
-                </RoomProvider>
+                    <LiveCursors name={user.name} />
+                    <WorldTitle />
+                  </RoomProvider>
+                </PusherProvider>
               )}
             </AuthGuard>
           </LiveblocksStorageProvider>
@@ -233,7 +238,7 @@ function AuthGuard({
 }
 
 function FooterActions() {
-  const data = useLoaderData<typeof loader>()
+  const data = useTypedLoaderData<typeof loader>()
 
   const floating = useFloating({
     placement: "top-end",

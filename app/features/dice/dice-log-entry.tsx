@@ -1,19 +1,21 @@
 import { z } from "zod"
 
-import type { DiceLog } from "@prisma/client"
-import type { SerializeFrom } from "@remix-run/node"
 import { Suspense } from "react"
-import { createFetchStore } from "react-suspense-fetch"
-import type { apiUserLoader } from "~/routes/api/user.$id"
 
-export function DiceLogEntry({ log }: { log: DiceLog }): JSX.Element {
-  const dice = parseDiceJson(log.dice)
+export type DiceLogEntryProps = {
+  user: { name: string }
+  dice: unknown[]
+  intent: string
+}
+
+export function DiceLogEntry(props: DiceLogEntryProps): JSX.Element {
+  const dice = parseDiceJson(props.dice)
   return (
     <div className="flex items-end gap-6 rounded-md bg-black/75 px-6 py-4">
       <div className="flex flex-1 flex-col gap-1">
         {dice ? (
           <>
-            {!!log.intent && <p className="leading-tight">{log.intent}</p>}
+            {!!props.intent && <p className="leading-tight">{props.intent}</p>}
 
             <ul className="flex flex-wrap gap-1">
               {dice.map((die, index) => (
@@ -31,14 +33,13 @@ export function DiceLogEntry({ log }: { log: DiceLog }): JSX.Element {
           </>
         ) : (
           <p className="text-sm leading-none text-red-400">
-            Failed to parse dice
+            Failed to parse dice: {JSON.stringify(props.dice)}
           </p>
         )}
 
         <Suspense>
           <p className="mt-auto text-[13px]">
-            <span className="opacity-70">Rolled by</span>{" "}
-            <Username userId={log.userId} />
+            <span className="opacity-70">Rolled by</span> {props.user.name}
           </p>
         </Suspense>
       </div>
@@ -68,17 +69,6 @@ export function DiceLogEntry({ log }: { log: DiceLog }): JSX.Element {
   )
 }
 
-const userStore = createFetchStore(async (id: string) => {
-  const res = await fetch(`/api/user/${id}`)
-  const data = (await res.json()) as SerializeFrom<typeof apiUserLoader>
-  return data.user
-})
-
-function Username({ userId }: { userId: string }) {
-  const user = userStore.get(userId, { forcePrefetch: true })
-  return <>{user?.name ?? "unknown"}</>
-}
-
 function HexagonFilled(props: React.SVGAttributes<SVGElement>) {
   return (
     <svg
@@ -95,21 +85,12 @@ function HexagonFilled(props: React.SVGAttributes<SVGElement>) {
   )
 }
 
-const dieSchema = z.object({
-  sides: z.number().int().positive(),
-  result: z.number().int().positive(),
-})
-export type Die = z.infer<typeof dieSchema>
-
-const diceSchema = z.array(dieSchema)
-
-function normalizedRollText(dice: Die[]) {
-  const counts = new Map<number, number>()
-  for (const die of dice) {
-    counts.set(die.sides, (counts.get(die.sides) ?? 0) + 1)
-  }
-  return [...counts].map(([result, count]) => `${count}d${result}`).join(" + ")
-}
+const diceSchema = z.array(
+  z.object({
+    sides: z.number().int().positive(),
+    result: z.number().int().positive(),
+  }),
+)
 
 function parseDiceJson(input: unknown) {
   try {
