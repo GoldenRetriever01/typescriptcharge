@@ -1,4 +1,6 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "pnpm env-check && pnpm build",
   "github": {
     "silent": true
   }

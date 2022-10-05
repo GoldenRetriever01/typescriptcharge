@@ -14,7 +14,8 @@
     "lint-fix": "pnpm lint --fix",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
-    "tailwind": "tailwindcss -o app/generated/tailwind.css -c tailwind.config.cjs"
+    "tailwind": "tailwindcss -o app/generated/tailwind.css -c tailwind.config.cjs",
+    "env-check": "tsx app/env.server.ts"
   },
   "dependencies": {
     "@floating-ui/react-dom": "^1.0.0",
