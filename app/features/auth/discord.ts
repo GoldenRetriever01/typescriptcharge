@@ -31,7 +31,20 @@ export async function discordLogin(
       code: authCode,
     }),
   })
-  return response.json()
+
+  const data = await response.json()
+
+  // make sure tokens aren't logged
+  if (data.access_token) data.access_token = "REDACTED"
+  if (data.refresh_token) data.refresh_token = "REDACTED"
+
+  console.info("Discord login", response.status, response.statusText, data)
+
+  if (!response.ok) {
+    throw new Error("Discord login failed")
+  }
+
+  return data
 }
 
 const authResponseSchema = z.object({
