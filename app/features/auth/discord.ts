@@ -1,3 +1,4 @@
+import { z } from "zod"
 import { env } from "~/env.server"
 
 export function getAuthorizeUrl() {
@@ -9,14 +10,14 @@ export function getAuthorizeUrl() {
   return url.toString()
 }
 
-export type DiscordAuthResponse = {
+export type DiscordTokenResponse = {
   access_token: string
   expires_in: number
 }
 
 export async function discordLogin(
   authCode: string,
-): Promise<DiscordAuthResponse> {
+): Promise<DiscordTokenResponse> {
   const response = await fetch("https://discord.com/api/oauth2/token", {
     method: "POST",
     headers: {
@@ -33,13 +34,15 @@ export async function discordLogin(
   return response.json()
 }
 
-export type DiscordUser = {
-  id: string
-  username: string
-  avatar: string | null
-  discriminator: string
-  public_flags: number
-}
+const authResponseSchema = z.object({
+  user: z.object({
+    id: z.string(),
+    username: z.string(),
+    avatar: z.string().nullish(),
+  }),
+})
+
+export type DiscordUser = z.infer<typeof authResponseSchema>["user"]
 
 export async function getDiscordAuthUser(
   accessToken: string,
@@ -49,11 +52,13 @@ export async function getDiscordAuthUser(
       Authorization: `Bearer ${accessToken}`,
     },
   })
-  try {
-    const data = await response.clone().json()
-    return data.user
-  } catch (error) {
-    console.warn(await response.text())
-    throw error
-  }
+  console.info("Discord auth response:", {
+    status: response.status,
+    statusText: response.statusText,
+  })
+
+  const data = await response.json()
+  console.info("Discord auth user:", data?.user)
+
+  return authResponseSchema.parse(data).user
 }
