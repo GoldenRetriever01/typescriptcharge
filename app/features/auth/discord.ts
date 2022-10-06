@@ -34,11 +34,13 @@ export async function discordLogin(
 
   const data = await response.json()
 
-  // make sure tokens aren't logged
-  if (data.access_token) data.access_token = "REDACTED"
-  if (data.refresh_token) data.refresh_token = "REDACTED"
-
-  console.info("Discord login", response.status, response.statusText, data)
+  {
+    const logged = { ...data }
+    // make sure tokens aren't logged
+    if (logged.access_token) logged.access_token = "REDACTED"
+    if (logged.refresh_token) logged.refresh_token = "REDACTED"
+    console.info("Discord login", response.status, response.statusText, logged)
+  }
 
   if (!response.ok) {
     throw new Error("Discord login failed")
