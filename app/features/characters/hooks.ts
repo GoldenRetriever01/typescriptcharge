@@ -8,9 +8,11 @@ import { useLiveblocksStorageContext } from "../multiplayer/liveblocks-storage"
 
 export function useCharacters() {
   const storage = useLiveblocksStorageContext()
-  return (
-    useStorage((root) => root.characters) ?? storage.data.characters?.data ?? []
-  )
+  let storageCharacters = useStorage((root) => root.characters)
+  if (!Array.isArray(storageCharacters)) {
+    return storage.data.characters?.data ?? []
+  }
+  return storageCharacters
 }
 
 export function useUpdateCharacter(id: string) {
