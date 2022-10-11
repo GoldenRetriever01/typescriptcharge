@@ -89,7 +89,7 @@ export async function loader({ request }: LoaderArgs) {
 
 export const meta: TypedMetaFunction<typeof loader> = ({ data }) => {
   const title = truthyJoin(" | ", [
-    data.storage.data.world?.name,
+    data?.storage.data.world?.name,
     "Charge Worlds",
   ])
   const description = "Virtual environment for the Charge RPG system"
