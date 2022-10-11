@@ -4,7 +4,7 @@ import clsx from "clsx"
 import { Dices, Eye, EyeOff, Plus, Trash, X } from "lucide-react"
 import { Fragment, useState } from "react"
 import TextArea from "react-expanding-textarea"
-import { useUserContext } from "~/features/auth/user-context"
+import { useMembership } from "~/features/auth/client-membership-context"
 import { characterActionLibrary } from "~/features/characters/character-actions"
 import { CharacterColorButton } from "~/features/characters/character-color-button"
 import { characterColors } from "~/features/characters/character-colors"
@@ -33,12 +33,12 @@ import {
 const dividerClass = "border-black/25"
 
 export default function CharactersPage() {
-  const user = useUserContext()
+  const membership = useMembership()
   const params = useParams<{ id?: string }>()
   const navigate = useNavigate()
 
   let characters = useCharacters()
-  if (!user.isAdmin) {
+  if (membership.isAdmin) {
     characters = characters.filter((character) => !character.hidden)
   }
 
@@ -353,10 +353,10 @@ function DeleteButton({
 }
 
 function HideButton({ character }: { character: Character }) {
-  const user = useUserContext()
+  const membership = useMembership()
   const updateCharacter = useUpdateCharacter(character.id)
 
-  if (!user.isAdmin) {
+  if (!membership.isAdmin) {
     return <></>
   }
 

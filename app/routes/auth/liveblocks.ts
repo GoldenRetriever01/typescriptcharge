@@ -1,11 +1,15 @@
 import { authorize } from "@liveblocks/node"
 import type { ActionArgs } from "@remix-run/node"
 import { env } from "~/env.server"
-import { requireWorldMember } from "~/features/auth/require-world-member"
+import { requireMembership } from "~/features/auth/require-membership"
+import { requireSessionUser } from "~/features/auth/session"
 import { defaultRoomId } from "~/features/multiplayer/liveblocks-client"
+import { getDefaultWorld } from "~/features/world/world-db.server"
 
 export async function action({ request }: ActionArgs) {
-  await requireWorldMember(request)
+  const user = await requireSessionUser(request)
+  const world = await getDefaultWorld()
+  await requireMembership(user, world)
 
   const authResponse = await authorize({
     room: defaultRoomId,

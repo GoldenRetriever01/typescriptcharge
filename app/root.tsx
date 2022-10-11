@@ -14,7 +14,7 @@ import {
   useCatch,
 } from "@remix-run/react"
 import clsx from "clsx"
-import { Book, Clock, Users } from "lucide-react"
+import { Book, Clock, Users, Wrench } from "lucide-react"
 import type { ComponentPropsWithoutRef, ReactNode } from "react"
 import type { TypedMetaFunction } from "remix-typedjson"
 import { typedjson, useTypedLoaderData } from "remix-typedjson"
@@ -22,9 +22,11 @@ import { truthyJoin } from "~/helpers/truthy-join"
 import { clearButtonClass, maxWidthContainer } from "~/ui/styles"
 import favicon from "./assets/favicon.svg"
 import { env } from "./env.server"
+import { toClientMembership } from "./features/auth/client-membership"
+import { ClientMembershipProvider } from "./features/auth/client-membership-context"
 import { toClientUser } from "./features/auth/client-user"
-import { requireWorldMember } from "./features/auth/require-world-member"
-import { UserProvider } from "./features/auth/user-context"
+import { requireMembership } from "./features/auth/require-membership"
+import { requireSessionUser } from "./features/auth/session"
 import { DiceButton, DiceConfirmPanel } from "./features/dice/dice-button-d6"
 import { LiveCursors } from "./features/multiplayer/live-cursors"
 import {
@@ -40,46 +42,50 @@ import {
   LogsPanelProvider,
 } from "./features/multiplayer/logs"
 import { PusherProvider } from "./features/multiplayer/pusher-client"
+import { getDefaultWorld } from "./features/world/world-db.server"
 import { WorldTitle } from "./features/world/world-title"
 import tailwind from "./generated/tailwind.css"
 import { prisma } from "./prisma.server"
 import { Portal } from "./ui/portal"
 
+async function loadWorldLogs() {
+  return prisma.diceLog.findMany({
+    where: {
+      roomId: defaultRoomId,
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+    take: 20,
+    select: {
+      dice: true,
+      intent: true,
+      user: { select: { name: true } },
+    },
+  })
+}
+
 export const unstable_shouldReload = () => false
 
 export async function loader({ request }: LoaderArgs) {
-  async function getWorldLogs() {
-    return prisma.diceLog.findMany({
-      where: {
-        roomId: defaultRoomId,
-      },
-      orderBy: {
-        createdAt: "asc",
-      },
-      take: 20,
-      select: {
-        dice: true,
-        intent: true,
-        user: { select: { name: true } },
-      },
-    })
-  }
+  const user = await requireSessionUser(request)
+  const world = await getDefaultWorld()
+  const membership = await requireMembership(user, world)
 
-  const [user, storage, logs] = await Promise.all([
-    requireWorldMember(request),
+  const [storage, logs] = await Promise.all([
     getLiveblocksStorage(),
-    getWorldLogs(),
+    loadWorldLogs(),
   ])
 
   return typedjson({
     user: toClientUser(user),
+    membership: toClientMembership(membership),
     storage,
     logs,
     pusherKey: env.PUSHER_KEY,
     pusherCluster: env.PUSHER_CLUSTER,
   })
 }
-export { loader as rootLoader }
 
 export const meta: TypedMetaFunction<typeof loader> = ({ data }) => {
   const title = truthyJoin(" | ", [
@@ -127,7 +133,7 @@ export default function App() {
           pusherCluster={data.pusherCluster}
         >
           <RoomProvider id={defaultRoomId} {...defaultRoomInit}>
-            <UserProvider user={data.user}>
+            <ClientMembershipProvider membership={data.membership}>
               <div className="flex min-h-screen flex-col">
                 <div className={maxWidthContainer}>
                   <header className="my-6">
@@ -144,7 +150,7 @@ export default function App() {
 
               <LiveCursors name={data.user.name} />
               <WorldTitle />
-            </UserProvider>
+            </ClientMembershipProvider>
           </RoomProvider>
         </PusherProvider>
       </LiveblocksStorageProvider>
@@ -253,6 +259,7 @@ function SystemMessage({ children }: { children: ReactNode }) {
 }
 
 function MainNav() {
+  const { membership } = useTypedLoaderData<typeof loader>()
   return (
     <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 sm:justify-start">
       <HeaderLink to="/">
@@ -264,6 +271,11 @@ function MainNav() {
       <HeaderLink to="/clocks">
         <Clock size={20} /> Clocks
       </HeaderLink>
+      {membership.role === "GM" && (
+        <HeaderLink to="/settings">
+          <Wrench size={20} /> Settings
+        </HeaderLink>
+      )}
     </nav>
   )
 }

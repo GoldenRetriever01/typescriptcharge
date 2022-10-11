@@ -4,6 +4,7 @@ import cuid from "cuid"
 import { z } from "zod"
 import { env } from "~/env.server"
 import { discordLogin } from "~/features/auth/discord"
+import { raise } from "~/helpers/errors"
 import { prisma } from "~/prisma.server"
 import { getDiscordAuthUser } from "./discord"
 
@@ -41,8 +42,11 @@ export async function createSessionCookie(authCode: string) {
   })
 
   const session: Session = { sessionId }
-
   return sessionCookie.serialize(session)
+}
+
+export function createLogoutCookie() {
+  return sessionCookie.serialize("", { maxAge: 0 })
 }
 
 export async function getSessionUser(
@@ -65,6 +69,7 @@ export async function getSessionUser(
   return user ?? undefined
 }
 
-export function createLogoutCookie() {
-  return sessionCookie.serialize("", { maxAge: 0 })
+export async function requireSessionUser(request: Request) {
+  const user = await getSessionUser(request)
+  return user ?? raise(new Response(undefined, { status: 401 }))
 }
