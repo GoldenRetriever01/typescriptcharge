@@ -1,5 +1,6 @@
 import PusherClient from "pusher-js"
 import { createContext, useContext, useEffect, useState } from "react"
+import { useLatestRef } from "~/helpers/react"
 import type { PusherEvents } from "./pusher-config"
 import { pusherChannel } from "./pusher-config"
 
@@ -37,6 +38,8 @@ export function usePusherEvent<E extends keyof PusherEvents>(
   eventName: E,
   callback: (data: PusherEvents[E]) => void,
 ) {
+  const callbackRef = useLatestRef(callback)
+
   const pusher = useContext(ClientContext)
   if (pusher === empty) {
     throw new Error("PusherProvider not found")
@@ -45,9 +48,11 @@ export function usePusherEvent<E extends keyof PusherEvents>(
   useEffect(() => {
     if (!pusher) return
     const channel = pusher.subscribe(pusherChannel)
-    channel.bind(eventName, callback)
+    channel.bind(eventName, (data: PusherEvents[E]) => {
+      callbackRef.current(data)
+    })
     return () => {
       channel.unbind_all().unsubscribe()
     }
-  })
+  }, [callbackRef, eventName, pusher])
 }
