@@ -19,6 +19,15 @@ model User {
   sessionId String?
 }
 
+model World {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  adminDiscordId   String
+  playerDiscordIds String[]
+}
+
 model DiceLog {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
