@@ -1,18 +1,16 @@
 import { authorize } from "@liveblocks/node"
 import type { ActionArgs } from "@remix-run/node"
 import { env } from "~/env.server"
+import { requireWorldMember } from "~/features/auth/require-world-member"
 import { defaultRoomId } from "~/features/multiplayer/liveblocks-client"
-import { getSessionUser } from "../../features/auth/session"
 
 export async function action({ request }: ActionArgs) {
-  const user = await getSessionUser(request)
+  await requireWorldMember(request)
 
-  const authResponse = user?.isAllowed
-    ? await authorize({
-        room: defaultRoomId,
-        secret: env.LIVEBLOCKS_SECRET_KEY,
-      })
-    : undefined
+  const authResponse = await authorize({
+    room: defaultRoomId,
+    secret: env.LIVEBLOCKS_SECRET_KEY,
+  })
 
   if (authResponse?.error) {
     console.error("Liveblocks auth error:", authResponse.error)

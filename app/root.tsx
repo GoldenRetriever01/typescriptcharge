@@ -1,5 +1,9 @@
 import { autoUpdate, offset, size, useFloating } from "@floating-ui/react-dom"
-import type { LinksFunction, LoaderArgs } from "@remix-run/node"
+import type {
+  ErrorBoundaryComponent,
+  LinksFunction,
+  LoaderArgs,
+} from "@remix-run/node"
 import {
   Links,
   LiveReload,
@@ -7,18 +11,19 @@ import {
   NavLink,
   Outlet,
   Scripts,
-  useLoaderData,
+  useCatch,
 } from "@remix-run/react"
 import clsx from "clsx"
 import { Book, Clock, Users } from "lucide-react"
-import type { ReactNode } from "react"
+import type { ComponentPropsWithoutRef, ReactNode } from "react"
 import type { TypedMetaFunction } from "remix-typedjson"
 import { typedjson, useTypedLoaderData } from "remix-typedjson"
 import { truthyJoin } from "~/helpers/truthy-join"
 import { clearButtonClass, maxWidthContainer } from "~/ui/styles"
 import favicon from "./assets/favicon.svg"
 import { env } from "./env.server"
-import { getSessionUser } from "./features/auth/session"
+import { toClientUser } from "./features/auth/client-user"
+import { requireWorldMember } from "./features/auth/require-world-member"
 import { UserProvider } from "./features/auth/user-context"
 import { DiceButton, DiceConfirmPanel } from "./features/dice/dice-button-d6"
 import { LiveCursors } from "./features/multiplayer/live-cursors"
@@ -61,13 +66,13 @@ export async function loader({ request }: LoaderArgs) {
   }
 
   const [user, storage, logs] = await Promise.all([
-    getSessionUser(request),
+    requireWorldMember(request),
     getLiveblocksStorage(),
     getWorldLogs(),
   ])
 
   return typedjson({
-    user,
+    user: toClientUser(user),
     storage,
     logs,
     pusherKey: env.PUSHER_KEY,
@@ -113,10 +118,108 @@ export const links: LinksFunction = () => [
 ]
 
 export default function App() {
+  const data = useTypedLoaderData<typeof loader>()
   return (
     <Document>
-      <AppContent />
+      <LiveblocksStorageProvider storage={data.storage}>
+        <PusherProvider
+          pusherKey={data.pusherKey}
+          pusherCluster={data.pusherCluster}
+        >
+          <RoomProvider id={defaultRoomId} {...defaultRoomInit}>
+            <UserProvider user={data.user}>
+              <div className="flex min-h-screen flex-col">
+                <div className={maxWidthContainer}>
+                  <header className="my-6">
+                    <MainNav />
+                  </header>
+                  <main>
+                    <Outlet />
+                  </main>
+                </div>
+                <footer className="sticky bottom-0 mx-auto mt-auto w-full max-w-screen-2xl p-4">
+                  <FooterActions />
+                </footer>
+              </div>
+
+              <LiveCursors name={data.user.name} />
+              <WorldTitle />
+            </UserProvider>
+          </RoomProvider>
+        </PusherProvider>
+      </LiveblocksStorageProvider>
     </Document>
+  )
+}
+
+export function CatchBoundary() {
+  return (
+    <Document>
+      <div className={maxWidthContainer}>
+        <CatchBoundaryContent />
+      </div>
+    </Document>
+  )
+}
+
+export function ErrorBoundary({
+  error,
+}: ComponentPropsWithoutRef<ErrorBoundaryComponent>) {
+  const message =
+    error instanceof Error ? error.stack || error.message : String(error)
+
+  return (
+    <Document>
+      <div className={maxWidthContainer}>
+        <div className="grid gap-4 py-4">
+          <h1 className="font-header text-4xl font-light">
+            Oops! Something went wrong.
+          </h1>
+          <pre className="overflow-x-auto rounded-md bg-black/50 p-4">
+            {message}
+          </pre>
+          <a href="/" className="underline hover:no-underline">
+            Return to safety
+          </a>
+        </div>
+      </div>
+    </Document>
+  )
+}
+
+function CatchBoundaryContent() {
+  const response = useCatch()
+
+  if (response.status === 401) {
+    return (
+      <SystemMessage>
+        <p>
+          To see this, please{" "}
+          <a href="/auth/discord/login" className="underline">
+            Login with Discord
+          </a>
+        </p>
+      </SystemMessage>
+    )
+  }
+
+  if (response.status === 403) {
+    return (
+      <SystemMessage>
+        <p>
+          {`Sorry, you're not allowed to see this. `}
+          <a href="/auth/logout" className="underline">
+            Log out
+          </a>
+        </p>
+      </SystemMessage>
+    )
+  }
+
+  return (
+    <SystemMessage>
+      <p>Oops! Something went wrong.</p>
+    </SystemMessage>
   )
 }
 
@@ -140,69 +243,12 @@ function Document({ children }: { children: ReactNode }) {
   )
 }
 
-function AppContent() {
-  const data = useLoaderData<typeof loader>()
-
-  if (!data.user) {
-    return (
-      <div className={maxWidthContainer}>
-        <main className="grid gap-4 p-8">
-          <p>
-            To access this world, please{" "}
-            <a href="/auth/discord/login" className="underline">
-              Login with Discord
-            </a>
-          </p>
-          <p className="opacity-75">{`(i'll make this less jank later)`}</p>
-        </main>
-      </div>
-    )
-  }
-
-  if (!data.user.isAllowed) {
-    return (
-      <div className={maxWidthContainer}>
-        <main className="grid gap-4 p-8">
-          <p>
-            {`Sorry, you're not authorized to enter this world. `}
-            <a href="/auth/logout" className="underline">
-              Log out
-            </a>
-          </p>
-          <p className="opacity-75">{`(i'll make this less jank later)`}</p>
-        </main>
-      </div>
-    )
-  }
-
+function SystemMessage({ children }: { children: ReactNode }) {
   return (
-    <LiveblocksStorageProvider storage={data.storage}>
-      <PusherProvider
-        pusherKey={data.pusherKey}
-        pusherCluster={data.pusherCluster}
-      >
-        <RoomProvider id={defaultRoomId} {...defaultRoomInit}>
-          <UserProvider user={data.user}>
-            <div className="flex min-h-screen flex-col">
-              <div className={maxWidthContainer}>
-                <header className="my-6">
-                  <MainNav />
-                </header>
-                <main>
-                  <Outlet />
-                </main>
-              </div>
-              <footer className="sticky bottom-0 mx-auto mt-auto w-full max-w-screen-2xl p-4">
-                <FooterActions />
-              </footer>
-            </div>
-
-            <LiveCursors name={data.user.name} />
-            <WorldTitle />
-          </UserProvider>
-        </RoomProvider>
-      </PusherProvider>
-    </LiveblocksStorageProvider>
+    <section className="grid gap-4">
+      {children}
+      <p className="opacity-75">{`(i'll make this less jank later)`}</p>
+    </section>
   )
 }
 

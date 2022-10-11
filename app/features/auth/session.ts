@@ -1,9 +1,9 @@
+import type { User } from "@prisma/client"
 import { createCookie } from "@remix-run/node"
 import cuid from "cuid"
 import { z } from "zod"
 import { env } from "~/env.server"
 import { discordLogin } from "~/features/auth/discord"
-import { discordUserAllowList } from "~/features/auth/discord-allow-list"
 import { prisma } from "~/prisma.server"
 import { getDiscordAuthUser } from "./discord"
 
@@ -45,17 +45,9 @@ export async function createSessionCookie(authCode: string) {
   return sessionCookie.serialize(session)
 }
 
-export type SessionUser = {
-  id: string
-  name: string
-  avatar: string | null
-  isAllowed: boolean
-  isAdmin: boolean
-}
-
 export async function getSessionUser(
   request: Request,
-): Promise<SessionUser | undefined> {
+): Promise<User | undefined> {
   const session: unknown = await sessionCookie.parse(
     request.headers.get("cookie"),
   )
@@ -67,23 +59,10 @@ export async function getSessionUser(
     return
   }
 
-  const userResult = await prisma.user.findFirst({
+  const user = await prisma.user.findFirst({
     where: { sessionId: result.data.sessionId },
-    select: {
-      id: true,
-      name: true,
-      avatar: true,
-      discordId: true,
-    },
   })
-  if (!userResult) return
-
-  const { discordId, ...user } = userResult
-  return {
-    ...user,
-    isAllowed: discordUserAllowList.includes(discordId),
-    isAdmin: env.ADMIN_DISCORD_ID === discordId,
-  }
+  return user ?? undefined
 }
 
 export function createLogoutCookie() {
