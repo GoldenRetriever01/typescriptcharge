@@ -31,7 +31,7 @@ export const inputBaseClass = clsx(
 
 export const inputClass = clsx(
   inputBaseClass,
-  "inline-flex h-12 items-center px-3 leading-none",
+  "inline-flex min-h-[3rem] flex-wrap items-center p-3 leading-tight",
 )
 
 export const textAreaClass = clsx(inputBaseClass, "p-3")
