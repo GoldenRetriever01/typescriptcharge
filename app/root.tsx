@@ -15,10 +15,9 @@ import type { ReactNode } from "react"
 import type { TypedMetaFunction } from "remix-typedjson"
 import { typedjson, useTypedLoaderData } from "remix-typedjson"
 import { truthyJoin } from "~/helpers/truthy-join"
-import { clearButtonClass } from "~/ui/styles"
+import { clearButtonClass, maxWidthContainer } from "~/ui/styles"
 import favicon from "./assets/favicon.svg"
 import { env } from "./env.server"
-import type { SessionUser } from "./features/auth/session"
 import { getSessionUser } from "./features/auth/session"
 import { UserProvider } from "./features/auth/user-context"
 import { DiceButton, DiceConfirmPanel } from "./features/dice/dice-button-d6"
@@ -114,7 +113,14 @@ export const links: LinksFunction = () => [
 ]
 
 export default function App() {
-  const data = useTypedLoaderData<typeof loader>()
+  return (
+    <Document>
+      <AppContent />
+    </Document>
+  )
+}
+
+function Document({ children }: { children: ReactNode }) {
   return (
     <html
       lang="en"
@@ -126,40 +132,77 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <div className="mx-auto flex min-h-screen flex-col gap-4 p-4">
-          <LiveblocksStorageProvider storage={data.storage}>
-            <AuthGuard>
-              {({ user }) => (
-                <PusherProvider
-                  pusherKey={data.pusherKey}
-                  pusherCluster={data.pusherCluster}
-                >
-                  <RoomProvider id={defaultRoomId} {...defaultRoomInit}>
-                    <div className="mx-auto grid w-full max-w-screen-md gap-4">
-                      <div className="my-2">
-                        <MainNav />
-                      </div>
-                      <UserProvider user={user}>
-                        <Outlet />
-                      </UserProvider>
-                    </div>
-
-                    <div className="sticky bottom-4 mx-auto mt-auto w-full max-w-screen-2xl">
-                      <FooterActions />
-                    </div>
-
-                    <LiveCursors name={user.name} />
-                    <WorldTitle />
-                  </RoomProvider>
-                </PusherProvider>
-              )}
-            </AuthGuard>
-          </LiveblocksStorageProvider>
-        </div>
+        {children}
         <Scripts />
         <LiveReload />
       </body>
     </html>
+  )
+}
+
+function AppContent() {
+  const data = useLoaderData<typeof loader>()
+
+  if (!data.user) {
+    return (
+      <div className={maxWidthContainer}>
+        <main className="grid gap-4 p-8">
+          <p>
+            To access this world, please{" "}
+            <a href="/auth/discord/login" className="underline">
+              Login with Discord
+            </a>
+          </p>
+          <p className="opacity-75">{`(i'll make this less jank later)`}</p>
+        </main>
+      </div>
+    )
+  }
+
+  if (!data.user.isAllowed) {
+    return (
+      <div className={maxWidthContainer}>
+        <main className="grid gap-4 p-8">
+          <p>
+            {`Sorry, you're not authorized to enter this world. `}
+            <a href="/auth/logout" className="underline">
+              Log out
+            </a>
+          </p>
+          <p className="opacity-75">{`(i'll make this less jank later)`}</p>
+        </main>
+      </div>
+    )
+  }
+
+  return (
+    <LiveblocksStorageProvider storage={data.storage}>
+      <PusherProvider
+        pusherKey={data.pusherKey}
+        pusherCluster={data.pusherCluster}
+      >
+        <RoomProvider id={defaultRoomId} {...defaultRoomInit}>
+          <UserProvider user={data.user}>
+            <div className="flex min-h-screen flex-col">
+              <div className={maxWidthContainer}>
+                <header className="my-6">
+                  <MainNav />
+                </header>
+                <main>
+                  <Outlet />
+                </main>
+              </div>
+              <footer className="sticky bottom-0 mx-auto mt-auto w-full max-w-screen-2xl p-4">
+                <FooterActions />
+              </footer>
+            </div>
+
+            <LiveCursors name={data.user.name} />
+            <WorldTitle />
+          </UserProvider>
+        </RoomProvider>
+      </PusherProvider>
+    </LiveblocksStorageProvider>
   )
 }
 
@@ -197,44 +240,6 @@ function HeaderLink({
       {children}
     </NavLink>
   )
-}
-
-function AuthGuard({
-  children,
-}: {
-  children: (props: { user: SessionUser }) => ReactNode
-}) {
-  const data = useLoaderData<typeof loader>()
-
-  if (!data.user) {
-    return (
-      <main className="grid gap-4 p-8">
-        <p>
-          To access this world, please{" "}
-          <a href="/auth/discord/login" className="underline">
-            Login with Discord
-          </a>
-        </p>
-        <p className="opacity-75">{`(i'll make this less jank later)`}</p>
-      </main>
-    )
-  }
-
-  if (!data.user.isAllowed) {
-    return (
-      <main className="grid gap-4 p-8">
-        <p>
-          {`Sorry, you're not authorized to enter this world.`}
-          <a href="/auth/logout" className="underline">
-            Log out
-          </a>
-        </p>
-        <p className="opacity-75">{`(i'll make this less jank later)`}</p>
-      </main>
-    )
-  }
-
-  return <>{children({ user: data.user })}</>
 }
 
 function FooterActions() {

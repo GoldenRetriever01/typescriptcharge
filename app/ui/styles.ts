@@ -1,5 +1,7 @@
 import clsx from "clsx"
 
+export const maxWidthContainer = clsx("mx-auto w-full max-w-screen-md px-4")
+
 export const activePress = clsx(
   "transition active:translate-y-0.5 active:transition-none",
 )
