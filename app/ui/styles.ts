@@ -29,7 +29,10 @@ export const inputBaseClass = clsx(
   "block w-full resize-none rounded-md bg-black/25 transition focus:bg-black/50 focus:outline-none focus:ring-2 focus:ring-blue-500",
 )
 
-export const inputClass = clsx(inputBaseClass, "h-12 px-3 leading-none")
+export const inputClass = clsx(
+  inputBaseClass,
+  "inline-flex h-12 items-center px-3 leading-none",
+)
 
 export const textAreaClass = clsx(inputBaseClass, "p-3")
 

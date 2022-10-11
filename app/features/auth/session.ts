@@ -28,17 +28,18 @@ export async function createSessionCookie(authCode: string) {
 
   const sessionId = cuid()
 
+  const data = {
+    name: discordUser.username,
+    avatar: discordUser.avatar
+      ? `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png`
+      : undefined,
+    sessionId,
+  }
+
   await prisma.user.upsert({
     where: { discordId: discordUser.id },
-    update: { sessionId },
-    create: {
-      discordId: discordUser.id,
-      name: discordUser.username,
-      avatar: discordUser.avatar
-        ? `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png`
-        : undefined,
-      sessionId,
-    },
+    update: data,
+    create: { ...data, discordId: discordUser.id },
   })
 
   const session: Session = { sessionId }
