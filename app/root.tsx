@@ -162,7 +162,9 @@ export function CatchBoundary() {
   return (
     <Document>
       <div className={maxWidthContainer}>
-        <CatchBoundaryContent />
+        <div className="py-8">
+          <CatchBoundaryContent />
+        </div>
       </div>
     </Document>
   )
