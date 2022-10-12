@@ -19,7 +19,7 @@ import type { ComponentPropsWithoutRef, ReactNode } from "react"
 import type { TypedMetaFunction } from "remix-typedjson"
 import { typedjson, useTypedLoaderData } from "remix-typedjson"
 import { truthyJoin } from "~/helpers/truthy-join"
-import { clearButtonClass, maxWidthContainer } from "~/ui/styles"
+import { maxWidthContainerClass, navLinkClass } from "~/ui/styles"
 import favicon from "./assets/favicon.svg"
 import { env } from "./env.server"
 import { toClientMembership } from "./features/auth/client-membership"
@@ -135,7 +135,7 @@ export default function App() {
           <RoomProvider id={defaultRoomId} {...defaultRoomInit}>
             <ClientMembershipProvider membership={data.membership}>
               <div className="flex min-h-screen flex-col">
-                <div className={maxWidthContainer}>
+                <div className={maxWidthContainerClass}>
                   <header className="my-6">
                     <MainNav />
                   </header>
@@ -161,7 +161,7 @@ export default function App() {
 export function CatchBoundary() {
   return (
     <Document>
-      <div className={maxWidthContainer}>
+      <div className={maxWidthContainerClass}>
         <div className="py-8">
           <CatchBoundaryContent />
         </div>
@@ -178,7 +178,7 @@ export function ErrorBoundary({
 
   return (
     <Document>
-      <div className={maxWidthContainer}>
+      <div className={maxWidthContainerClass}>
         <div className="grid gap-4 py-4">
           <h1 className="font-header text-4xl font-light">
             Oops! Something went wrong.
@@ -292,11 +292,7 @@ function HeaderLink({
   partial?: boolean
 }) {
   return (
-    <NavLink
-      to={to}
-      className={({ isActive }) => clearButtonClass(isActive)}
-      end={partial ? false : undefined}
-    >
+    <NavLink to={to} className={navLinkClass} end={partial ? false : undefined}>
       {children}
     </NavLink>
   )

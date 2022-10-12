@@ -2,7 +2,7 @@ import clsx from "clsx"
 import { X } from "lucide-react"
 import { useEffect, useRef } from "react"
 import { Counter } from "../../ui/counter"
-import { activePress } from "../../ui/styles"
+import { activePressClass } from "../../ui/styles"
 
 const positiveMod = (n: number, m: number) => ((n % m) + m) % m
 
@@ -172,7 +172,7 @@ export function Clock({
         <button
           className={clsx(
             "absolute top-0 right-0 rounded-md p-2 opacity-0 ring-blue-500 transition focus:opacity-75 focus:outline-none focus:ring-2 group-hover:opacity-75",
-            activePress,
+            activePressClass,
           )}
           type="button"
           title="Remove clock"

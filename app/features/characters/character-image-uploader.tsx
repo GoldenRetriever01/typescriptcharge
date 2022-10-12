@@ -6,7 +6,7 @@ import { useCallback, useRef } from "react"
 import type { characterImageAction } from "~/routes/api/characters.$id.image"
 import { Button } from "~/ui/button"
 import { LoadingSpinner } from "~/ui/loading"
-import { activePress } from "~/ui/styles"
+import { activePressClass } from "~/ui/styles"
 import type { Character } from "./character-sheet-data"
 
 export function CharacterImageUploader({
@@ -41,7 +41,7 @@ export function CharacterImageUploader({
       <Button
         className={clsx(
           "group relative grid h-full min-h-[24rem] w-full place-content-center place-items-center gap-4 overflow-clip rounded-md bg-black/25 p-4 ring-blue-500 transition hover:bg-black/50 focus:outline-none focus-visible:ring-2 sm:min-h-[unset]",
-          activePress,
+          activePressClass,
         )}
         onClick={() => inputRef.current!.click()}
         disabled={!!fetcher.submission}

@@ -7,7 +7,7 @@ import {
 } from "ariakit/popover"
 import clsx from "clsx"
 import { Palette } from "lucide-react"
-import { activePress, solidButton } from "~/ui/styles"
+import { activePressClass, solidButtonClass } from "~/ui/styles"
 import { characterColors } from "./character-colors"
 import type { Character } from "./character-sheet-data"
 import { useUpdateCharacter } from "./hooks"
@@ -22,7 +22,7 @@ export function CharacterColorButton({ character }: { character: Character }) {
 
   return (
     <>
-      <PopoverDisclosure state={popover} className={solidButton}>
+      <PopoverDisclosure state={popover} className={solidButtonClass}>
         <Palette /> Color
       </PopoverDisclosure>
       <Popover
@@ -39,7 +39,7 @@ export function CharacterColorButton({ character }: { character: Character }) {
               className={clsx(
                 classes.background,
                 "rounded-md ring-2 ring-transparent brightness-150 transition hover:brightness-100 focus:outline-none focus-visible:ring-blue-500",
-                activePress,
+                activePressClass,
               )}
               onClick={() => updateCharacter({ color: name })}
             />

@@ -26,7 +26,8 @@ import {
   clearButtonClass,
   inputClass,
   labelTextClass,
-  solidButton,
+  navLinkClass,
+  solidButtonClass,
   textAreaClass,
 } from "~/ui/styles"
 
@@ -65,29 +66,22 @@ export default function CharactersPage() {
         colorClasses.border,
       )}
     >
-      <nav className="flex items-start justify-between">
-        <div className="flex flex-1 flex-wrap gap-4">
-          {characters.map((character) => (
-            <Link
-              key={character.id}
-              to={`/characters/${character.id}`}
-              className={clearButtonClass(character === currentCharacter)}
-            >
-              {character.name || "Unnamed"}{" "}
-              {character.hidden && <EyeOff size={16} />}
-            </Link>
-          ))}
-          {characters.length === 0 && (
-            <p className="opacity-70">No characters found</p>
-          )}
-        </div>
-
-        <Button
-          className={clearButtonClass(false)}
-          onClick={handleCreateClicked}
-        >
+      <nav className="flex flex-1 flex-wrap gap-x-4 gap-y-2">
+        {characters.map((character) => (
+          <Link
+            key={character.id}
+            to={`/characters/${character.id}`}
+            className={navLinkClass({
+              isActive: character === currentCharacter,
+            })}
+          >
+            {character.name || "Unnamed"}{" "}
+            {character.hidden && <EyeOff size={16} />}
+          </Link>
+        ))}
+        <Button className={clearButtonClass} onClick={handleCreateClicked}>
           <Plus />
-          Create
+          Add new
         </Button>
       </nav>
       {currentCharacter && (
@@ -268,7 +262,7 @@ function ActionRollButton({
     <Button
       type="submit"
       title={`Roll ${action}`}
-      className={clearButtonClass(false)}
+      className={clearButtonClass}
       onClick={() => {
         setDiceRoll(level + 1, `${name}: ${action}`)
       }}
@@ -298,7 +292,7 @@ function DeleteButton({
 
   return (
     <>
-      <button className={solidButton} onClick={() => setVisible(true)}>
+      <button className={solidButtonClass} onClick={() => setVisible(true)}>
         <Trash />
         Delete
       </button>
@@ -332,13 +326,13 @@ function DeleteButton({
                 </Dialog.Title>
                 <div className="flex items-center gap-4">
                   <button
-                    className={solidButton}
+                    className={solidButtonClass}
                     onClick={() => setVisible(false)}
                   >
                     <X />
                     Cancel
                   </button>
-                  <button className={solidButton} onClick={handleConfirm}>
+                  <button className={solidButtonClass} onClick={handleConfirm}>
                     <Trash />
                     Delete
                   </button>
@@ -362,7 +356,7 @@ function HideButton({ character }: { character: Character }) {
 
   return (
     <Button
-      className={solidButton}
+      className={solidButtonClass}
       onClick={() => updateCharacter({ hidden: !character.hidden })}
     >
       {character.hidden ? <Eye /> : <EyeOff />}

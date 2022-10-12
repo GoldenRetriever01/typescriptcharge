@@ -13,7 +13,7 @@ import {
   inputClass,
   labelTextClass,
   raisedPanelClass,
-  solidButton,
+  solidButtonClass,
 } from "~/ui/styles"
 
 const snowflakeSchema = z
@@ -133,7 +133,11 @@ export default function SettingsPage() {
               placeholder="0123456789"
               required
             />
-            <Button type="submit" className={solidButton} title="Add player">
+            <Button
+              type="submit"
+              className={solidButtonClass}
+              title="Add player"
+            >
               <Plus />
             </Button>
           </Form>
@@ -157,7 +161,7 @@ export default function SettingsPage() {
               />
               <Button
                 type="submit"
-                className={solidButton}
+                className={solidButtonClass}
                 title="Remove player"
               >
                 <Minus />

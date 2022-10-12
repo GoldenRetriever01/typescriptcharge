@@ -1,7 +1,7 @@
 import clsx from "clsx"
 import { MinusCircle, PlusCircle } from "lucide-react"
 import { range } from "../helpers/range"
-import { activePress, clearButtonClass } from "./styles"
+import { activePressClass, clearButtonClass } from "./styles"
 
 export function Counter({
   value,
@@ -19,7 +19,7 @@ export function Counter({
       <button
         type="button"
         title="Remove slice"
-        className={clearButtonClass(false)}
+        className={clearButtonClass}
         onClick={() => onChange(Math.max(value - 1, min))}
       >
         <MinusCircle />
@@ -32,7 +32,7 @@ export function Counter({
       <button
         type="button"
         title="Add slice"
-        className={clearButtonClass(false)}
+        className={clearButtonClass}
         onClick={() => onChange(Math.min(value + 1, max))}
       >
         <PlusCircle />
@@ -61,7 +61,7 @@ export function DotCounter({
           className={clsx(
             "h-5 w-5 rounded-full border-2",
             n <= value ? "bg-white" : "opacity-50",
-            activePress,
+            activePressClass,
           )}
         />
       ))}

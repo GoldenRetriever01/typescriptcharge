@@ -59,7 +59,7 @@ export default function ClocksPage() {
         <div className="flex justify-center">
           <button
             type="button"
-            className={clearButtonClass(false)}
+            className={clearButtonClass}
             onClick={() => {
               setClocks([
                 ...clocks,
