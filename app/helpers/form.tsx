@@ -1,6 +1,6 @@
-import type { ComponentPropsWithoutRef, ForwardedRef } from "react"
-import { forwardRef } from "react"
+import type { ComponentProps } from "react"
 import type * as z from "zod"
+import { autoRef } from "./react"
 
 export function defineField<Output>(
   name: string,
@@ -9,11 +9,10 @@ export function defineField<Output>(
   return {
     parse: (data: FormData) => schema.parse(data.get(name)),
     safeParse: (data: FormData) => schema.safeParse(data.get(name)),
-    input: forwardRef(function Input(
-      props: Omit<ComponentPropsWithoutRef<"input">, "name">,
-      ref: ForwardedRef<HTMLInputElement>,
+    input: autoRef(function Input(
+      props: Omit<ComponentProps<"input">, "name">,
     ) {
-      return <input {...props} name={name} ref={ref} />
+      return <input {...props} name={name} />
     }),
   }
 }

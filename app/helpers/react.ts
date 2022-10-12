@@ -1,5 +1,5 @@
-import type { ReactNode } from "react"
-import { useCallback, useInsertionEffect, useRef } from "react"
+import type { ForwardedRef, ReactElement, ReactNode } from "react"
+import { forwardRef, useCallback, useInsertionEffect, useRef } from "react"
 
 export function useEvent<A extends unknown[], R>(fn: (...args: A) => R) {
   const ref = useRef((...args: A): R => {
@@ -25,4 +25,19 @@ export function isRendered(
   value: unknown,
 ): value is Exclude<ReactNode, undefined | null | boolean> {
   return value != undefined && typeof value !== "boolean"
+}
+
+export function autoRef<Props extends object, RefType>(component: {
+  (props: Props & { ref?: ForwardedRef<RefType> }): ReactElement
+  displayName?: string
+}) {
+  const AutoRefComponent = forwardRef<RefType, Props>((props, ref) =>
+    component({ ...props, ref }),
+  )
+
+  AutoRefComponent.displayName = `AutoRef(${
+    component.displayName || component.name
+  })`
+
+  return AutoRefComponent
 }
