@@ -6,6 +6,7 @@ import { useId } from "react"
 import type { ZodError } from "zod"
 import { z } from "zod"
 import { getDefaultWorld } from "~/features/world/world-db.server"
+import { defineField } from "~/helpers/form"
 import { prisma } from "~/prisma.server"
 import { Button } from "~/ui/button"
 import {
@@ -22,6 +23,8 @@ const snowflakeSchema = z
 function formatZodError(error: ZodError) {
   return error.issues.map((i) => i.message).join("\n")
 }
+
+const userDiscordIdField = defineField("userDiscordId", snowflakeSchema)
 
 export async function loader({ request }: LoaderArgs) {
   const world = await getDefaultWorld()
@@ -50,7 +53,7 @@ export async function action({ request }: ActionArgs) {
   if (method === "post") {
     const form = await request.formData()
 
-    const userDiscordId = snowflakeSchema.safeParse(form.get("userDiscordId"))
+    const userDiscordId = userDiscordIdField.safeParse(form)
     if (!userDiscordId.success) {
       return json(
         { success: false, error: formatZodError(userDiscordId.error) },
@@ -79,7 +82,7 @@ export async function action({ request }: ActionArgs) {
   if (method === "delete") {
     const form = await request.formData()
 
-    const userDiscordId = snowflakeSchema.safeParse(form.get("userDiscordId"))
+    const userDiscordId = userDiscordIdField.safeParse(form)
     if (!userDiscordId.success) {
       return json(
         { success: false, error: formatZodError(userDiscordId.error) },
@@ -124,10 +127,9 @@ export default function SettingsPage() {
                 Discord user ID
               </label>
             </div>
-            <input
+            <userDiscordIdField.input
               id={inputId}
               className={inputClass}
-              name="userDiscordId"
               placeholder="0123456789"
               required
             />
@@ -149,9 +151,8 @@ export default function SettingsPage() {
                   ({player.userDiscordId})
                 </span>
               </p>
-              <input
+              <userDiscordIdField.input
                 type="hidden"
-                name="userDiscordId"
                 value={player.userDiscordId}
               />
               <Button
