@@ -1,11 +1,11 @@
 import type { ActionArgs } from "@remix-run/node"
 import { redirect } from "@remix-run/node"
 import { z } from "zod"
-import { getSessionUser } from "~/features/auth/session"
-import { defaultRoomId } from "~/features/multiplayer/liveblocks-client"
-import { triggerEvent } from "~/features/multiplayer/pusher.server"
+import { getSessionUser } from "~/auth/session"
+import { db } from "~/core/db.server"
 import { range } from "~/helpers/range"
-import { prisma } from "~/prisma.server"
+import { defaultRoomId } from "~/multiplayer/liveblocks-client"
+import { triggerEvent } from "~/multiplayer/pusher.server"
 
 export function loader() {
   return redirect("/")
@@ -30,7 +30,7 @@ export async function action({ request }: ActionArgs) {
     result: Math.floor(Math.random() * 6) + 1,
   }))
 
-  const log = await prisma.diceLog.create({
+  const log = await db.diceLog.create({
     data: {
       roomId: defaultRoomId,
       userId: user.id,

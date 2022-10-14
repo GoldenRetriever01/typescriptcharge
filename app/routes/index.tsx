@@ -1,7 +1,7 @@
 import TextArea from "react-expanding-textarea"
-import { useUpdateWorld, useWorld } from "~/features/world/world-state"
 import { Field } from "~/ui/field"
 import { inputClass, raisedPanelClass, textAreaClass } from "~/ui/styles"
+import { useUpdateWorld, useWorld } from "~/world/world-state"
 
 export default function WorldPage() {
   const world = useWorld()

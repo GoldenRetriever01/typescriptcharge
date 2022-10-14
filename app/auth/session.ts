@@ -2,10 +2,10 @@ import type { User } from "@prisma/client"
 import { createCookie } from "@remix-run/node"
 import cuid from "cuid"
 import { z } from "zod"
-import { env } from "~/env.server"
-import { discordLogin } from "~/features/auth/discord"
+import { discordLogin } from "~/auth/discord"
+import { db } from "~/core/db.server"
+import { env } from "~/core/env.server"
 import { raise } from "~/helpers/errors"
-import { prisma } from "~/prisma.server"
 import { getDiscordAuthUser } from "./discord"
 
 const sessionSchema = z.object({
@@ -36,7 +36,7 @@ export async function createSessionCookie(authCode: string) {
     sessionId,
   }
 
-  await prisma.user.upsert({
+  await db.user.upsert({
     where: { discordId: discordUser.id },
     update: data,
     create: { ...data, discordId: discordUser.id },
@@ -64,7 +64,7 @@ export async function getSessionUser(
     return
   }
 
-  const user = await prisma.user.findFirst({
+  const user = await db.user.findFirst({
     where: { sessionId: result.data.sessionId },
   })
   return user ?? undefined

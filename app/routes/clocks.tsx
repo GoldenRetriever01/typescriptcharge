@@ -1,12 +1,12 @@
 import { LiveList } from "@liveblocks/client"
 import { Plus } from "lucide-react"
-import { Clock } from "~/features/clocks/clock"
-import type { ClockState } from "~/features/clocks/clock-state"
+import { Clock } from "~/clocks/clock"
+import type { ClockState } from "~/clocks/clock-state"
 import {
   useMutation,
   useStorage,
-} from "~/features/multiplayer/liveblocks-react"
-import { useLiveblocksStorageContext } from "~/features/multiplayer/liveblocks-storage"
+} from "~/multiplayer/liveblocks-react"
+import { useLiveblocksStorageContext } from "~/multiplayer/liveblocks-storage"
 import { clearButtonClass, raisedPanelClass } from "~/ui/styles"
 
 export default function ClocksPage() {

@@ -1,9 +1,9 @@
-import { prisma } from "~/prisma.server"
+import { db } from "~/core/db.server"
 
 const defaultWorldId = "default"
 
 export function getDefaultWorld() {
-  return prisma.world.upsert({
+  return db.world.upsert({
     where: { id: defaultWorldId },
     update: {},
     create: { id: defaultWorldId },

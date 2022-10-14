@@ -2,11 +2,8 @@ import type { Client } from "@liveblocks/client"
 import { createClient } from "@liveblocks/client"
 import fetch from "cross-fetch"
 import WebSocket from "isomorphic-ws"
-import { env } from "~/env.server"
-import {
-  defaultRoomId,
-  defaultRoomInit,
-} from "~/features/multiplayer/liveblocks-client"
+import { env } from "~/core/env.server"
+import { defaultRoomId, defaultRoomInit } from "~/multiplayer/liveblocks-client"
 
 declare global {
   var liveblocksClient: Client | undefined

@@ -1,5 +1,5 @@
 import { redirect } from "@remix-run/node"
-import { createLogoutCookie } from "~/features/auth/session"
+import { createLogoutCookie } from "~/auth/session"
 
 export async function loader() {
   return redirect("/", {

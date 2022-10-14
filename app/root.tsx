@@ -19,37 +19,34 @@ import type { ComponentPropsWithoutRef, ReactNode } from "react"
 import type { TypedMetaFunction } from "remix-typedjson"
 import { typedjson, useTypedLoaderData } from "remix-typedjson"
 import { truthyJoin } from "~/helpers/truthy-join"
-import { maxWidthContainerClass, navLinkClass } from "~/ui/styles"
-import favicon from "./assets/favicon.svg"
-import { env } from "./env.server"
-import { toClientMembership } from "./features/auth/client-membership"
-import { ClientMembershipProvider } from "./features/auth/client-membership-context"
-import { toClientUser } from "./features/auth/client-user"
-import { requireMembership } from "./features/auth/require-membership"
-import { requireSessionUser } from "./features/auth/session"
-import { DiceButton, DiceConfirmPanel } from "./features/dice/dice-button-d6"
-import { LiveCursors } from "./features/multiplayer/live-cursors"
-import {
-  defaultRoomId,
-  defaultRoomInit,
-} from "./features/multiplayer/liveblocks-client"
-import { RoomProvider } from "./features/multiplayer/liveblocks-react"
-import { LiveblocksStorageProvider } from "./features/multiplayer/liveblocks-storage"
-import { getLiveblocksStorage } from "./features/multiplayer/liveblocks-storage.server"
+import { LiveCursors } from "~/multiplayer/live-cursors"
+import { defaultRoomId, defaultRoomInit } from "~/multiplayer/liveblocks-client"
+import { RoomProvider } from "~/multiplayer/liveblocks-react"
+import { LiveblocksStorageProvider } from "~/multiplayer/liveblocks-storage"
+import { getLiveblocksStorage } from "~/multiplayer/liveblocks-storage.server"
 import {
   LogsPanel,
   LogsPanelButton,
   LogsPanelProvider,
-} from "./features/multiplayer/logs"
-import { PusherProvider } from "./features/multiplayer/pusher-client"
-import { getDefaultWorld } from "./features/world/world-db.server"
-import { WorldTitle } from "./features/world/world-title"
+} from "~/multiplayer/logs"
+import { PusherProvider } from "~/multiplayer/pusher-client"
+import { maxWidthContainerClass, navLinkClass } from "~/ui/styles"
+import favicon from "./assets/favicon.svg"
+import { toClientMembership } from "./auth/client-membership"
+import { ClientMembershipProvider } from "./auth/client-membership-context"
+import { toClientUser } from "./auth/client-user"
+import { requireMembership } from "./auth/require-membership"
+import { requireSessionUser } from "./auth/session"
+import { db } from "./core/db.server"
+import { env } from "./core/env.server"
+import { DiceButton, DiceConfirmPanel } from "./dice/dice-button-d6"
 import tailwind from "./generated/tailwind.css"
-import { prisma } from "./prisma.server"
 import { Portal } from "./ui/portal"
+import { getDefaultWorld } from "./world/world-db.server"
+import { WorldTitle } from "./world/world-title"
 
 async function loadWorldLogs() {
-  return prisma.diceLog.findMany({
+  return db.diceLog.findMany({
     where: {
       roomId: defaultRoomId,
     },

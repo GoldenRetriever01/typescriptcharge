@@ -1,8 +1,8 @@
 import clsx from "clsx"
 import { X } from "lucide-react"
 import { useEffect, useRef } from "react"
-import { Counter } from "../../ui/counter"
-import { activePressClass } from "../../ui/styles"
+import { Counter } from "~/ui/counter"
+import { activePressClass } from "~/ui/styles"
 
 const positiveMod = (n: number, m: number) => ((n % m) + m) % m
 

@@ -5,9 +5,8 @@ import { Minus, Plus } from "lucide-react"
 import { useId } from "react"
 import type { ZodError } from "zod"
 import { z } from "zod"
-import { getDefaultWorld } from "~/features/world/world-db.server"
+import { db } from "~/core/db.server"
 import { defineField } from "~/helpers/form"
-import { prisma } from "~/prisma.server"
 import { Button } from "~/ui/button"
 import {
   inputClass,
@@ -15,6 +14,7 @@ import {
   raisedPanelClass,
   solidButtonClass,
 } from "~/ui/styles"
+import { getDefaultWorld } from "~/world/world-db.server"
 
 const snowflakeSchema = z
   .string()
@@ -29,7 +29,7 @@ const userDiscordIdField = defineField("userDiscordId", snowflakeSchema)
 export async function loader({ request }: LoaderArgs) {
   const world = await getDefaultWorld()
 
-  const players = await prisma.membership.findMany({
+  const players = await db.membership.findMany({
     where: {
       AND: {
         worldId: world.id,
@@ -63,7 +63,7 @@ export async function action({ request }: ActionArgs) {
 
     const world = await getDefaultWorld()
 
-    await prisma.membership.create({
+    await db.membership.create({
       data: {
         user: {
           connectOrCreate: {
@@ -92,7 +92,7 @@ export async function action({ request }: ActionArgs) {
 
     const world = await getDefaultWorld()
 
-    await prisma.membership.delete({
+    await db.membership.delete({
       where: {
         worldId_userDiscordId: {
           userDiscordId: userDiscordId.data,

@@ -13,8 +13,8 @@ import {
 import { createClient as createSupabaseClient } from "@supabase/supabase-js"
 import { createHash } from "node:crypto"
 import sharp from "sharp"
-import { env } from "~/env.server"
-import { serverLiveblocksRoom } from "~/features/multiplayer/liveblocks-client.server"
+import { env } from "~/core/env.server"
+import { serverLiveblocksRoom } from "~/multiplayer/liveblocks-client.server"
 
 export async function action({ request, params }: ActionArgs) {
   let form

@@ -1,5 +1,5 @@
 import Pusher from "pusher"
-import { env } from "~/env.server"
+import { env } from "~/core/env.server"
 import type { PusherEvents } from "./pusher-config"
 import { pusherChannel } from "./pusher-config"
 

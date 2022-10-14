@@ -1,10 +1,10 @@
 import { LiveList } from "@liveblocks/client"
-import type { Character } from "~/features/characters/character-sheet-data"
+import type { Character } from "~/characters/character-sheet-data"
 import {
   useMutation,
   useStorage,
-} from "~/features/multiplayer/liveblocks-react"
-import { useLiveblocksStorageContext } from "../multiplayer/liveblocks-storage"
+} from "~/multiplayer/liveblocks-react"
+import { useLiveblocksStorageContext } from "~/multiplayer/liveblocks-storage"
 
 export function useCharacters() {
   const storage = useLiveblocksStorageContext()

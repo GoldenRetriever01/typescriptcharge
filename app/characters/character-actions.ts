@@ -1,4 +1,4 @@
-import type { ValueOf } from "../../helpers/types"
+import type { ValueOf } from "~/helpers/types"
 
 export const characterActionLibrary = {
   Physique: ["Muscle", "Finesse", "Move", "Sneak"],

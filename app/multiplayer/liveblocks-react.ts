@@ -1,9 +1,6 @@
 import { createRoomContext } from "@liveblocks/react"
-import type {
-  Presence,
-  Storage,
-} from "~/features/multiplayer/liveblocks-client"
-import { getLiveblocksClient } from "~/features/multiplayer/liveblocks-client"
+import type { Presence, Storage } from "~/multiplayer/liveblocks-client"
+import { getLiveblocksClient } from "~/multiplayer/liveblocks-client"
 
 export const {
   RoomProvider,
