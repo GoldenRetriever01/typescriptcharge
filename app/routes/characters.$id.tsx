@@ -46,12 +46,20 @@ export async function loader({ request }: LoaderArgs) {
 
   const membership = await requireMembership(user, world)
 
-  return json({
-    membership: {
-      isAdmin: membership.role === "GM",
-      isPlayer: membership.role === "PLAYER",
+  return json(
+    {
+      membership: {
+        isAdmin: membership.role === "GM",
+        isPlayer: membership.role === "PLAYER",
+      },
     },
-  })
+    {
+      headers: {
+        "Vary": "Cookie",
+        "Cache-Control": `max-age=${60 * 60 * 24 * 365}`,
+      },
+    },
+  )
 }
 
 export default function CharactersPage() {
