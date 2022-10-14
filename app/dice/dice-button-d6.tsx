@@ -4,6 +4,7 @@ import clsx from "clsx"
 import { AnimatePresence, motion } from "framer-motion"
 import { Check, Dices, Minus, Plus, X } from "lucide-react"
 import { atom } from "nanostores"
+import { route } from "routes-gen"
 import { Button } from "~/ui/button"
 import { blackCircleIconButtonClass, inputClass } from "~/ui/styles"
 
@@ -44,7 +45,8 @@ export function DiceButton() {
   const fetchers = useFetchers()
   const pending = fetchers.some(
     (f) =>
-      f.submission?.action === "/api/roll" && f.submission.method === "POST",
+      f.submission?.action === route("/api/roll") &&
+      f.submission.method === "POST",
   )
 
   return (
@@ -86,7 +88,7 @@ export function DiceConfirmPanel() {
           exit={{ scale: 0.95, opacity: 0 }}
         >
           <fetcher.Form
-            action="/api/roll"
+            action={route("/api/roll")}
             method="post"
             replace
             className="flex flex-wrap items-center justify-end gap-2"

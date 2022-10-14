@@ -3,6 +3,7 @@ import type { SerializeFrom } from "@remix-run/server-runtime"
 import clsx from "clsx"
 import { ImagePlus } from "lucide-react"
 import { useCallback, useRef } from "react"
+import { route } from "routes-gen"
 import type { characterImageAction } from "~/routes/api/characters.$id.image"
 import { Button } from "~/ui/button"
 import { LoadingSpinner } from "~/ui/loading"
@@ -32,7 +33,7 @@ export function CharacterImageUploader({
           const formData = new FormData()
           formData.append("image", image)
           fetcher.submit(formData, {
-            action: `/api/characters/${character.id}/image`,
+            action: route("/api/characters/:id/image", { id: character.id }),
             method: "post",
             encType: "multipart/form-data",
           })

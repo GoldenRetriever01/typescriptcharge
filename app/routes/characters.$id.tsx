@@ -4,6 +4,7 @@ import clsx from "clsx"
 import { Dices, Eye, EyeOff, Plus, Trash, X } from "lucide-react"
 import { Fragment, useState } from "react"
 import TextArea from "react-expanding-textarea"
+import { route } from "routes-gen"
 import { useMembership } from "~/auth/client-membership-context"
 import { characterActionLibrary } from "~/characters/character-actions"
 import { CharacterColorButton } from "~/characters/character-color-button"
@@ -51,7 +52,7 @@ export default function CharactersPage() {
 
   const handleCreateClicked = () => {
     const character = addCharacter()
-    navigate(`/characters/${character.id}`)
+    navigate(route("/characters/:id", { id: character.id }))
   }
 
   const colorClasses =
@@ -70,7 +71,7 @@ export default function CharactersPage() {
         {characters.map((character) => (
           <Link
             key={character.id}
-            to={`/characters/${character.id}`}
+            to={route("/characters/:id", { id: character.id })}
             className={navLinkClass({
               isActive: character === currentCharacter,
             })}
@@ -287,7 +288,7 @@ function DeleteButton({
   const handleConfirm = () => {
     deleteCharacter()
     setVisible(false)
-    navigate("/characters")
+    navigate(route("/characters"))
   }
 
   return (

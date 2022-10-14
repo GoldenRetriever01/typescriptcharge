@@ -11,6 +11,7 @@ dist
 .cache
 .vscode
 /app/generated
+/app/routes.d.ts
 .vercel
 /data
 

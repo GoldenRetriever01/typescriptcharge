@@ -5,6 +5,7 @@ import type {
   LoaderArgs,
 } from "@remix-run/node"
 import {
+  Link,
   Links,
   LiveReload,
   Meta,
@@ -18,6 +19,7 @@ import { Book, Clock, Users, Wrench } from "lucide-react"
 import type { ComponentPropsWithoutRef, ReactNode } from "react"
 import type { TypedMetaFunction } from "remix-typedjson"
 import { typedjson, useTypedLoaderData } from "remix-typedjson"
+import { route } from "routes-gen"
 import { truthyJoin } from "~/helpers/truthy-join"
 import { LiveCursors } from "~/multiplayer/live-cursors"
 import { defaultRoomId, defaultRoomInit } from "~/multiplayer/liveblocks-client"
@@ -200,7 +202,7 @@ function CatchBoundaryContent() {
       <SystemMessage>
         <p>
           To see this, please{" "}
-          <a href="/auth/discord/login" className="underline">
+          <a href={route("/auth/discord/login")} className="underline">
             Login with Discord
           </a>
         </p>
@@ -213,9 +215,9 @@ function CatchBoundaryContent() {
       <SystemMessage>
         <p>
           {`Sorry, you're not allowed to see this. `}
-          <a href="/auth/logout" className="underline">
+          <Link to={route("/auth/logout")} className="underline">
             Log out
-          </a>
+          </Link>
         </p>
       </SystemMessage>
     )
@@ -261,37 +263,21 @@ function MainNav() {
   const { membership } = useTypedLoaderData<typeof loader>()
   return (
     <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 sm:justify-start">
-      <HeaderLink to="/">
+      <NavLink to={route("/")} className={navLinkClass}>
         <Book size={20} /> World
-      </HeaderLink>
-      <HeaderLink to="/characters" partial>
+      </NavLink>
+      <NavLink to={route("/characters")} className={navLinkClass} end={false}>
         <Users size={20} /> Characters
-      </HeaderLink>
-      <HeaderLink to="/clocks">
+      </NavLink>
+      <NavLink to={route("/clocks")} className={navLinkClass}>
         <Clock size={20} /> Clocks
-      </HeaderLink>
+      </NavLink>
       {membership.role === "GM" && (
-        <HeaderLink to="/settings">
+        <NavLink to={route("/settings")} className={navLinkClass}>
           <Wrench size={20} /> Settings
-        </HeaderLink>
+        </NavLink>
       )}
     </nav>
-  )
-}
-
-function HeaderLink({
-  to,
-  children,
-  partial,
-}: {
-  to: string
-  children: React.ReactNode
-  partial?: boolean
-}) {
-  return (
-    <NavLink to={to} className={navLinkClass} end={partial ? false : undefined}>
-      {children}
-    </NavLink>
   )
 }
 

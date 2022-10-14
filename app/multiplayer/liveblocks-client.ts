@@ -1,6 +1,7 @@
 import type { Client } from "@liveblocks/client"
 import { createClient, LiveList } from "@liveblocks/client"
 import type { RoomInitializers } from "@liveblocks/client/internal"
+import { route } from "routes-gen"
 import type { Character } from "~/characters/character-sheet-data"
 import type { ClockState } from "~/clocks/clock-state"
 import type { World } from "~/world/world"
@@ -18,7 +19,7 @@ export type Storage = {
 let client: Client
 export function getLiveblocksClient() {
   return (client ??= createClient({
-    authEndpoint: "/auth/liveblocks",
+    authEndpoint: route("/auth/liveblocks"),
   }))
 }
 
