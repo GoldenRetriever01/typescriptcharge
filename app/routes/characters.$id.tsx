@@ -1,11 +1,12 @@
 import { Dialog, Transition } from "@headlessui/react"
-import { Link, useNavigate, useParams } from "@remix-run/react"
+import type { LoaderArgs } from "@remix-run/node"
+import { json } from "@remix-run/node"
+import { Link, useLoaderData, useNavigate, useParams } from "@remix-run/react"
 import clsx from "clsx"
 import { Dices, Eye, EyeOff, Plus, Trash, X } from "lucide-react"
 import { Fragment, useState } from "react"
 import TextArea from "react-expanding-textarea"
 import { route } from "routes-gen"
-import { useMembership } from "~/auth/client-membership-context"
 import { characterActionLibrary } from "~/characters/character-actions"
 import { CharacterColorButton } from "~/characters/character-color-button"
 import { characterColors } from "~/characters/character-colors"
@@ -31,11 +32,30 @@ import {
   solidButtonClass,
   textAreaClass,
 } from "~/ui/styles"
+import { requireMembership } from "../auth/require-membership"
+import { requireSessionUser } from "../auth/session"
+import { getDefaultWorld } from "../world/world-db.server"
 
 const dividerClass = "border-black/25"
 
+export async function loader({ request }: LoaderArgs) {
+  const [user, world] = await Promise.all([
+    requireSessionUser(request),
+    getDefaultWorld(),
+  ])
+
+  const membership = await requireMembership(user, world)
+
+  return json({
+    membership: {
+      isAdmin: membership.role === "GM",
+      isPlayer: membership.role === "PLAYER",
+    },
+  })
+}
+
 export default function CharactersPage() {
-  const membership = useMembership()
+  const { membership } = useLoaderData<typeof loader>()
   const params = useParams<{ id?: string }>()
   const navigate = useNavigate()
 
@@ -348,7 +368,7 @@ function DeleteButton({
 }
 
 function HideButton({ character }: { character: Character }) {
-  const membership = useMembership()
+  const { membership } = useLoaderData<typeof loader>()
   const updateCharacter = useUpdateCharacter(character.id)
 
   if (!membership.isAdmin) {

@@ -35,7 +35,6 @@ import { PusherProvider } from "~/multiplayer/pusher-client"
 import { maxWidthContainerClass, navLinkClass } from "~/ui/styles"
 import favicon from "./assets/favicon.svg"
 import { toClientMembership } from "./auth/client-membership"
-import { ClientMembershipProvider } from "./auth/client-membership-context"
 import { toClientUser } from "./auth/client-user"
 import { requireMembership } from "./auth/require-membership"
 import { requireSessionUser } from "./auth/session"
@@ -132,24 +131,22 @@ export default function App() {
           pusherCluster={data.pusherCluster}
         >
           <RoomProvider id={defaultRoomId} {...defaultRoomInit}>
-            <ClientMembershipProvider membership={data.membership}>
-              <div className="flex min-h-screen flex-col">
-                <div className={maxWidthContainerClass}>
-                  <header className="my-6">
-                    <MainNav />
-                  </header>
-                  <main>
-                    <Outlet />
-                  </main>
-                </div>
-                <footer className="sticky bottom-0 mx-auto mt-auto w-full max-w-screen-2xl p-4">
-                  <FooterActions />
-                </footer>
+            <div className="flex min-h-screen flex-col">
+              <div className={maxWidthContainerClass}>
+                <header className="my-6">
+                  <MainNav />
+                </header>
+                <main>
+                  <Outlet />
+                </main>
               </div>
+              <footer className="sticky bottom-0 mx-auto mt-auto w-full max-w-screen-2xl p-4">
+                <FooterActions />
+              </footer>
+            </div>
 
-              <LiveCursors name={data.user.name} />
-              <WorldTitle />
-            </ClientMembershipProvider>
+            <LiveCursors name={data.user.name} />
+            <WorldTitle />
           </RoomProvider>
         </PusherProvider>
       </LiveblocksStorageProvider>
