@@ -13,6 +13,7 @@ import {
   Outlet,
   Scripts,
   useCatch,
+  useTransition,
 } from "@remix-run/react"
 import clsx from "clsx"
 import { Book, Clock, Users, Wrench } from "lucide-react"
@@ -42,6 +43,7 @@ import { db } from "./core/db.server"
 import { env } from "./core/env.server"
 import { DiceButton, DiceConfirmPanel } from "./dice/dice-button-d6"
 import tailwind from "./generated/tailwind.css"
+import { LoadingSpinner } from "./ui/loading"
 import { Portal } from "./ui/portal"
 import { getDefaultWorld } from "./world/world-db.server"
 import { WorldTitle } from "./world/world-title"
@@ -242,8 +244,24 @@ function Document({ children }: { children: ReactNode }) {
         {children}
         <Scripts />
         <LiveReload />
+        <PendingIndicator />
       </body>
     </html>
+  )
+}
+
+function PendingIndicator() {
+  const transition = useTransition()
+  const pending = transition.state !== "idle"
+  return (
+    <div
+      className={clsx(
+        "pointer-events-none fixed left-0 bottom-0 p-4 transition",
+        pending ? "opacity-100" : "opacity-0",
+      )}
+    >
+      <LoadingSpinner />
+    </div>
   )
 }
 
