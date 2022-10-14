@@ -17,7 +17,7 @@
     "typecheck": "tsc --noEmit",
     "tailwind": "tailwindcss -o app/generated/tailwind.css -c tailwind.config.cjs",
     "routes": "routes-gen --driver @routes-gen/remix",
-    "env-check": "tsx app/env.server.ts"
+    "env-check": "tsx app/core/env.server.ts"
   },
   "dependencies": {
     "@floating-ui/react-dom": "^1.0.0",
