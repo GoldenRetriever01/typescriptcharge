@@ -125,6 +125,7 @@ export default function CharactersPage() {
 
 function CharacterSheetEditor({ character }: { character: Character }) {
   const updateCharacter = useUpdateCharacter(character.id)
+  const { membership } = useLoaderData<typeof loader>()
 
   return (
     <div className="grid gap-4">
@@ -153,10 +154,14 @@ function CharacterSheetEditor({ character }: { character: Character }) {
           <section>
             <h2 className={labelTextClass}>Momentum</h2>
             <div className={clsx(inputClass, "grid place-items-center")}>
-              <Counter
-                value={character.momentum}
-                onChange={(momentum) => updateCharacter({ momentum })}
-              />
+              {membership.isAdmin ? (
+                <Counter
+                  value={character.momentum}
+                  onChange={(momentum) => updateCharacter({ momentum })}
+                />
+              ) : (
+                <p className="font-medium">{character.momentum}</p>
+              )}
             </div>
           </section>
         </div>
