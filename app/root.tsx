@@ -156,7 +156,7 @@ export default function App() {
                   </Form>
                   <HellYeah />
                 </div>
-                <div className="sticky bottom-0 mx-auto mt-auto w-full max-w-screen-2xl p-4">
+                <div className="sticky bottom-0 mr-4 ml-auto inline-block w-fit pb-4">
                   <FooterActions />
                 </div>
               </footer>
