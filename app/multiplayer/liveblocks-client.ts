@@ -7,7 +7,7 @@ import type { ClockState } from "~/clocks/clock-state"
 import type { World } from "~/world/world"
 
 export type Presence = {
-  cursor?: { name: string; x: number; y: number; route: string }
+  cursor?: { name: string; x: number; y: number; route: string; avatar: string }
 }
 
 export type Storage = {

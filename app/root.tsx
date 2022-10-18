@@ -162,7 +162,10 @@ export default function App() {
               </footer>
             </div>
 
-            <LiveCursors name={data.user.name} />
+            <LiveCursors
+              name={data.user.name}
+              avatar={data.user.avatar ?? "ineedadefault.png"}
+            />
             <WorldTitle />
           </RoomProvider>
         </PusherProvider>
