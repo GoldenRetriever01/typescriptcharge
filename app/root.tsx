@@ -17,7 +17,7 @@ import {
   useTransition,
 } from "@remix-run/react"
 import clsx from "clsx"
-import { Book, Clock, Users, Wrench, AirVent, HandMetal } from "lucide-react"
+import { Book, Clock, Users, Wrench, HandMetal, LogOut } from "lucide-react"
 import type { ComponentPropsWithoutRef, ReactNode } from "react"
 import { useRef } from "react"
 import type { TypedMetaFunction } from "remix-typedjson"
@@ -150,7 +150,7 @@ export default function App() {
                 >
                   <Form method="post" action="/auth/logout" reloadDocument>
                     <button type="submit" className={clsx(navLinkClass())}>
-                      <AirVent size={20} />
+                      <LogOut size={20} />
                       SIGN OUT
                     </button>
                   </Form>
