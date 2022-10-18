@@ -5,6 +5,7 @@ import type {
   LoaderArgs,
 } from "@remix-run/node"
 import {
+  Form,
   Link,
   Links,
   LiveReload,
@@ -16,8 +17,9 @@ import {
   useTransition,
 } from "@remix-run/react"
 import clsx from "clsx"
-import { Book, Clock, Users, Wrench } from "lucide-react"
+import { Book, Clock, Users, Wrench, AirVent, HandMetal } from "lucide-react"
 import type { ComponentPropsWithoutRef, ReactNode } from "react"
+import { useRef } from "react"
 import type { TypedMetaFunction } from "remix-typedjson"
 import { typedjson, useTypedLoaderData } from "remix-typedjson"
 import { route } from "routes-gen"
@@ -142,8 +144,22 @@ export default function App() {
                   <Outlet />
                 </main>
               </div>
-              <footer className="sticky bottom-0 mx-auto mt-auto w-full max-w-screen-2xl p-4">
-                <FooterActions />
+              <footer className="contents">
+                <div className={clsx(maxWidthContainerClass, "flex gap-4")}>
+                  <Form method="post" action="/auth/logout" reloadDocument>
+                    <button
+                      type="submit"
+                      className={clsx(navLinkClass(), "mt-4")}
+                    >
+                      <AirVent size={20} />
+                      SIGN OUT
+                    </button>
+                  </Form>
+                  <HellYeah />
+                </div>
+                <div className="sticky bottom-0 mx-auto mt-auto w-full max-w-screen-2xl p-4">
+                  <FooterActions />
+                </div>
               </footer>
             </div>
 
@@ -270,7 +286,26 @@ function SystemMessage({ children }: { children: ReactNode }) {
     <section className="grid gap-4">
       {children}
       <p className="opacity-75">{`(i'll make this less jank later)`}</p>
+      <HellYeah />
     </section>
+  )
+}
+
+function HellYeah() {
+  const yeahRef = useRef<HTMLAudioElement>()
+  const onHellYeah = () => {
+    if (!yeahRef.current) return
+
+    yeahRef.current.currentTime = 0
+    void yeahRef.current.play()
+  }
+
+  return (
+    <button className={clsx(navLinkClass(), "mt-4")} onClick={onHellYeah}>
+      <HandMetal size={20} />
+      <audio src="/yeah.mp3" ref={yeahRef} />
+      HELL YEAH
+    </button>
   )
 }
 
