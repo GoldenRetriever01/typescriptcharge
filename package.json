@@ -55,6 +55,7 @@
     "react-dom": "^18.2.0",
     "react-expanding-textarea": "^2.3.6",
     "react-suspense-fetch": "^0.6.0",
+    "react-use-measure": "^2.1.1",
     "react-virtuoso": "^2.19.1",
     "remix-typedjson": "^0.1.2",
     "routes-gen": "^0.5.2",

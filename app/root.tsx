@@ -20,6 +20,7 @@ import clsx from "clsx"
 import { Book, Clock, Users, Wrench, HandMetal, LogOut } from "lucide-react"
 import type { ComponentPropsWithoutRef, ReactNode } from "react"
 import { useRef } from "react"
+import useMeasure from "react-use-measure"
 import type { TypedMetaFunction } from "remix-typedjson"
 import { typedjson, useTypedLoaderData } from "remix-typedjson"
 import { route } from "routes-gen"
@@ -127,6 +128,8 @@ export const links: LinksFunction = () => [
 
 export default function App() {
   const data = useTypedLoaderData<typeof loader>()
+  const [ref, bounds] = useMeasure()
+
   return (
     <Document>
       <LiveblocksStorageProvider storage={data.storage}>
@@ -140,7 +143,7 @@ export default function App() {
                 <header className="my-6">
                   <MainNav />
                 </header>
-                <main>
+                <main ref={ref}>
                   <Outlet />
                 </main>
               </div>
@@ -165,6 +168,7 @@ export default function App() {
             <LiveCursors
               name={data.user.name}
               avatar={data.user.avatar ?? "ineedadefault.png"}
+              leftOffset={bounds.left}
             />
             <WorldTitle />
           </RoomProvider>

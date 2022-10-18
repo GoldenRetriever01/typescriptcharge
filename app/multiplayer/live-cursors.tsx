@@ -7,9 +7,11 @@ import { Portal } from "~/ui/portal"
 
 export function LiveCursors({
   name,
+  leftOffset,
   avatar,
 }: {
   name: string
+  leftOffset: number
   avatar: string
 }) {
   const others = useOthers()
@@ -19,7 +21,7 @@ export function LiveCursors({
   useWindowEvent("mousemove", (event) => {
     update({
       cursor: {
-        x: event.pageX,
+        x: event.pageX - leftOffset,
         y: event.pageY,
         name,
         avatar,
@@ -33,7 +35,11 @@ export function LiveCursors({
       {others
         .filter((other) => other.presence.cursor)
         .map((other, index) => (
-          <Cursor key={other.id ?? index} {...other.presence.cursor!} />
+          <Cursor
+            key={other.id ?? index}
+            {...other.presence.cursor!}
+            x={other.presence.cursor!.x + leftOffset}
+          />
         ))}
     </Portal>
   )
