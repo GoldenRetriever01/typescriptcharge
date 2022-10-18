@@ -96,7 +96,7 @@ export const meta: TypedMetaFunction<typeof loader> = ({ data }) => {
     "Charge Worlds",
   ])
   const description = "Virtual environment for the Charge RPG system"
-  const siteUrl = "https://charge-worlds.netlify.app/"
+  const siteUrl = "https://charge-worlds.mapleleaf.dev"
 
   return {
     // eslint-disable-next-line unicorn/text-encoding-identifier-case
