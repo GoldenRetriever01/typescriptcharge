@@ -6,3 +6,9 @@ export async function loader() {
     headers: { "Set-Cookie": await createLogoutCookie() },
   })
 }
+
+export async function action() {
+  return redirect("/", {
+    headers: { "Set-Cookie": await createLogoutCookie() },
+  })
+}
