@@ -145,12 +145,11 @@ export default function App() {
                 </main>
               </div>
               <footer className="contents">
-                <div className={clsx(maxWidthContainerClass, "flex gap-4")}>
+                <div
+                  className={clsx(maxWidthContainerClass, "mt-4 flex gap-4")}
+                >
                   <Form method="post" action="/auth/logout" reloadDocument>
-                    <button
-                      type="submit"
-                      className={clsx(navLinkClass(), "mt-4")}
-                    >
+                    <button type="submit" className={clsx(navLinkClass())}>
                       <AirVent size={20} />
                       SIGN OUT
                     </button>
@@ -292,7 +291,7 @@ function SystemMessage({ children }: { children: ReactNode }) {
 }
 
 function HellYeah() {
-  const yeahRef = useRef<HTMLAudioElement>()
+  const yeahRef = useRef<HTMLAudioElement>(null)
   const onHellYeah = () => {
     if (!yeahRef.current) return
 
@@ -301,10 +300,11 @@ function HellYeah() {
   }
 
   return (
-    <button className={clsx(navLinkClass(), "mt-4")} onClick={onHellYeah}>
+    <button className={clsx(navLinkClass())} onClick={onHellYeah}>
       <HandMetal size={20} />
-      <audio src="/yeah.mp3" ref={yeahRef} />
       HELL YEAH
+      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+      <audio src="/yeah.mp3" ref={yeahRef} className="h-0" />
     </button>
   )
 }
