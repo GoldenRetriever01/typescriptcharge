@@ -17,7 +17,7 @@ import {
   useTransition,
 } from "@remix-run/react"
 import clsx from "clsx"
-import { Book, Clock, Users, Wrench, HandMetal, LogOut } from "lucide-react"
+import { Book, Clock, HandMetal, LogOut, Users, Wrench } from "lucide-react"
 import type { ComponentPropsWithoutRef, ReactNode } from "react"
 import { useRef } from "react"
 import useMeasure from "react-use-measure"
@@ -46,10 +46,10 @@ import { db } from "./core/db.server"
 import { env } from "./core/env.server"
 import { DiceButton, DiceConfirmPanel } from "./dice/dice-button-d6"
 import tailwind from "./generated/tailwind.css"
+import { getDefaultWorld } from "./routes/world/world-db.server"
+import { WorldTitle } from "./routes/world/world-title"
 import { LoadingSpinner } from "./ui/loading"
 import { Portal } from "./ui/portal"
-import { getDefaultWorld } from "./world/world-db.server"
-import { WorldTitle } from "./world/world-title"
 
 async function loadWorldLogs() {
   return db.diceLog.findMany({

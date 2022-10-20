@@ -7,23 +7,14 @@ import { Dices, Eye, EyeOff, Plus, Trash, X } from "lucide-react"
 import { Fragment, useState } from "react"
 import TextArea from "react-expanding-textarea"
 import { route } from "routes-gen"
-import { characterActionLibrary } from "~/characters/character-actions"
-import { CharacterColorButton } from "~/characters/character-color-button"
-import { characterColors } from "~/characters/character-colors"
-import { CharacterImageUploader } from "~/characters/character-image-uploader"
-import type { Character } from "~/characters/character-sheet-data"
-import {
-  useAddCharacter,
-  useCharacters,
-  useDeleteCharacter,
-  useUpdateCharacter,
-} from "~/characters/hooks"
-import { Clock } from "~/clocks/clock"
-import { setDiceRoll } from "~/dice/dice-button-d6"
-import { entriesTyped } from "~/helpers/entries-typed"
-import { Button } from "~/ui/button"
-import { Counter, DotCounter } from "~/ui/counter"
-import { Field } from "~/ui/field"
+import { requireMembership } from "../../auth/require-membership"
+import { requireSessionUser } from "../../auth/session"
+import { setDiceRoll } from "../../dice/dice-button-d6"
+import { entriesTyped } from "../../helpers/entries-typed"
+import { Button } from "../../ui/button"
+import { Clock } from "../../ui/clock"
+import { Counter, DotCounter } from "../../ui/counter"
+import { Field } from "../../ui/field"
 import {
   clearButtonClass,
   inputClass,
@@ -31,10 +22,19 @@ import {
   navLinkClass,
   solidButtonClass,
   textAreaClass,
-} from "~/ui/styles"
-import { requireMembership } from "../auth/require-membership"
-import { requireSessionUser } from "../auth/session"
+} from "../../ui/styles"
 import { getDefaultWorld } from "../world/world-db.server"
+import { characterActionLibrary } from "./character-actions"
+import { CharacterColorButton } from "./character-color-button"
+import { characterColors } from "./character-colors"
+import { CharacterImageUploader } from "./character-image-uploader"
+import type { Character } from "./character-sheet-data"
+import {
+  useAddCharacter,
+  useCharacters,
+  useDeleteCharacter,
+  useUpdateCharacter,
+} from "./hooks"
 
 const dividerClass = "border-black/25"
 

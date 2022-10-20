@@ -86,6 +86,7 @@
     "prettier": "^2.7.1",
     "prisma": "^4.4.0",
     "prop-types": "^15.8.1",
+    "remix-flat-routes": "^0.4.4",
     "tailwind-scrollbar": "^2.0.1",
     "tailwindcss": "^3.1.8",
     "tsx": "^3.9.0",

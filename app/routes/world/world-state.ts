@@ -1,9 +1,6 @@
-import {
-  useMutation,
-  useStorage,
-} from "~/multiplayer/liveblocks-react"
+import { useMutation, useStorage } from "~/multiplayer/liveblocks-react"
 import { useLiveblocksStorageContext } from "~/multiplayer/liveblocks-storage"
-import type { World } from "./world"
+import type { World } from "./world-type"
 
 const defaultWorld = {
   name: "",

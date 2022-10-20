@@ -1,8 +1,8 @@
 import { z } from "zod"
-import { characterSchema } from "~/characters/character-sheet-data"
-import { clockStateSchema } from "~/clocks/clock-state"
-import { env } from "~/core/env.server"
-import { defaultRoomId } from "~/multiplayer/liveblocks-client"
+import { env } from "../core/env.server"
+import { defaultRoomId } from "../multiplayer/liveblocks-client"
+import { characterSchema } from "../routes/characters.$id/character-sheet-data"
+import { clockStateSchema } from "../routes/clocks/clock-state"
 
 const liveblocksStorageSchema = z.object({
   data: z

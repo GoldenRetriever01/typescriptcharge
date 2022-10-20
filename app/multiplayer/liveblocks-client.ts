@@ -2,9 +2,9 @@ import type { Client } from "@liveblocks/client"
 import { createClient, LiveList } from "@liveblocks/client"
 import type { RoomInitializers } from "@liveblocks/client/internal"
 import { route } from "routes-gen"
-import type { Character } from "~/characters/character-sheet-data"
-import type { ClockState } from "~/clocks/clock-state"
-import type { World } from "~/world/world"
+import type { Character } from "../routes/characters.$id/character-sheet-data"
+import type { ClockState } from "../routes/clocks/clock-state"
+import type { World } from "../routes/world/world-type"
 
 export type Presence = {
   cursor?: { name: string; x: number; y: number; route: string; avatar: string }

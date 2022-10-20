@@ -58,6 +58,7 @@ specifiers:
   react-suspense-fetch: ^0.6.0
   react-use-measure: ^2.1.1
   react-virtuoso: ^2.19.1
+  remix-flat-routes: ^0.4.4
   remix-typedjson: ^0.1.2
   routes-gen: ^0.5.2
   sharp: ^0.31.1
@@ -137,6 +138,7 @@ devDependencies:
   prettier: 2.7.1
   prisma: 4.4.0
   prop-types: 15.8.1
+  remix-flat-routes: 0.4.4
   tailwind-scrollbar: 2.0.1_tailwindcss@3.1.8
   tailwindcss: 3.1.8
   tsx: 3.9.0
@@ -2833,6 +2835,12 @@ packages:
     dependencies:
       balanced-match: 1.0.2
       concat-map: 0.0.1
+
+  /brace-expansion/2.0.1:
+    resolution: {integrity: sha512-XnAIvQ8eM+kC6aULx6wuQiwVsnzsi9d3WxzV3FpWTGA19F621kwdbsAcFKXgKUHZWsy+mY6iL1sHTxWEFCytDA==}
+    dependencies:
+      balanced-match: 1.0.2
+    dev: true
 
   /braces/2.3.2:
     resolution: {integrity: sha512-aNdbnj9P8PjdXU4ybaWLK2IF3jc/EoDYbC7AazW6to3TRsfXxscC9UXOB5iDiEQrkyIbWp2SLQda4+QAa7nc3w==}
@@ -6616,6 +6624,13 @@ packages:
     dependencies:
       brace-expansion: 1.1.11
 
+  /minimatch/5.1.0:
+    resolution: {integrity: sha512-9TPBGGak4nHfGZsPBohm9AWg6NoT7QTCehS3BIJABslyZbzxfV78QM2Y6+i741OPZIafFAaiiEMh5OyIrJPgtg==}
+    engines: {node: '>=10'}
+    dependencies:
+      brace-expansion: 2.0.1
+    dev: true
+
   /minimist-options/4.1.0:
     resolution: {integrity: sha512-Q4r8ghd80yhO/0j1O3B2BjweX3fiHg9cdOwjJd2J76Q135c+NDxGCqdYKQ1SKBuFfgWbAUzBfvYjPUEeNgqN1A==}
     engines: {node: '>= 6'}
@@ -7825,6 +7840,13 @@ packages:
       '@types/mdast': 3.0.10
       mdast-util-to-hast: 11.3.0
       unified: 10.1.2
+    dev: true
+
+  /remix-flat-routes/0.4.4:
+    resolution: {integrity: sha512-DmdOm50nXvksW6cX2m+IJIYb9TLus9SgfhgRO/trwkvVIB9NusN/VkiYP/vclGMFWEJky/Z3L2C3BbkNIYGCqg==}
+    hasBin: true
+    dependencies:
+      minimatch: 5.1.0
     dev: true
 
   /remix-typedjson/0.1.2_hxglujwarjbg2fjadnme7atvpy:

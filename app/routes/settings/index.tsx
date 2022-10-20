@@ -14,7 +14,7 @@ import {
   raisedPanelClass,
   solidButtonClass,
 } from "~/ui/styles"
-import { getDefaultWorld } from "~/world/world-db.server"
+import { getDefaultWorld } from "../world/world-db.server"
 
 const snowflakeSchema = z
   .string()

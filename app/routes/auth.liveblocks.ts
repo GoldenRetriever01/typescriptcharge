@@ -4,7 +4,7 @@ import { requireMembership } from "~/auth/require-membership"
 import { requireSessionUser } from "~/auth/session"
 import { env } from "~/core/env.server"
 import { defaultRoomId } from "~/multiplayer/liveblocks-client"
-import { getDefaultWorld } from "~/world/world-db.server"
+import { getDefaultWorld } from "../routes/world/world-db.server"
 
 export async function action({ request }: ActionArgs) {
   const user = await requireSessionUser(request)
