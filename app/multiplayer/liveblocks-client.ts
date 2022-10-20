@@ -1,7 +1,7 @@
 import type { Client } from "@liveblocks/client"
 import { createClient, LiveList } from "@liveblocks/client"
-import type { RoomInitializers } from "@liveblocks/client/internal"
 import { route } from "routes-gen"
+import { satisfies } from "../helpers/satisfies"
 import type { Character } from "../routes/characters.$id/character-sheet-data"
 import type { ClockState } from "../routes/clocks/clock-state"
 import type { World } from "../routes/world/world-type"
@@ -33,11 +33,14 @@ export function enterDefaultRoom() {
 export const defaultRoomId =
   process.env.NODE_ENV === "production" ? "default" : "default-dev"
 
-export const defaultRoomInit: RoomInitializers<Presence, Storage> = {
+export const defaultRoomInit = satisfies<{
+  initialPresence: Presence
+  initialStorage: Storage
+}>()({
   initialPresence: {},
   initialStorage: {
     world: { name: "New World", description: "A brand new world" },
     clocks: new LiveList(),
     characters: new LiveList(),
   },
-}
+})
