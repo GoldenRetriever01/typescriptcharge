@@ -83,11 +83,9 @@ export function LogsPanel({ logs: logsProp }: { logs: DiceLogEntryProps[] }) {
               </div>
             )}
             className="thin-scrollbar -mr-1 h-full"
-            followOutput={() => "smooth"}
-            initialItemCount={logs.length}
             initialTopMostItemIndex={logs.length - 1}
+            followOutput={() => "smooth"}
             alignToBottom
-            defaultItemHeight={120}
           />
         </motion.div>
       )}
