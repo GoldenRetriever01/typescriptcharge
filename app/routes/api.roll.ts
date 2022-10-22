@@ -1,5 +1,6 @@
 import type { ActionArgs } from "@remix-run/node"
 import { redirect } from "@remix-run/node"
+import { randomInt } from "node:crypto"
 import { z } from "zod"
 import { getSessionUser } from "~/auth/session"
 import { db } from "~/core/db.server"
@@ -29,7 +30,7 @@ export async function action({ request }: ActionArgs) {
 
   const results = range(1, diceCount).map(() => ({
     sides: 6,
-    result: Math.floor(Math.random() * 6) + 1,
+    result: randomInt(1, 7),
   }))
 
   const log = await db.diceLog.create({
