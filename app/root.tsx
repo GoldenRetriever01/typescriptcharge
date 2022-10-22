@@ -147,22 +147,22 @@ export default function App() {
                   <Outlet />
                 </main>
               </div>
-              <footer className="contents">
-                <div
-                  className={clsx(maxWidthContainerClass, "mt-4 flex gap-4")}
-                >
-                  <Form method="post" action="/auth/logout" reloadDocument>
-                    <button type="submit" className={clsx(navLinkClass())}>
-                      <LogOut size={20} />
-                      SIGN OUT
-                    </button>
-                  </Form>
-                  <HellYeah />
-                </div>
-                <div className="sticky bottom-0 mr-4 ml-auto inline-block w-fit pb-4">
+              <footer
+                className={clsx(maxWidthContainerClass, "mt-6 flex gap-4")}
+              >
+                <Form method="post" action="/auth/logout" reloadDocument>
+                  <button type="submit" className={clsx(navLinkClass())}>
+                    <LogOut size={20} />
+                    SIGN OUT
+                  </button>
+                </Form>
+                <HellYeah />
+              </footer>
+              <aside className="sticky bottom-0 p-4 max-w-screen-2xl mx-auto mt-auto w-full pointer-events-none">
+                <div className="w-fit ml-auto pointer-events-auto">
                   <FooterActions />
                 </div>
-              </footer>
+              </aside>
             </div>
 
             <LiveCursors
