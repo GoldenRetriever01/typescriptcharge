@@ -53,12 +53,12 @@ import { LoadingSpinner } from "./ui/loading"
 import { Portal } from "./ui/portal"
 
 async function loadWorldLogs(): Promise<DiceLogEntryProps[]> {
-  return db.diceLog.findMany({
+  const logs = await db.diceLog.findMany({
     where: {
       roomId: defaultRoomId,
     },
     orderBy: {
-      createdAt: "asc",
+      createdAt: "desc",
     },
     take: 20,
     select: {
@@ -68,6 +68,7 @@ async function loadWorldLogs(): Promise<DiceLogEntryProps[]> {
       isDisadvantage: true,
     },
   })
+  return logs.reverse()
 }
 
 export const unstable_shouldReload = () => false
