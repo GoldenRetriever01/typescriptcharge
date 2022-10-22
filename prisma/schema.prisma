@@ -57,8 +57,8 @@ model DiceLog {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
-  roomId String
-  // TODO: create a die model with a compound unique constraint for sides and result
-  dice   Json[] @db.JsonB // [{"sides": 6, "result": 3}, ...]
-  intent String @default("")
+  roomId         String
+  dice           Json[]  @db.JsonB // [{"sides": 6, "result": 3}, ...]
+  intent         String  @default("")
+  isDisadvantage Boolean @default(false)
 }

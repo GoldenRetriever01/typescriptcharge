@@ -1,19 +1,35 @@
 import { z } from "zod"
 
+import clsx from "clsx"
 import { Suspense } from "react"
 
 export type DiceLogEntryProps = {
   user: { name: string }
   dice: unknown[]
   intent: string
+  isDisadvantage: boolean
 }
 
 export function DiceLogEntry(props: DiceLogEntryProps): JSX.Element {
-  const dice = parseDiceJson(props.dice)
+  const dice = (parseDiceJson(props.dice) ?? []).sort(
+    (a, b) => b.result - a.result,
+  )
+
+  const poolResult = props.isDisadvantage
+    ? Math.min(...dice.map((d) => d.result))
+    : Math.max(...dice.map((d) => d.result))
+
+  const poolResultColor =
+    poolResult === 6
+      ? "text-emerald-400 drop-shadow-[0_0_4px_theme(colors.emerald.400)]"
+      : poolResult >= 4
+      ? "text-amber-400 drop-shadow-[0_0_4px_theme(colors.amber.400)]"
+      : "text-rose-400 drop-shadow-[0_0_4px_theme(colors.rose.400)]"
+
   return (
     <div className="flex items-end gap-6 rounded-md bg-black/75 px-6 py-4">
       <div className="flex flex-1 flex-col gap-1">
-        {dice ? (
+        {dice.length > 0 ? (
           <>
             {!!props.intent && <p className="leading-tight">{props.intent}</p>}
 
@@ -21,7 +37,10 @@ export function DiceLogEntry(props: DiceLogEntryProps): JSX.Element {
               {dice.map((die, index) => (
                 <li
                   key={index}
-                  className="relative flex items-center justify-center"
+                  className={clsx(
+                    "relative flex items-center justify-center",
+                    die.result === poolResult && poolResultColor,
+                  )}
                 >
                   <HexagonFilled className="h-8 w-8" />
                   <span className="absolute translate-y-[1px] font-medium text-gray-800">
@@ -39,32 +58,11 @@ export function DiceLogEntry(props: DiceLogEntryProps): JSX.Element {
 
         <Suspense>
           <p className="mt-auto text-[13px]">
-            <span className="opacity-70">Rolled by</span> {props.user.name}
+            <span className="opacity-70">Rolled by</span> {props.user.name}{" "}
+            {props.isDisadvantage && "(disadvantage)"}
           </p>
         </Suspense>
       </div>
-      {dice && (
-        <>
-          <div className="-my-1 w-1 self-stretch rounded bg-white/25" />
-
-          <div className="flex flex-col items-center gap-0.5 self-center text-center leading-none">
-            <p>
-              <span className="inline-block text-xs opacity-75">Max</span>
-              <br />
-              <span className="text-lg font-medium leading-tight">
-                {Math.max(...dice.map((die) => die.result))}
-              </span>
-            </p>
-            <p>
-              <span className="inline-block text-xs opacity-75">Min</span>
-              <br />
-              <span className="text-lg font-medium leading-tight">
-                {Math.min(...dice.map((die) => die.result))}
-              </span>
-            </p>
-          </div>
-        </>
-      )}
     </div>
   )
 }

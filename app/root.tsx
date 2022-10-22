@@ -45,13 +45,14 @@ import { requireSessionUser } from "./auth/session"
 import { db } from "./core/db.server"
 import { env } from "./core/env.server"
 import { DiceButton, DiceConfirmPanel } from "./dice/dice-button-d6"
+import type { DiceLogEntryProps } from "./dice/dice-log-entry"
 import tailwind from "./generated/tailwind.css"
 import { getDefaultWorld } from "./routes/world/world-db.server"
 import { WorldTitle } from "./routes/world/world-title"
 import { LoadingSpinner } from "./ui/loading"
 import { Portal } from "./ui/portal"
 
-async function loadWorldLogs() {
+async function loadWorldLogs(): Promise<DiceLogEntryProps[]> {
   return db.diceLog.findMany({
     where: {
       roomId: defaultRoomId,
@@ -64,6 +65,7 @@ async function loadWorldLogs() {
       dice: true,
       intent: true,
       user: { select: { name: true } },
+      isDisadvantage: true,
     },
   })
 }

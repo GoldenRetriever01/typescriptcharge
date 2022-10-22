@@ -2,12 +2,13 @@ import { useStore } from "@nanostores/react"
 import { useFetcher, useFetchers } from "@remix-run/react"
 import clsx from "clsx"
 import { AnimatePresence, motion } from "framer-motion"
-import { Check, Dices, Minus, Plus, X } from "lucide-react"
+import { Check, Dices, Minus, Plus } from "lucide-react"
 import { atom } from "nanostores"
 import { route } from "routes-gen"
 import { Button } from "~/ui/button"
 import { blackCircleIconButtonClass, inputClass } from "~/ui/styles"
 
+const visibleStore = atom(false)
 const countStore = atom(0)
 const intentStore = atom("")
 
@@ -15,32 +16,29 @@ const diceButtonId = "dice-button"
 const diceConfirmButtonId = "confirm-dice"
 const intentInputId = "dice-intent"
 
-let prev = countStore.get()
-countStore.listen((next) => {
-  if (prev === 0 && next > 0) {
+visibleStore.listen((next) => {
+  if (next) {
     setTimeout(() => {
       // eslint-disable-next-line unicorn/prefer-query-selector
       document.getElementById(intentInputId)?.focus()
     })
-  }
-
-  if (prev > 0 && next === 0) {
+  } else {
     setTimeout(() => {
       // eslint-disable-next-line unicorn/prefer-query-selector
       document.getElementById(diceButtonId)?.focus()
     })
   }
-
-  prev = next
 })
 
 export function setDiceRoll(count: number, intent: string) {
   countStore.set(count)
   intentStore.set(intent)
+  visibleStore.set(true)
 }
 
 export function DiceButton() {
   const count = useStore(countStore)
+  const visible = useStore(visibleStore)
 
   const fetchers = useFetchers()
   const pending = fetchers.some(
@@ -50,21 +48,20 @@ export function DiceButton() {
   )
 
   return (
-    <div
-      className={clsx("relative", count === 0 ? "opacity-75" : "opacity-100")}
-    >
+    <div className={clsx("relative", visible ? "opacity-100" : "opacity-75")}>
       <Button
         id={diceButtonId}
         type="submit"
         title="Roll some d6"
         className={blackCircleIconButtonClass}
         onClick={() => {
-          countStore.set(countStore.get() + 1)
+          countStore.set(1)
+          visibleStore.set(!visibleStore.get())
         }}
       >
         <Dices className={clsx(pending && "animate-spin")} />
       </Button>
-      {count > 0 && (
+      {visible && (
         <span className="absolute top-0 right-0 block font-bold leading-none">
           {count}
         </span>
@@ -76,10 +73,11 @@ export function DiceButton() {
 export function DiceConfirmPanel() {
   const count = useStore(countStore)
   const intent = useStore(intentStore)
+  const visible = useStore(visibleStore)
   const fetcher = useFetcher()
   return (
     <AnimatePresence>
-      {count > 0 && (
+      {visible && (
         <motion.div
           className="flex origin-bottom-right flex-col items-end gap-2"
           transition={{ type: "tween", duration: 0.15 }}
@@ -92,10 +90,6 @@ export function DiceConfirmPanel() {
             method="post"
             replace
             className="flex flex-wrap items-center justify-end gap-2"
-            onSubmit={() => {
-              countStore.set(0)
-              intentStore.set("")
-            }}
           >
             <input
               id={intentInputId}
@@ -110,15 +104,8 @@ export function DiceConfirmPanel() {
                 intentStore.set(event.target.value)
               }}
             />
-            <input type="hidden" name="count" value={count} />
+            <input type="hidden" name="poolSize" value={count} />
             <div className="flex items-center gap-2">
-              <Button
-                title="Cancel"
-                className={blackCircleIconButtonClass}
-                onClick={() => countStore.set(0)}
-              >
-                <X size={16} />
-              </Button>
               <Button
                 title="Subtract a dice"
                 className={blackCircleIconButtonClass}

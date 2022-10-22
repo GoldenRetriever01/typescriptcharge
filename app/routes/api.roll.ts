@@ -18,14 +18,16 @@ export async function action({ request }: ActionArgs) {
   }
 
   const bodySchema = z.object({
-    count: z
+    poolSize: z
       .string()
-      .transform((value) => z.number().int().positive().parse(Number(value))),
+      .transform((value) => z.number().int().parse(Number(value))),
     intent: z.string().max(100),
   })
   const body = bodySchema.parse(Object.fromEntries(await request.formData()))
 
-  const results = range(1, body.count).map(() => ({
+  const diceCount = body.poolSize <= 0 ? 2 : Math.max(body.poolSize, 1)
+
+  const results = range(1, diceCount).map(() => ({
     sides: 6,
     result: Math.floor(Math.random() * 6) + 1,
   }))
@@ -36,11 +38,13 @@ export async function action({ request }: ActionArgs) {
       userId: user.id,
       dice: results,
       intent: body.intent,
+      isDisadvantage: body.poolSize <= 0,
     },
     select: {
       user: { select: { name: true } },
       dice: true,
       intent: true,
+      isDisadvantage: true,
     },
   })
 
