@@ -6,3 +6,4 @@ A mini virtual tabletop made for the [Charge RPG](https://fari.games/en/games/fa
 
 - This is a test for badge..
 Another test.
+....
