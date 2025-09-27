@@ -4,4 +4,4 @@ A mini virtual tabletop made for the [Charge RPG](https://fari.games/en/games/fa
 
 - [Project Board](https://github.com/users/itsMapleLeaf/projects/1/views/1)
 
-- This is a test for badge
+- This is a test for badge.
